@@ -8,10 +8,10 @@ package {
     public var a:int;
 
     function Color(r:int = 0, g:int = 0, b:int = 0, a:int = 255) {
-      r = r;
-      g = g;
-      b = b;
-      a = a;
+      this.r = r;
+      this.g = g;
+      this.b = b;
+      this.a = a;
     }
 
     private function zeroPad(str:String, padLength:int=2):String {

@@ -14,8 +14,8 @@ package {
     function Entity(x:Number = 0, y:Number = 0, width:Number = 20, height:Number = -1, color:Number = 0xFF0000):void {
       if (height == -1) height = width;
 
-      x = x;
-      y = y;
+      this.x = x;
+      this.y = y;
 
       graphics.beginFill(color);
       graphics.drawRect(x, y, width, height);
