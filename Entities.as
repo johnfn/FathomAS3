@@ -7,19 +7,19 @@ package {
 			this.entities = [];
 		}
 
-		public function add(entity):void {
+		public function add(entity:Entity):void {
 			this.entities.push(entity);
 		}
 
 		public function get(...criteria):Array {
-			var remainingEntities = this.entities;
+			var remainingEntities:Array = this.entities;
 
-			for each (var item in criteria) {
-				var pass = [];
+			for each (var item:* in criteria) {
+				var pass:Array = [];
 
-				for each (var entity in remainingEntities){
+				for each (var entity:Entity in remainingEntities){
 					if (item is String) {
-						var desired = true;
+						var desired:Boolean = true;
 						if (item[0] == "!") {
 							desired = false;
 							item = item.substring(1);
@@ -46,7 +46,7 @@ package {
 		}
 
 		public function one(...criteria):Entity {
-			var results = this.get.apply(this, criteria);
+			var results:Array = this.get.apply(this, criteria);
 			//assert(results.length == 1);
 			return results[0];
 		}
@@ -56,7 +56,7 @@ package {
 		}
 
 		public function update():void {
-			for each (var e in this.get("updateable")) {
+			for each (var e:Entity in this.get("updateable")) {
 				e.emit("pre-update");
 				e.update(this);
 				e.emit("post-update");

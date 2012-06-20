@@ -6,5 +6,9 @@ package {
 		public static function getUniqueID():Number {
 			return ++uid;
 		}
+
+		public static function initialize():void {
+			entities.update();
+		}
 	}
 }

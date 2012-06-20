@@ -30,23 +30,23 @@ package {
 		}
 
 		public function on(event:String, callback:Function):Entity {
-			var eventList = __fathom.events[event] || [];
-			if (! (callback in eventList)) {
-				eventList.push(callback);
+			var events:Array = __fathom.events[event] || [];
+			if (! (callback in events)) {
+				events.push(callback);
 			}
 
-			__fathom.events[event] = eventList;
+			__fathom.events[event] = events;
 
 			return this;
 		}
 
 		public function off(event:String, callback:Function = null):Entity {
-			var events = __fathom.events[event];
+			var events:Array = __fathom.events[event];
 			if (!events) {
 				throw "Don't have that event!";
 			}
 
-			if (callback) {
+			if (callback != null) {
 				__fathom.events[event] = events.splice(events.indexOf(callback), 1);
 			} else {
 				__fathom.events[event] = [];
@@ -69,14 +69,12 @@ package {
 
 		public function groups():Array { return ["updateable"]; }
 
-		public function eq(other):Boolean { return __fathom.uid == other.__fathom.uid; }
+		public function eq(other:Entity):Boolean { return __fathom.uid == other.__fathom.uid; }
 
-		public function collides(other):Boolean { return (!eq(other)) && hitTestObject(other); }
+		public function collides(other:Entity):Boolean { return (!eq(other)) && hitTestObject(other); }
 
-		public function update():void {}
+		public function update(e:Entities):void {}
 
 		public function depth():Number { return 0; }
-
-
 	}
 }
