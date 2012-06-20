@@ -9,17 +9,29 @@ package {
 			return ++uid;
 		}
 
+    public static function make2DArrayFn(width:int, height:int, fn:Function):Array {
+      var result:Array = new Array(width);
+
+      for (var i:int = 0; i < width; i++) {
+        result[i] = new Array(height);
+        for (var j:int = 0; j < height; j++) {
+          result[i][j] = fn(i, j);
+        }
+      }
+
+      return result;
+    }
+
+    public static function foreach2D(a:Array, fn:Function):void {
+      for (var i:int = 0; i < a.length; i++) {
+        for (var j:int = 0; j < a[0].length; j++) {
+          fn(i, j, a[i][j]);
+        }
+      }
+    }
+
 		public static function make2DArray(width:int, height:int, defaultValue:*):Array {
-			var result:Array = new Array(width);
-
-			for (var i:int = 0; i < width; i++) {
-				result[i] = new Array(height);
-				for (var j:int = 0; j < height; j++) {
-					result[i][j] = defaultValue;
-				}
-			}
-
-			return result;
+      return make2DArrayFn(width, height, function(x:int, y:int):* { return defaultValue; });
 		}
 
 		public static function randRange(low:int, high:int):int {

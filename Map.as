@@ -17,12 +17,21 @@ package {
 
 		function Map(widthInTiles:int, heightInTiles:int, tileSize:int) {
       super(0, 0, widthInTiles * tileSize, heightInTiles * tileSize)
+      graphics.clear();
 
-			widthInTiles = widthInTiles;
-			heightInTiles = heightInTiles;
-			tileSize = tileSize;
+			this.widthInTiles = widthInTiles;
+			this.heightInTiles = heightInTiles;
+			this.tileSize = tileSize;
 
-			tiles = Util.make2DArray(widthInTiles, heightInTiles, undefined);
+      var that:Map = this;
+
+			tiles = Util.make2DArrayFn(widthInTiles, heightInTiles, function(x:int, y:int):Tile {
+        var t:Tile = new Tile(x * tileSize, y * tileSize, tileSize, 0);
+        that.addChild(t);
+        return t;
+      });
+
+      addChild(tiles[0][0]);
 		}
 
 		public function fromImage(mapClass:Class):void {
@@ -33,18 +42,32 @@ package {
 
 			for (var x:int=0; x < bData.width; x++) {
 				for (var y:int=0; y < bData.height; y++) {
-          if (x < 3 && y < 3) trace((new Color()).readInt(bData.getPixel(x, y)).toString());
-
 					data[x][y] = (new Color()).readInt(bData.getPixel(x, y));
 				}
 			}
 
-      trace(data[0][0].toString());
+      updateTiles();
 		}
 
 		public function setTile(x:int, y:int, type:int):void {
-			tiles[x][y] = new Tile(x * tileSize, y * tileSize, tileSize, type);
+			tiles[x][y].setType(type);
 		}
+
+    private function updateTiles():void {
+      for (var x:int = 0; x < widthInTiles; x++) {
+        for (var y:int = 0; y < heightInTiles; y++) {
+          var val:int = 0;
+
+          if (data[topLeftCorner.x + x][topLeftCorner.y + y].eq(new Color(0, 0, 0))) {
+            val = 1;
+          } else {
+            val = 0;
+          }
+
+          setTile(x, y, val);
+        }
+      }
+    }
 
 		public function moveCorner(diff:Vec):void {
 			diff = diff.multiply(widthInTiles);
@@ -52,20 +75,7 @@ package {
 			topLeftCorner.x += diff.x;
 			topLeftCorner.y += diff.y;
 
-			for (var x:int = 0; x < widthInTiles; x++) {
-				for (var y:int = 0; y < heightInTiles; y++) {
-          var val:int = 0;
-
-					if (data[topLeftCorner.x + x][topLeftCorner.y + y].eq(new Color(0, 0, 0))) {
-						val = 1;
-            trace("good!");
-					} else {
-						val = 0;
-					}
-
-					setTile(x, y, val);
-				}
-			}
+      updateTiles();
 		}
 
 		public override function groups():Array {
@@ -74,13 +84,27 @@ package {
 	}
 }
 
-class Tile extends flash.display.Sprite {
-  function Tile(x:int, y:int, width:int, type:int) {
-    x=x;
-    y=y;
-    width=width;
-    height=height;
+class Tile extends flash.display.MovieClip {
+  public var gfxWidth:int;
+  public var gfxHeight:int;
 
+  function Tile(x:int, y:int, w:int, type:int) {
+    super();
+
+    this.x = x;
+    this.y = y;
+
+    /* Great bug here. We can't call these width/height because
+    width and height are determined by the contents of the MovieClip.
+    Any attempt to set w/h here will see them implicitly returned to 0. */
+
+    this.gfxWidth = w;
+    this.gfxHeight = w;
+
+    setType(type);
+  }
+
+  public function setType(type:int):void {
     var color:Color;
 
     if (type == 0) {
@@ -90,8 +114,7 @@ class Tile extends flash.display.Sprite {
     }
 
     graphics.beginFill(color.toInt());
-    graphics.drawRect(x, y, width, height);
+    graphics.drawRect(0, 0, this.gfxWidth, this.gfxHeight);
+    graphics.endFill();
   }
 }
-
-

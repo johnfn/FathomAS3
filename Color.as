@@ -46,8 +46,12 @@ package {
       return this;
 		}
 
+    public function eq(c:Color):Boolean {
+      return r == c.r && g == c.g && b == c.b && a == c.a;
+    }
+
     public function toInt():uint {
-      return parseInt(toString(), 16);
+      return parseInt(toString().substring(1), 16);
     }
 
 		public function randomizeRed(low:int = 0, high:int = 255):Color {
