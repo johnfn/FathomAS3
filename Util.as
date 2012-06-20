@@ -22,7 +22,7 @@ package {
 			return result;
 		}
 
-		public static function randRange(low, high) {
+		public static function randRange(low:int, high:int):int {
 			return low + Math.floor(Math.random() * (high - low));
 		}
 
