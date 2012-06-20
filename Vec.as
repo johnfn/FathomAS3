@@ -7,12 +7,16 @@ package {
     public var y:int;
 
     function Vec(x:int = 0, y:int = 0) {
-      x = x;
-      y = y;
+      this.x = x;
+      this.y = y;
     }
 
     public function eq(v:Vec):Boolean {
       return x == v.x && y == v.y;
+    }
+
+    public function toString():String {
+    	return "Vec[" + this.x + ", " + this.y + "]";
     }
 
     public function randomize():Vec {
@@ -23,7 +27,7 @@ package {
       if (r == 2) { return new Vec( 1,  0); }
       if (r == 3) { return new Vec(-1,  0); }
 
-      return new Vec(0, 0); //This line never executes. Just to satisfy type checker.
+      return new Vec(0, 0); //This line never executes. It's just to satisfy type checker.
     }
 
     public function multiply(n:int):Vec {

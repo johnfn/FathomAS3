@@ -8,6 +8,9 @@ package {
   public class Entity extends MovieClip {
     private var __fathom:Object;
 
+    public var vx:int = 0;
+    public var vy:int = 0;
+
     function Entity(x:Number = 0, y:Number = 0, width:Number = 20, height:Number = -1, color:Number = 0xFF0000):void {
       if (height == -1) height = width;
 
@@ -24,7 +27,8 @@ package {
                       };
       Util.entities.add(this)
 
-      on("pre-update", Hooks.move(new Point(1, 0)));
+      on("pre-update", Hooks.rpgLike(5));
+      on("pre-update", Hooks.decel());
     }
 
     public function entities():Entities {

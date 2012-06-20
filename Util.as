@@ -1,9 +1,14 @@
 package {
   public class Util {
     import flash.utils.*;
+    import flash.events.KeyboardEvent;
+    import flash.display.DisplayObject;
+    import flash.display.Stage;
 
     public static var uid:Number = 0;
     public static var entities:Entities = new Entities();
+    public static var Key:Object = {};
+    private static var keysDown:Array = new Array(255);
 
     public static function getUniqueID():Number {
       return ++uid;
@@ -34,15 +39,50 @@ package {
       return make2DArrayFn(width, height, function(x:int, y:int):* { return defaultValue; });
     }
 
+    public static function movementVector():Vec {
+      var x:int = ((isDown(Key.Right) ? 1 : 0) - (isDown(Key.Left) ? 1 : 0));
+      var y:int = ((isDown(Key.Down)  ? 1 : 0) - (isDown(Key.Up)   ? 1 : 0));
+
+      return new Vec(x, y);
+    }
+
+
     public static function randRange(low:int, high:int):int {
       return low + Math.floor(Math.random() * (high - low));
+    }
+
+    public static function isDown(which:int):Boolean {
+      return keysDown[which];
     }
 
     private static function update():void {
       entities.update();
     }
 
-    public static function initialize():void {
+    private static function _keyDown(event:KeyboardEvent):void {
+      keysDown[event.keyCode] = true;
+    }
+
+    private static function _keyUp(event:KeyboardEvent):void {
+      keysDown[event.keyCode] = false;
+    }
+
+    private static function initializeKeyListeners(stage:Stage):void {
+      stage.addEventListener(KeyboardEvent.KEY_DOWN, _keyDown);
+      stage.addEventListener(KeyboardEvent.KEY_UP, _keyUp);
+
+      for (var i:int = 0; i < 255; i++) {
+        keysDown[i] = false;
+      }
+
+      Key["Left"]  = 37;
+      Key["Up"]    = 38;
+      Key["Right"] = 39;
+      Key["Down"]  = 40;
+    }
+
+    public static function initialize(stage:Stage):void {
+      initializeKeyListeners(stage);
       setInterval(update, 1000/30);
     }
   }
