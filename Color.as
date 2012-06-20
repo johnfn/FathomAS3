@@ -5,25 +5,33 @@ package {
     public var r:int;
     public var g:int;
     public var b:int;
+    public var a:int;
 
-		function Color(r:int = 0, g:int = 0, b:int = 0) {
+		function Color(r:int = 0, g:int = 0, b:int = 0, a:int = 255) {
 			r = r;
 			g = g;
 			b = b;
+      a = a;
 		}
+
+    private function zeroPad(str:String, padLength:int=2):String {
+      while (str.length < padLength) {
+        str = "0" + str;
+      }
+
+      return str;
+    }
 
 		public function toString():String {
-			return "#" + r.toString(16).charAt(0)
-			           + g.toString(16).charAt(0)
-			           + b.toString(16).charAt(0);
+			return "#" + zeroPad(r.toString(16))
+			           + zeroPad(g.toString(16))
+			           + zeroPad(b.toString(16));
 		}
 
-    public function readInt(n:int):Color {
-      g = n % 255;
-      n /= 255;
-      b = n % 255;
-      n /= 255;
-      r = n;
+    public function readInt(hex:int):Color {
+      r = ((hex & 0xFF0000) >> 16);
+      g = ((hex & 0x00FF00) >> 8);
+      b = ((hex & 0x0000FF));
 
       return this;
     }

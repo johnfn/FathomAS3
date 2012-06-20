@@ -25,7 +25,7 @@ package {
 			tiles = Util.make2DArray(widthInTiles, heightInTiles, undefined);
 		}
 
-		public function fromImage(mapClass:Class) {
+		public function fromImage(mapClass:Class):void {
 			var bAsset:BitmapAsset = new mapClass();
 			var bData:BitmapData = bAsset.bitmapData;
 
@@ -33,18 +33,20 @@ package {
 
 			for (var x:int=0; x < bData.width; x++) {
 				for (var y:int=0; y < bData.height; y++) {
-					data[x][y] = (new Color()).readInt(bData.getPixel(x, y))
+          if (x < 3 && y < 3) trace((new Color()).readInt(bData.getPixel(x, y)).toString());
+
+					data[x][y] = (new Color()).readInt(bData.getPixel(x, y));
 				}
 			}
 
       trace(data[0][0].toString());
 		}
 
-		public function setTile(x:int, y:int, type:int) {
+		public function setTile(x:int, y:int, type:int):void {
 			tiles[x][y] = new Tile(x * tileSize, y * tileSize, tileSize, type);
 		}
 
-		public function moveCorner(diff:Vec) {
+		public function moveCorner(diff:Vec):void {
 			diff = diff.multiply(widthInTiles);
 
 			topLeftCorner.x += diff.x;
@@ -56,6 +58,7 @@ package {
 
 					if (data[topLeftCorner.x + x][topLeftCorner.y + y].eq(new Color(0, 0, 0))) {
 						val = 1;
+            trace("good!");
 					} else {
 						val = 0;
 					}
