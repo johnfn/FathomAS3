@@ -1,13 +1,13 @@
 package {
-	public class Util {
-		import flash.utils.*;
+  public class Util {
+    import flash.utils.*;
 
-		public static var uid:Number = 0;
-		public static var entities:Entities = new Entities();
+    public static var uid:Number = 0;
+    public static var entities:Entities = new Entities();
 
-		public static function getUniqueID():Number {
-			return ++uid;
-		}
+    public static function getUniqueID():Number {
+      return ++uid;
+    }
 
     public static function make2DArrayFn(width:int, height:int, fn:Function):Array {
       var result:Array = new Array(width);
@@ -30,20 +30,20 @@ package {
       }
     }
 
-		public static function make2DArray(width:int, height:int, defaultValue:*):Array {
+    public static function make2DArray(width:int, height:int, defaultValue:*):Array {
       return make2DArrayFn(width, height, function(x:int, y:int):* { return defaultValue; });
-		}
+    }
 
-		public static function randRange(low:int, high:int):int {
-			return low + Math.floor(Math.random() * (high - low));
-		}
+    public static function randRange(low:int, high:int):int {
+      return low + Math.floor(Math.random() * (high - low));
+    }
 
-		private static function update():void {
-			entities.update();
-		}
+    private static function update():void {
+      entities.update();
+    }
 
-		public static function initialize():void {
-			setInterval(update, 1000/30);
-		}
-	}
+    public static function initialize():void {
+      setInterval(update, 1000/30);
+    }
+  }
 }
