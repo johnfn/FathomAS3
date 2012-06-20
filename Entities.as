@@ -3,10 +3,6 @@ package {
 	public class Entities {
 		public var entities:Array = [];
 
-		public function main():void {
-			this.entities = [];
-		}
-
 		public function add(entity:Entity):void {
 			this.entities.push(entity);
 		}
