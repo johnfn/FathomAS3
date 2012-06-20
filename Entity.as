@@ -20,9 +20,9 @@ package {
 											, events: {}
 										  , entities: Util.entities
 										  };
+			Util.entities.add(this)
 
 			on("pre-update", Hooks.move(new Point(1, 0)));
-			trace(this.__fathom.uid);
 		}
 
 		public function entities():Entities {
@@ -56,7 +56,7 @@ package {
 		}
 
 		public function emit(event:String):Entity {
-			if (__fathom.events.indexOf(event) != -1) {
+			if (event in __fathom.events) {
 				for each (var hook:Function in __fathom.events[event]) {
 					hook.call(this)
 				}

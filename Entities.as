@@ -20,23 +20,22 @@ package {
 				for each (var entity:Entity in remainingEntities){
 					if (item is String) {
 						var desired:Boolean = true;
-						if (item[0] == "!") {
+						if (item.charAt(0) == "!") {
 							desired = false;
 							item = item.substring(1);
 						}
 
-						if (item in entity.groups() == desired) {
+						if ((entity.groups().indexOf(item) != -1) == desired) {
 							pass.push(entity);
 						}
-					}
 
-					if (item is Function) {
+					} else if (item is Function) {
 						if (item(entity)) {
 							pass.push(entity);
 						}
+					} else {
+						throw new Error("Unsupported Criteria type.");
 					}
-
-					throw new Error("Unsupported Criteria type.");
 				}
 
 				remainingEntities = pass;
