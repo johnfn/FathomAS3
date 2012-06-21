@@ -5,8 +5,6 @@ package {
 
     public function add(entity:Entity):void {
       this.entities.push(entity);
-
-      Util.stage.addChild(entity);
     }
 
     public function get(...criteria):Array {

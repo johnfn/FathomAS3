@@ -26,7 +26,7 @@ package {
       }
     }
 
-    public static function onLeaveMap(who:Entity, map:Map, callback:Function):Function {
+    public static function onLeaveMap(who:MovingEntity, map:Map, callback:Function):Function {
       return function():void {
         if (who.x <= 0 || who.y <= 0 || who.x >= map.width || who.y >= map.height) {
           callback.call(who);
@@ -34,7 +34,7 @@ package {
       }
     }
 
-    public static function loadNewMap(leftScreen:Entity, map:Map):Function {
+    public static function loadNewMap(leftScreen:MovingEntity, map:Map):Function {
       return function():void {
         var dx:int = Math.floor(leftScreen.x / map.width);
         var dy:int = Math.floor(leftScreen.y / map.height);
@@ -78,6 +78,25 @@ package {
           this.y -= this.vy;
           this.vy = 0;
         }
+      }
+    }
+
+    public static function platformerLike(speed:int, entity:MovingEntity):Function {
+      return function():void {
+        entity.vx += Util.movementVector().multiply(speed).x;
+        entity.vy += 5;
+
+        if (Util.keyIsDown(Util.Key.Up)) {
+          if (entity.nextLoc().touchesAnything()) {
+            entity.vy -= 50;
+          }
+        }
+
+        entity.x += entity.vx;
+        entity.y += entity.vy;
+
+        trace(entity.vy);
+
       }
     }
 
