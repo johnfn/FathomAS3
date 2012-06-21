@@ -11,14 +11,16 @@ package {
     public var vx:int = 0;
     public var vy:int = 0;
 
-    function Entity(x:Number = 0, y:Number = 0, width:Number = 20, height:Number = -1, color:Number = 0xFF0000):void {
-      if (height == -1) height = width;
+    function Entity(x:Number = 0, y:Number = 0, gfxWidth:Number = 20, gfxHeight:Number = -1, color:Number = 0xFF0000):void {
+      if (gfxHeight == -1) gfxHeight = gfxWidth;
+
+      super();
 
       this.x = x;
       this.y = y;
 
       graphics.beginFill(color);
-      graphics.drawRect(x, y, width, height);
+      graphics.drawRect(x, y, gfxWidth, gfxHeight);
       graphics.endFill();
 
       this.__fathom = { uid: Util.getUniqueID()
@@ -29,6 +31,13 @@ package {
 
       on("pre-update", Hooks.rpgLike(5));
       on("pre-update", Hooks.decel());
+
+      if (!Util.stage) {
+      	throw new Error("Util.initialize() has not been called. Failing.");
+      }
+
+      Util.stage.addChild(this);
+      trace(Util.stage.numChildren);
     }
 
     public function entities():Entities {

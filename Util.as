@@ -8,6 +8,8 @@ package {
     public static var uid:Number = 0;
     public static var entities:Entities = new Entities();
     public static var Key:Object = {};
+    public static var stage:Stage;
+
     private static var keysDown:Array = new Array(255);
 
     public static function getUniqueID():Number {
@@ -82,6 +84,8 @@ package {
     }
 
     public static function initialize(stage:Stage):void {
+      Util.stage = stage;
+
       initializeKeyListeners(stage);
       setInterval(update, 1000/30);
     }
