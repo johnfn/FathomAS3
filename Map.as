@@ -34,7 +34,7 @@ package {
       });
     }
 
-    public function fromImage(mapClass:Class):void {
+    public function fromImage(mapClass:Class):Map {
       var bAsset:BitmapAsset = new mapClass();
       var bData:BitmapData = bAsset.bitmapData;
 
@@ -47,6 +47,8 @@ package {
       }
 
       updateTiles();
+
+      return this;
     }
 
     public function setTile(x:int, y:int, type:int):void {

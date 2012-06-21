@@ -10,6 +10,22 @@ package {
       }
     }
 
+    public static function keyPressed(key:Number, callback:Function):Function {
+      return function():void {
+        if (Util.keyIsDown(key)) {
+          callback();
+        }
+      }
+    }
+
+    public static function keyRecentlyReleased(key:Number, callback:Function):Function {
+      return function():void {
+        if (Util.keyRecentlyReleased(key)) {
+          callback();
+        }
+      }
+    }
+
     public static function onLeaveMap(who:Entity, map:Map, callback:Function):Function {
       return function():void {
         if (who.x <= 0 || who.y <= 0 || who.x >= map.width || who.y >= map.height) {
@@ -18,7 +34,7 @@ package {
       }
     }
 
-    public static function loadNewMap(leftScreen:Entity, map:Map) {
+    public static function loadNewMap(leftScreen:Entity, map:Map):Function {
       return function():void {
         var dx:int = Math.floor(leftScreen.x / map.width);
         var dy:int = Math.floor(leftScreen.y / map.height);

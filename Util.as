@@ -11,6 +11,7 @@ package {
     public static var stage:Stage;
 
     private static var keysDown:Array = new Array(255);
+    private static var keysRecentlyUp:Array = new Array(255);
 
     public static function getUniqueID():Number {
       return ++uid;
@@ -42,8 +43,8 @@ package {
     }
 
     public static function movementVector():Vec {
-      var x:int = ((isDown(Key.Right) ? 1 : 0) - (isDown(Key.Left) ? 1 : 0));
-      var y:int = ((isDown(Key.Down)  ? 1 : 0) - (isDown(Key.Up)   ? 1 : 0));
+      var x:int = ((keyIsDown(Key.Right) ? 1 : 0) - (keyIsDown(Key.Left) ? 1 : 0));
+      var y:int = ((keyIsDown(Key.Down)  ? 1 : 0) - (keyIsDown(Key.Up)   ? 1 : 0));
 
       return new Vec(x, y);
     }
@@ -53,7 +54,7 @@ package {
       return low + Math.floor(Math.random() * (high - low));
     }
 
-    public static function isDown(which:int):Boolean {
+    public static function keyIsDown(which:int):Boolean {
       return keysDown[which];
     }
 
@@ -67,6 +68,24 @@ package {
 
     private static function _keyUp(event:KeyboardEvent):void {
       keysDown[event.keyCode] = false;
+
+      if (keysRecentlyUp[event.keyCode] != 0) {
+        clearTimeout(keysRecentlyUp[event.keyCode]);
+      }
+
+      keysRecentlyUp[event.keyCode] = setTimeout(function(){
+        keysRecentlyUp[event.keyCode] = 0;
+      }, 500);
+    }
+
+    public static function keyRecentlyReleased(which:int):Boolean {
+      if (keysRecentlyUp[which]) {
+        clearTimeout(keysRecentlyUp[which]);
+        keysRecentlyUp[which] = 0;
+        return true;
+      }
+
+      return false;
     }
 
     private static function initializeKeyListeners(stage:Stage):void {
