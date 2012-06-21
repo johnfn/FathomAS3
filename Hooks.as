@@ -26,11 +26,18 @@ package {
       return function():void {
         var that:* = this;
 
+        // Reset to known good collision state.
+        this.x -= this.vx;
+        this.y -= this.vy;
+
+        // Try both x and y.
+        this.x += this.vx;
         if (Util.entities.any(function(other:Entity):Boolean { return other.collides(that); } )) {
           this.x -= this.vx;
           this.vx = 0;
         }
 
+        this.y += this.vy;
         if (Util.entities.any(function(other:Entity):Boolean { return other.collides(that); } )) {
           this.y -= this.vy;
           this.vy = 0;
