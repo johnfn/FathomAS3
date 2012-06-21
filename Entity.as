@@ -77,7 +77,11 @@ package {
 
     public function emit(event:String):Entity {
       if (event in __fathom.events) {
-        for each (var hook:Function in __fathom.events[event]) {
+        var hooks:Array = __fathom.events[event];
+
+        for (var i:int = 0; i < hooks.length; i++){
+          var hook:Function = hooks[i];
+
           hook.call(this)
         }
       }
@@ -93,6 +97,22 @@ package {
       }));
     }
 
+    public function touchesGround():Boolean {
+      var footY:int = y + this.height;
+      var pts:Array = [];
+      var that:* = this;
+
+      for (var footX:int = x + 2; footX < this.x + this.width - 2; footX += 2) {
+        pts.push(new Point(footX, footY));
+      }
+
+      return pts.map(function(p) {
+        return Util.entities.any(function(other:Entity):Boolean {
+          return other.collidesPt(p);
+        });
+      }).any();
+    }
+
     public function die():void { __fathom.entities.remove(this); }
 
     public function groups():Array { return ["updateable"]; }
@@ -100,6 +120,8 @@ package {
     public function eq(other:Entity):Boolean { return __fathom.uid == other.__fathom.uid; }
 
     public function collides(other:Entity):Boolean { return (!eq(other)) && hitTestObject(other); }
+
+    public function collidesPt(point:Point):Boolean { return hitTestPoint(point.x, point.y); }
 
     public function update(e:Entities):void {}
 

@@ -10,10 +10,13 @@ package {
     public function get(...criteria):Array {
       var remainingEntities:Array = this.entities;
 
-      for each (var item:* in criteria) {
+      for (var i:int = 0; i < criteria.length; i++){
+        var item:* = criteria[i];
         var pass:Array = [];
 
-        for each (var entity:Entity in remainingEntities){
+        for (var i:int = 0; i < remainingEntities.length; i++){
+          var entity:Entity = remainingEntities[i];
+
           if (item is String) {
             var desired:Boolean = true;
             if (item.charAt(0) == "!") {
@@ -51,7 +54,10 @@ package {
     }
 
     public function update():void {
-      for each (var e:Entity in this.get("updateable")) {
+      var updaters:Array = this.get("updateable");
+
+      for (var i:int = 0; i < updaters.length; i++) {
+        var e:Entity = updaters[i];
         e.emit("pre-update");
         e.update(this);
         e.emit("post-update");

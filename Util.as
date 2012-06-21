@@ -13,6 +13,22 @@ package {
     private static var keysDown:Array = new Array(255);
     private static var keysRecentlyUp:Array = new Array(255);
 
+    Array.prototype.any = function(f:Function = null):Boolean {
+      if (f == null) {
+        f = function(x) {
+          return x == true;
+        }
+      }
+
+      for (var i:int = 0; i < this.length; i++) {
+        if (f(this[i])) {
+          return true;
+        }
+      }
+
+      return false;
+    }
+
     public static function getUniqueID():Number {
       return ++uid;
     }

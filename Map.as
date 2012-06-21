@@ -71,6 +71,13 @@ package {
       }
     }
 
+    public override function collidesPt(other:Point):Boolean {
+      var xPt:int = Math.floor(other.x / this.tileSize);
+      var yPt:int = Math.floor(other.y / this.tileSize);
+
+      return tiles[xPt][yPt].type == 1;
+    }
+
     public override function collides(other:Entity):Boolean {
       if (this == other) return false;
 

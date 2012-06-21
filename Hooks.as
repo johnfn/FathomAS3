@@ -87,16 +87,13 @@ package {
         entity.vy += 5;
 
         if (Util.keyIsDown(Util.Key.Up)) {
-          if (entity.nextLoc().touchesAnything()) {
+          if (entity.nextLoc().touchesGround()) {
             entity.vy -= 50;
           }
         }
 
         entity.x += entity.vx;
         entity.y += entity.vy;
-
-        trace(entity.vy);
-
       }
     }
 
