@@ -18,6 +18,18 @@ package {
       }
     }
 
+    public static function loadNewMap(leftScreen:Entity, map:Map) {
+      return function():void {
+        var dx:int = Math.floor(leftScreen.x / map.width);
+        var dy:int = Math.floor(leftScreen.y / map.height);
+
+        leftScreen.x -= dx * map.width;
+        leftScreen.y -= dy * map.height;
+
+        map.moveCorner(new Vec(dx, dy));
+      }
+    }
+
     public static function rpgLike(speed:int):Function {
       return function():void {
         var v:Vec = Util.movementVector().multiply(speed);
