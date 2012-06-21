@@ -73,7 +73,7 @@ package {
         clearTimeout(keysRecentlyUp[event.keyCode]);
       }
 
-      keysRecentlyUp[event.keyCode] = setTimeout(function(){
+      keysRecentlyUp[event.keyCode] = setTimeout(function():void {
         keysRecentlyUp[event.keyCode] = 0;
       }, 500);
     }

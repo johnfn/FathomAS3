@@ -79,6 +79,14 @@ package {
       return this;
     }
 
+    public function touchesAnything():Boolean {
+      var that:* = this;
+
+      return (Util.entities.any(function(other:Entity):Boolean {
+        return other.collides(that);
+      }));
+    }
+
     public function die():void { __fathom.entities.remove(this); }
 
     public function groups():Array { return ["updateable"]; }

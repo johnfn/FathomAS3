@@ -18,7 +18,7 @@ package {
       }
     }
 
-    public static function keyRecentlyReleased(key:Number, callback:Function):Function {
+    public static function keyReleased(key:Number, callback:Function):Function {
       return function():void {
         if (Util.keyRecentlyReleased(key)) {
           callback();
@@ -68,13 +68,13 @@ package {
 
         // Try both x and y.
         this.x += this.vx;
-        if (Util.entities.any(function(other:Entity):Boolean { return other.collides(that); } )) {
+        if (this.touchesAnything()) {
           this.x -= this.vx;
           this.vx = 0;
         }
 
         this.y += this.vy;
-        if (Util.entities.any(function(other:Entity):Boolean { return other.collides(that); } )) {
+        if (this.touchesAnything()) {
           this.y -= this.vy;
           this.vy = 0;
         }
