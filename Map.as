@@ -1,6 +1,7 @@
 package {
   import flash.display.Sprite;
   import flash.geom.Point;
+  import flash.geom.Rectangle;
   import mx.core.BitmapAsset;
   import flash.display.BitmapData;
 
@@ -69,6 +70,25 @@ package {
       }
     }
 
+    public override function collides(other:Entity):Boolean {
+      if (this == other) return false;
+
+      var xStart:int = Math.floor(other.x / this.tileSize);
+      var yStart:int = Math.floor(other.y / this.tileSize);
+
+      for (var x:int = xStart; x < xStart + 2; x++) {
+        for (var y:int = yStart; y < yStart + 2; y++) {
+          if (0 <= x && x < widthInTiles && 0 <= y && y < heightInTiles) {
+            if (tiles[x][y].type == 1) {
+              return true;
+            }
+          }
+        }
+      }
+
+      return false;
+    }
+
     public function moveCorner(diff:Vec):void {
       diff = diff.multiply(widthInTiles);
 
@@ -87,6 +107,7 @@ package {
 class Tile extends flash.display.MovieClip {
   public var gfxWidth:int;
   public var gfxHeight:int;
+  public var type:int;
 
   function Tile(x:int, y:int, w:int, type:int) {
     super();
@@ -106,6 +127,8 @@ class Tile extends flash.display.MovieClip {
 
   public function setType(type:int):void {
     var color:Color;
+
+    this.type = type;
 
     if (type == 0) {
       color = (new Color()).randomizeRed(150, 255);

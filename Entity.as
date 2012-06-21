@@ -27,17 +27,16 @@ package {
                       , events: {}
                       , entities: Util.entities
                       };
-      Util.entities.add(this)
 
-      on("pre-update", Hooks.rpgLike(5));
       on("pre-update", Hooks.decel());
+      on("pre-update", Hooks.rpgLike(5));
+
+      on("post-update", Hooks.resolveCollisions());
 
       if (!Util.stage) {
       	throw new Error("Util.initialize() has not been called. Failing.");
       }
-
-      Util.stage.addChild(this);
-      trace(Util.stage.numChildren);
+      Util.entities.add(this);
     }
 
     public function entities():Entities {
