@@ -31,11 +31,6 @@ package {
                       , events: {}
                       , entities: Util.entities
                       };
-
-      on("pre-update", Hooks.decel());
-      on("pre-update", Hooks.rpgLike(5));
-
-      on("post-update", Hooks.resolveCollisions());
     }
 
     private function draw(gfxWidth:Number, gfxHeight:Number, color:Number):void {

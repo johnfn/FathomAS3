@@ -10,6 +10,14 @@ package {
       }
     }
 
+    public static function onLeaveMap(who:Entity, map:Map, callback:Function):Function {
+      return function():void {
+        if (who.x <= 0 || who.y <= 0 || who.x >= map.width || who.y >= map.height) {
+          callback.call(who);
+        }
+      }
+    }
+
     public static function rpgLike(speed:int):Function {
       return function():void {
         var v:Vec = Util.movementVector().multiply(speed);
