@@ -88,7 +88,7 @@ package {
       return false;
     }
 
-    private static function initializeKeyListeners(stage:Stage):void {
+    private static function initializeKeyInput(stage:Stage):void {
       stage.addEventListener(KeyboardEvent.KEY_DOWN, _keyDown);
       stage.addEventListener(KeyboardEvent.KEY_UP, _keyUp);
 
@@ -100,12 +100,17 @@ package {
       Key["Up"]    = 38;
       Key["Right"] = 39;
       Key["Down"]  = 40;
+
+      // Add A - Z.
+      for (var k:int = 65; k <= 65 + 26; k++) {
+        Key[String.fromCharCode(k)] = k;
+      }
     }
 
     public static function initialize(stage:Stage):void {
       Util.stage = stage;
 
-      initializeKeyListeners(stage);
+      initializeKeyInput(stage);
       setInterval(update, 1000/30);
     }
   }
