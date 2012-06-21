@@ -16,12 +16,16 @@ package {
 
       super();
 
+      Util.entities.add(this);
+
       this.x = x;
       this.y = y;
 
-      graphics.beginFill(color);
-      graphics.drawRect(x, y, gfxWidth, gfxHeight);
-      graphics.endFill();
+      if (!Util.stage) {
+      	throw new Error("Util.initialize() has not been called. Failing.");
+      }
+
+      draw(gfxWidth, gfxHeight, color);
 
       this.__fathom = { uid: Util.getUniqueID()
                       , events: {}
@@ -32,11 +36,12 @@ package {
       on("pre-update", Hooks.rpgLike(5));
 
       on("post-update", Hooks.resolveCollisions());
+    }
 
-      if (!Util.stage) {
-      	throw new Error("Util.initialize() has not been called. Failing.");
-      }
-      Util.entities.add(this);
+    private function draw(gfxWidth:Number, gfxHeight:Number, color:Number):void {
+      graphics.beginFill(color);
+      graphics.drawRect(0, 0, gfxWidth, gfxHeight);
+      graphics.endFill();
     }
 
     public function entities():Entities {

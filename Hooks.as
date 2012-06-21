@@ -14,15 +14,11 @@ package {
       return function():void {
         var v:Vec = Util.movementVector().multiply(speed);
 
-        trace(v);
-
         this.vx += v.x;
         this.vy += v.y;
 
         this.x += this.vx;
         this.y += this.vy;
-
-        trace(this.x, this.y);
       }
     }
 

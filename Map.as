@@ -17,7 +17,8 @@ package {
     private var topLeftCorner:Point = new Point(0, 0);
 
     function Map(widthInTiles:int, heightInTiles:int, tileSize:int) {
-      super(0, 0, widthInTiles * tileSize, heightInTiles * tileSize)
+      super(0, 0, widthInTiles * tileSize, heightInTiles * tileSize);
+
       graphics.clear();
 
       this.widthInTiles = widthInTiles;
@@ -31,8 +32,6 @@ package {
         that.addChild(t);
         return t;
       });
-
-      addChild(tiles[0][0]);
     }
 
     public function fromImage(mapClass:Class):void {
@@ -89,6 +88,8 @@ package {
       return false;
     }
 
+    public override function update(es:Entities):void {}
+
     public function moveCorner(diff:Vec):void {
       diff = diff.multiply(widthInTiles);
 
@@ -99,7 +100,7 @@ package {
     }
 
     public override function groups():Array {
-      return ["renderable", "wall", "map"];
+      return ["updateable", "wall", "map"];
     }
   }
 }
