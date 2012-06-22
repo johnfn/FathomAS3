@@ -1,35 +1,29 @@
 package {
   //TODO: extends Array (or Vector.<Entity>)
 
-  public class EntityList {
-    private var entities:Array = [];
-
+  public dynamic class EntityList extends Array {
     function EntityList(entities:Array):void {
-      this.entities = entities;
+      if (entities is Array) {
+        for (var i:int = 0; i < entities.length; i++) {
+          this[i] = entities[i];
+        }
+      }
     }
 
     public function first():Entity {
-      return entities[0];
-    }
-
-    public function length():int {
-      return entities.length;
-    }
-
-    public function at(n:int):Entity {
-      return entities[n];
+      return this[0];
     }
 
     //TODO: A bit weird that this is the only non mutable fn.
     public function add(entity:Entity):void {
-      this.entities.push(entity);
+      this.push(entity);
     }
 
     public function get(...criteria):EntityList {
-      var eList:EntityList = new EntityList(this.entities);
+      var eList:EntityList = new EntityList(this);
 
       for (var i:int = 0; i < criteria.length; i++) {
-        eList = eList.filter(criteria[i]);
+        eList = eList.myfilter(criteria[i]);
       }
 
       return eList;
@@ -41,14 +35,14 @@ package {
     }
 
     public function any(...criteria):Boolean {
-      return this.get.apply(this, criteria).length() > 0;
+      return this.get.apply(this, criteria).length > 0;
     }
 
     public function update():void {
       var updaters:EntityList = this.get("updateable");
 
-      for (var i:int = 0; i < updaters.length(); i++) {
-        var e:Entity = updaters.at(i);
+      for (var i:int = 0; i < updaters.length; i++) {
+        var e:Entity = updaters[i];
         e.emit("pre-update");
         e.update(this);
         e.emit("post-update");
@@ -58,24 +52,20 @@ package {
     public function exclude(criteria:*):EntityList {
       var pass:Array = [];
 
-      for (var i:int = 0; i < entities.length; i++) {
-        if (criteria.__fathom.uid != entities[i].__fathom.uid) {
-          pass.push(entities[i]);
+      for (var i:int = 0; i < this.length; i++) {
+        if (criteria.__fathom.uid != this[i].__fathom.uid) {
+          pass.push(this[i]);
         }
       }
 
       return new EntityList(pass);
     }
 
-    public function toString():String {
-      return this.entities.toString();
-    }
-
-    public function filter(criteria:*):EntityList {
+    public function myfilter(criteria:*):EntityList {
       var pass:Array = [];
 
-      for (var i:int = 0; i < entities.length; i++){
-        var entity:Entity = entities[i];
+      for (var i:int = 0; i < this.length; i++){
+        var entity:Entity = this[i];
 
         if (criteria is String) {
           var desired:Boolean = true;
