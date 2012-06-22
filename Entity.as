@@ -98,15 +98,15 @@ package {
     }
 
     public function touchesGround():Boolean {
-      var footY:int = y + this.height;
+      var footY:int = y + this.gfxHeight;
       var pts:Array = [];
       var that:* = this;
 
-      for (var footX:int = x + 2; footX < this.x + this.width - 2; footX += 2) {
+      for (var footX:int = x + 2; footX < this.x + this.gfxWidth - 2; footX += 2) {
         pts.push(new Point(footX, footY));
       }
 
-      return pts.map(function(p) {
+      return pts.myMap(function(p:Point):Boolean {
         return Util.entities.any(function(other:Entity):Boolean {
           return other.collidesPt(p);
         });

@@ -13,11 +13,24 @@ package {
     private static var keysDown:Array = new Array(255);
     private static var keysRecentlyUp:Array = new Array(255);
 
+    public static function id(x:*):* {
+      return x;
+    }
+
+    //TODO.
+    Array.prototype.myMap = function(f:Function):Array {
+      var result:Array = [];
+
+      for (var i:int = 0; i < this.length; i++) {
+        result.push(f(this[i]));
+      }
+
+      return result;
+    }
+
     Array.prototype.any = function(f:Function = null):Boolean {
       if (f == null) {
-        f = function(x) {
-          return x == true;
-        }
+        f = id;
       }
 
       for (var i:int = 0; i < this.length; i++) {
