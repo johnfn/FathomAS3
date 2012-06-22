@@ -7,8 +7,8 @@ package {
   import Util;
 
   public class MovingEntity extends Entity {
-    public var vx:Number = 0;
-    public var vy:Number = 0;
+    public var vx:int = 0;
+    public var vy:int = 0;
 
     function MovingEntity(x:Number = 0, y:Number = 0, gfxWidth:Number = 20, gfxHeight:Number = -1, color:Number = 0xFF0000, visible:Boolean = true):void {
       super(x, y, gfxWidth, gfxHeight, color, visible);
