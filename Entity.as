@@ -4,6 +4,7 @@ package {
 
   import Hooks;
   import Util;
+  import MagicArray;
 
   public class Entity extends MovieClip {
     public var __fathom:Object;
@@ -98,7 +99,7 @@ package {
 
     public function touchesGround():Boolean {
       var footY:int = y + this.gfxHeight;
-      var pts:Array = [];
+      var pts:MagicArray = new MagicArray();
       var that:Entity = this;
 
       for (var footX:int = x + 2; footX < this.x + this.gfxWidth - 2; footX += 2) {

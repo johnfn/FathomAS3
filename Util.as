@@ -17,31 +17,6 @@ package {
       return x;
     }
 
-    //TODO.
-    Array.prototype.myMap = function(f:Function):Array {
-      var result:Array = [];
-
-      for (var i:int = 0; i < this.length; i++) {
-        result.push(f(this[i]));
-      }
-
-      return result;
-    }
-
-    Array.prototype.any = function(f:Function = null):Boolean {
-      if (f == null) {
-        f = id;
-      }
-
-      for (var i:int = 0; i < this.length; i++) {
-        if (f(this[i])) {
-          return true;
-        }
-      }
-
-      return false;
-    }
-
     public static function getUniqueID():Number {
       return ++uid;
     }
