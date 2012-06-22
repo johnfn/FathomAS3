@@ -17,6 +17,10 @@ package {
       return x;
     }
 
+    public static function epsilonEq(a:Number, b:Number, threshold:Number) {
+      return Math.abs(a - b) < threshold;
+    }
+
     public static function getUniqueID():Number {
       return ++uid;
     }
