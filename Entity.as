@@ -6,7 +6,7 @@ package {
   import Util;
 
   public class Entity extends MovieClip {
-    private var __fathom:Object;
+    public var __fathom:Object;
     internal var gfxHeight:Number;
     internal var gfxWidth:Number;
     internal var color:Number;
@@ -22,13 +22,12 @@ package {
 
       super();
 
-      Util.entities.add(this);
-
       if (!Util.stage) {
       	throw new Error("Util.initialize() has not been called. Failing.");
       }
 
       if (visible) {
+        Util.entities.add(this);
         draw(gfxWidth, gfxHeight, color);
         Util.stage.addChild(this);
       }
@@ -45,7 +44,7 @@ package {
       graphics.endFill();
     }
 
-    public function entities():Entities {
+    public function entities():EntityList {
       return __fathom.entities;
     }
 
@@ -100,14 +99,17 @@ package {
     public function touchesGround():Boolean {
       var footY:int = y + this.gfxHeight;
       var pts:Array = [];
-      var that:* = this;
+      var that:Entity = this;
 
       for (var footX:int = x + 2; footX < this.x + this.gfxWidth - 2; footX += 2) {
         pts.push(new Point(footX, footY));
       }
 
       return pts.myMap(function(p:Point):Boolean {
-        return Util.entities.any(function(other:Entity):Boolean {
+        return Util.entities.exclude(that).any(function(other:Entity):Boolean {
+          if (other.collidesPt(p)) {
+            trace(other.__fathom.uid);
+          }
           return other.collidesPt(p);
         });
       }).any();
@@ -123,7 +125,7 @@ package {
 
     public function collidesPt(point:Point):Boolean { return hitTestPoint(point.x, point.y); }
 
-    public function update(e:Entities):void {}
+    public function update(e:EntityList):void {}
 
     public function depth():Number { return 0; }
   }

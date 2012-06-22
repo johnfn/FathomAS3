@@ -6,7 +6,7 @@ package {
     import flash.display.Stage;
 
     public static var uid:Number = 0;
-    public static var entities:Entities = new Entities();
+    public static var entities:EntityList = new EntityList([]);
     public static var Key:Object = {};
     public static var stage:Stage;
 

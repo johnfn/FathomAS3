@@ -88,7 +88,7 @@ package {
 
         if (Util.keyIsDown(Util.Key.Up)) {
           if (entity.nextLoc().touchesGround()) {
-            entity.vy -= 50;
+            entity.vy -= 30;
           }
         }
 

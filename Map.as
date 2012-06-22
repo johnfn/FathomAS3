@@ -97,7 +97,7 @@ package {
       return false;
     }
 
-    public override function update(es:Entities):void {}
+    public override function update(es:EntityList):void {}
 
     public function moveCorner(diff:Vec):void {
       diff = diff.multiply(widthInTiles);
