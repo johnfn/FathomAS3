@@ -19,7 +19,7 @@ package {
     function Map(widthInTiles:int, heightInTiles:int, tileSize:int) {
       super(0, 0, widthInTiles * tileSize, heightInTiles * tileSize);
 
-      graphics.clear();
+      mc.graphics.clear();
 
       this.widthInTiles = widthInTiles;
       this.heightInTiles = heightInTiles;
@@ -29,7 +29,7 @@ package {
 
       tiles = Util.make2DArrayFn(widthInTiles, heightInTiles, function(x:int, y:int):Tile {
         var t:Tile = new Tile(x * tileSize, y * tileSize, tileSize, 0);
-        that.addChild(t);
+        that.mc.addChild(t);
         return t;
       });
     }
@@ -81,8 +81,8 @@ package {
     public override function collides(other:Entity):Boolean {
       if (this == other) return false;
 
-      var xStart:int = Math.floor(other.x / this.tileSize);
-      var yStart:int = Math.floor(other.y / this.tileSize);
+      var xStart:int = Math.floor(other.pos.x / this.tileSize);
+      var yStart:int = Math.floor(other.pos.y / this.tileSize);
 
       for (var x:int = xStart; x < xStart + 2; x++) {
         for (var y:int = yStart; y < yStart + 2; y++) {

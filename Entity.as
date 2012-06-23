@@ -6,20 +6,26 @@ package {
   import Util;
   import MagicArray;
 
-  public class Entity extends MovieClip {
+  public class Entity {
     public var __fathom:Object;
-    internal var gfxHeight:Number;
-    internal var gfxWidth:Number;
+    //public var pos:Vec;
+
+    internal var mc:MovieClip;
+    internal var height:Number;
+    internal var width:Number;
     internal var color:Number;
+    internal var _pos:Vec;
 
-    function Entity(x:Number = 0, y:Number = 0, gfxWidth:Number = 20, gfxHeight:Number = -1, color:Number = 0xFF0000, visible:Boolean = true):void {
-      if (gfxHeight == -1) gfxHeight = gfxWidth;
+    function Entity(x:Number = 0, y:Number = 0, width:Number = 20, height:Number = -1, color:Number = 0xFF0000, visible:Boolean = true):void {
+      if (height == -1) height = width;
 
-      this.gfxHeight = gfxHeight;
-      this.gfxWidth = gfxWidth;
+      this.height = height;
+      this.width = width;
       this.color = color;
-      this.x = x;
-      this.y = y;
+      this.mc = new MovieClip();
+      this.mc.x = x;
+      this.mc.y = y;
+      this.pos = new Vec(x, y);
 
       super();
 
@@ -29,8 +35,8 @@ package {
 
       if (visible) {
         Util.entities.add(this);
-        draw(gfxWidth, gfxHeight, color);
-        Util.stage.addChild(this);
+        draw(width, height, color);
+        Util.stage.addChild(mc);
       }
 
       this.__fathom = { uid: Util.getUniqueID()
@@ -39,10 +45,20 @@ package {
                       };
     }
 
-    private function draw(gfxWidth:Number, gfxHeight:Number, color:Number):void {
-      graphics.beginFill(color);
-      graphics.drawRect(0, 0, gfxWidth, gfxHeight);
-      graphics.endFill();
+    public function set pos(val:Vec):void {
+      this._pos = val;
+      this.mc.x = this._pos.x;
+      this.mc.y = this._pos.y;
+    }
+
+    public function get pos():Vec { return this._pos; }
+
+    private function draw(width:Number, height:Number, color:Number):void {
+      trace(color);
+      trace(width, height);
+      mc.graphics.beginFill(color);
+      mc.graphics.drawRect(0, 0, width, height);
+      mc.graphics.endFill();
     }
 
     public function entities():EntityList {
@@ -98,11 +114,11 @@ package {
     }
 
     public function touchesGround():Boolean {
-      var footY:int = y + this.gfxHeight;
+      var footY:int = pos.y + this.height;
       var pts:MagicArray = new MagicArray();
       var that:Entity = this;
 
-      for (var footX:int = x + 2; footX < this.x + this.gfxWidth - 2; footX += 2) {
+      for (var footX:int = pos.x + 2; footX < pos.x + this.width - 2; footX += 2) {
         pts.push(new Point(footX, footY));
       }
 
@@ -122,9 +138,9 @@ package {
 
     public function eq(other:Entity):Boolean { return __fathom.uid == other.__fathom.uid; }
 
-    public function collides(other:Entity):Boolean { return (!eq(other)) && hitTestObject(other); }
+    public function collides(other:Entity):Boolean { return (!eq(other)) && mc.hitTestObject(other.mc); }
 
-    public function collidesPt(point:Point):Boolean { return hitTestPoint(point.x, point.y); }
+    public function collidesPt(point:Point):Boolean { return mc.hitTestPoint(point.x, point.y); }
 
     public function update(e:EntityList):void {}
 

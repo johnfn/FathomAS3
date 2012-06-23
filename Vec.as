@@ -1,15 +1,21 @@
 package {
   import flash.display.Sprite;
 
-  /** Immutable Vector class (2d line indicating movement). */
+  /** Vector class (2d line indicating movement). */
   public class Vec {
-    public var x:int;
-    public var y:int;
+    private var _x:int;
+    private var _y:int;
 
     function Vec(x:int = 0, y:int = 0) {
       this.x = x;
       this.y = y;
     }
+
+    public function get x():int { return _x; }
+    public function set x(val:int):void { this._x = val; }
+
+    public function get y():int { return _y; }
+    public function set y(val:int):void { this._y = val; }
 
     public function eq(v:Vec):Boolean {
       return x == v.x && y == v.y;
@@ -30,16 +36,20 @@ package {
       return new Vec(0, 0); //This line never executes. It's just to satisfy type checker.
     }
 
+    public function add(v:Vec):Vec {
+      return new Vec(x + v.x, y + v.y);
+    }
+
+    public function subtract(v:Vec):Vec {
+      return new Vec(x - v.x, y - v.y);
+    }
+
     public function multiply(n:int):Vec {
       return new Vec(x * n, y * n);
     }
 
     public function divide(n:int):Vec {
       return new Vec(x / n, y / n);
-    }
-
-    public function add(v:Vec):Vec {
-      return new Vec(x + v.x, y + v.y);
     }
 
     public function normalize():Vec {
