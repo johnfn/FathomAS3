@@ -110,7 +110,7 @@ package {
         if (Math.abs(this.vel.x) < cutoff) { this.vel.x = 0; }
         if (Math.abs(this.vel.y) < cutoff) { this.vel.y = 0; }
 
-        this.vel.divide(decel);
+        this.vel = this.vel.divide(decel);
       }
     }
   }
