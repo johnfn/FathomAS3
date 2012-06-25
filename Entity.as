@@ -9,7 +9,6 @@ package {
 
   public class Entity implements IEqual {
     public var __fathom:Object;
-    //public var pos:Vec;
 
     internal var mc:MovieClip;
     internal var height:Number;
@@ -44,13 +43,6 @@ package {
                       , events: {}
                       , entities: Util.entities
                       };
-    }
-
-    public function equals(e:IEqual):Boolean {
-      if (getQualifiedClassName(e) != "Entity") return false;
-
-      var ent:Entity = e as Entity;
-      return this.__fathom.uid == ent.__fathom.uid;
     }
 
     public function set pos(val:Rect):void {
@@ -134,5 +126,12 @@ package {
     public function update(e:EntityList):void {}
 
     public function depth():Number { return 0; }
+
+    /* IEqual */
+
+    private var _uid:int = Util.getUniqueID();
+
+    public function get uid():int { return _uid; }
+    public function equals(r:IEqual):Boolean { return uid == r.uid; }
   }
 }
