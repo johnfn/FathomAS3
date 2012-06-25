@@ -54,8 +54,6 @@ package {
     public function get pos():Rect { return this._pos; }
 
     private function draw(width:Number, height:Number, color:Number):void {
-      trace(color);
-      trace(width, height);
       mc.graphics.beginFill(color);
       mc.graphics.drawRect(0, 0, width, height);
       mc.graphics.endFill();
@@ -133,5 +131,6 @@ package {
 
     public function get uid():int { return _uid; }
     public function equals(r:IEqual):Boolean { return uid == r.uid; }
+    public function asCloneOf(c:IEqual):IEqual { throw new Error("Nope!!!"); return this; }
   }
 }

@@ -79,5 +79,9 @@ package {
 
     public function get uid():int { return _uid; }
     public function equals(r:IEqual):Boolean { return uid == r.uid; }
+    public function asCloneOf(c:IEqual):IEqual {
+      this._uid = c.uid;
+      return this;
+    }
   }
 }

@@ -17,7 +17,9 @@ package {
 
     /* Return the location that this entity will be one timestep in the future, ignoring collisions. */
     public function nextLoc():Rect {
-      return new Rect(pos.x + vel.x, pos.y + vel.y, width, height);
+      // we need the asCloneOf() call here so that when we return this
+      // we don't end up thinking that the nextLoc is colliding with the previous object.
+      return (new Rect(pos.x + vel.x, pos.y + vel.y, width, height)).asCloneOf(this) as Rect;
     }
   }
 }
