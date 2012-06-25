@@ -49,11 +49,11 @@ package {
       }
     }
 
-    public function exclude(criteria:*):EntityList {
+    public function exclude(criteria:IEqual):EntityList {
       var pass:Array = [];
 
       for (var i:int = 0; i < this.length; i++) {
-        if (criteria.__fathom.uid != this[i].__fathom.uid) {
+        if (! criteria.equals(this[i])) {
           pass.push(this[i]);
         }
       }

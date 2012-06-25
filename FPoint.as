@@ -28,8 +28,7 @@ package {
     }
 
     public function add(v:Vec) {
-      this.x += v.x;
-      this.y += v.y;
+      return new Vector(this.x + p.x, this.y + p.y);
     }
 
     public function subtract(p:Point) {

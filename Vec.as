@@ -2,7 +2,7 @@ package {
   import flash.display.Sprite;
 
   /** Vector class (2d line indicating movement). */
-  public class Vec {
+  public class Vec implements IPositionable {
     private var _x:int;
     private var _y:int;
 
@@ -36,19 +36,19 @@ package {
       return new Vec(0, 0); //This line never executes. It's just to satisfy type checker.
     }
 
-    public function add(v:Vec):Vec {
+    public function add(v:IPositionable):IPositionable {
       return new Vec(x + v.x, y + v.y);
     }
 
-    public function subtract(v:Vec):Vec {
+    public function subtract(v:IPositionable):IPositionable {
       return new Vec(x - v.x, y - v.y);
     }
 
-    public function multiply(n:int):Vec {
+    public function multiply(n:int):IPositionable {
       return new Vec(x * n, y * n);
     }
 
-    public function divide(n:int):Vec {
+    public function divide(n:int):IPositionable {
       return new Vec(x / n, y / n);
     }
 

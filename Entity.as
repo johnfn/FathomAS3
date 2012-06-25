@@ -1,12 +1,13 @@
 package {
   import flash.display.MovieClip;
   import flash.geom.Point;
+  import flash.utils.getQualifiedClassName;
 
   import Hooks;
   import Util;
   import MagicArray;
 
-  public class Entity {
+  public class Entity implements IEqual {
     public var __fathom:Object;
     //public var pos:Vec;
 
@@ -14,7 +15,7 @@ package {
     internal var height:Number;
     internal var width:Number;
     internal var color:Number;
-    internal var _pos:Vec;
+    internal var _pos:FRect;
 
     function Entity(x:Number = 0, y:Number = 0, width:Number = 20, height:Number = -1, color:Number = 0xFF0000, visible:Boolean = true):void {
       if (height == -1) height = width;
@@ -25,7 +26,7 @@ package {
       this.mc = new MovieClip();
       this.mc.x = x;
       this.mc.y = y;
-      this.pos = new Vec(x, y);
+      this.pos = new FRect(x, y, 20);
 
       super();
 
@@ -45,13 +46,20 @@ package {
                       };
     }
 
-    public function set pos(val:Vec):void {
+    public function equals(e:IEqual):Boolean {
+      if (getQualifiedClassName(e) != "Entity") return false;
+
+      var ent:Entity = e as Entity;
+      return this.__fathom.uid == ent.__fathom.uid;
+    }
+
+    public function set pos(val:FRect):void {
       this._pos = val;
       this.mc.x = this._pos.x;
       this.mc.y = this._pos.y;
     }
 
-    public function get pos():Vec { return this._pos; }
+    public function get pos():FRect { return this._pos; }
 
     private function draw(width:Number, height:Number, color:Number):void {
       trace(color);
@@ -111,25 +119,6 @@ package {
       return (Util.entities.any(function(other:Entity):Boolean {
         return other.collides(that);
       }));
-    }
-
-    public function touchesGround():Boolean {
-      var footY:int = pos.y + this.height;
-      var pts:MagicArray = new MagicArray();
-      var that:Entity = this;
-
-      for (var footX:int = pos.x + 2; footX < pos.x + this.width - 2; footX += 2) {
-        pts.push(new Point(footX, footY));
-      }
-
-      return pts.myMap(function(p:Point):Boolean {
-        return Util.entities.exclude(that).any(function(other:Entity):Boolean {
-          if (other.collidesPt(p)) {
-            trace(other.__fathom.uid);
-          }
-          return other.collidesPt(p);
-        });
-      }).any();
     }
 
     public function die():void { __fathom.entities.remove(this); }

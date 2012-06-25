@@ -71,7 +71,7 @@ package {
         var that:* = this;
 
         // Reset to known good collision state.
-        this.pos = this.pos.subtract(this.vel);
+        this.pos = this.pos.subtract(this.vel) as FRect;
 
         // Try both x and y.
         this.pos.x += this.vel.x;
@@ -91,7 +91,7 @@ package {
     public static function platformerLike(speed:int, entity:MovingEntity):Function {
       return function():void {
         var movement:Vec = new Vec(Util.movementVector().multiply(speed).x, 5);
-        entity.vel = entity.vel.add(movement);
+        entity.vel = entity.vel.add(movement) as Vec;
 
         if (Util.keyIsDown(Util.Key.Up)) {
           if (entity.nextLoc().touchesGround()) {
@@ -99,7 +99,7 @@ package {
           }
         }
 
-        entity.pos = entity.pos.add(entity.vel);
+        entity.pos = entity.pos.add(entity.vel) as FRect;
       }
     }
 
