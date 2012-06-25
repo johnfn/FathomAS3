@@ -95,7 +95,7 @@ package {
 
         if (Util.keyIsDown(Util.Key.Up)) {
           if (entity.nextLoc().touchesGround()) {
-            entity.vel.y -= 30;
+            entity.vel.y -= 80;
           }
         }
 

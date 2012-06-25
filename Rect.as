@@ -28,6 +28,11 @@ package {
       this.bottom = this.y + this.height;
     }
 
+    /* Does Rect contain point p? */
+    public function containsPt(p:Point):Boolean {
+      return x <= p.x && p.x < right && y <= p.y && p.y < bottom;
+    }
+
     public function touchesGround():Boolean {
       var footY:int = y + this.height;
       var pts:MagicArray = new MagicArray();

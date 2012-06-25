@@ -25,7 +25,7 @@ package {
       this.mc = new MovieClip();
       this.mc.x = x;
       this.mc.y = y;
-      this.pos = new Rect(x, y, 20);
+      this.pos = new Rect(x, y, width, height);
 
       super();
 
