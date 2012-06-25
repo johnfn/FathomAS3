@@ -1,5 +1,5 @@
 package {
-  public class FRect implements IPositionable, IEqual {
+  public class Rect implements IPositionable, IEqual {
     import flash.geom.Point;
     import flash.utils.getQualifiedClassName;
 
@@ -17,7 +17,7 @@ package {
     public function get y():int { return _y; }
     public function set y(val:int):void { this._y = val; }
 
-    function FRect(x:int, y:int, width:int, height:int = -1) {
+    function Rect(x:int, y:int, width:int, height:int = -1) {
       if (height == -1) height = width;
 
       this.x = x;
@@ -29,16 +29,16 @@ package {
     }
 
     public function equals(r:IEqual):Boolean {
-      if (getQualifiedClassName(r) != "FRect") return false;
+      if (getQualifiedClassName(r) != "Rect") return false;
 
-      var fr:FRect = r as FRect;
+      var fr:Rect = r as Rect;
       return x == fr.x && y == fr.y && width == fr.width && height == fr.height;
     }
 
     public function touchesGround():Boolean {
       var footY:int = y + this.height;
       var pts:MagicArray = new MagicArray();
-      var that:FRect = this;
+      var that:Rect = this;
 
       for (var footX:int = x + 2; footX < x + this.width - 2; footX += 2) {
         pts.push(new Point(footX, footY));
@@ -54,22 +54,22 @@ package {
     /* IPositionable */
 
     public function add(v:IPositionable):IPositionable {
-      return new FRect(_x + v.x, _y + v.y, width, height);
+      return new Rect(_x + v.x, _y + v.y, width, height);
     }
 
     public function subtract(v:IPositionable):IPositionable {
-      return new FRect(_x - v.x, _y - v.y, width, height);
+      return new Rect(_x - v.x, _y - v.y, width, height);
     }
 
     public function multiply(n:int):IPositionable {
-      return new FRect(_x * n, _y * n, width, height);
+      return new Rect(_x * n, _y * n, width, height);
     }
 
     public function divide(n:int):IPositionable {
-      return new FRect(_x / n, _y / n, width, height);
+      return new Rect(_x / n, _y / n, width, height);
     }
 
-    public function touchingRect(rect:FRect):Boolean {
+    public function touchingRect(rect:Rect):Boolean {
       return !   (rect.x      > this.x + this.width  ||
          rect.x + rect.width  < this.x               ||
          rect.y               > this.y + this.height ||

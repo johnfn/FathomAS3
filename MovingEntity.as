@@ -16,8 +16,8 @@ package {
     public override function die():void { __fathom.entities.remove(this); }
 
     /* Return the location that this entity will be one timestep in the future, ignoring collisions. */
-    public function nextLoc():FRect {
-      return new FRect(pos.x + vel.x, pos.y + vel.y, width, height);
+    public function nextLoc():Rect {
+      return new Rect(pos.x + vel.x, pos.y + vel.y, width, height);
     }
   }
 }

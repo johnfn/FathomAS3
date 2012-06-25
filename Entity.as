@@ -15,7 +15,7 @@ package {
     internal var height:Number;
     internal var width:Number;
     internal var color:Number;
-    internal var _pos:FRect;
+    internal var _pos:Rect;
 
     function Entity(x:Number = 0, y:Number = 0, width:Number = 20, height:Number = -1, color:Number = 0xFF0000, visible:Boolean = true):void {
       if (height == -1) height = width;
@@ -26,7 +26,7 @@ package {
       this.mc = new MovieClip();
       this.mc.x = x;
       this.mc.y = y;
-      this.pos = new FRect(x, y, 20);
+      this.pos = new Rect(x, y, 20);
 
       super();
 
@@ -53,13 +53,13 @@ package {
       return this.__fathom.uid == ent.__fathom.uid;
     }
 
-    public function set pos(val:FRect):void {
+    public function set pos(val:Rect):void {
       this._pos = val;
       this.mc.x = this._pos.x;
       this.mc.y = this._pos.y;
     }
 
-    public function get pos():FRect { return this._pos; }
+    public function get pos():Rect { return this._pos; }
 
     private function draw(width:Number, height:Number, color:Number):void {
       trace(color);

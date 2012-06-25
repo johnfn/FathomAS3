@@ -71,7 +71,7 @@ package {
         var that:* = this;
 
         // Reset to known good collision state.
-        this.pos = this.pos.subtract(this.vel) as FRect;
+        this.pos = this.pos.subtract(this.vel) as Rect;
 
         // Try both x and y.
         this.pos.x += this.vel.x;
@@ -99,7 +99,7 @@ package {
           }
         }
 
-        entity.pos = entity.pos.add(entity.vel) as FRect;
+        entity.pos = entity.pos.add(entity.vel) as Rect;
       }
     }
 
