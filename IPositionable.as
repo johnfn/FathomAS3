@@ -1,14 +1,17 @@
 package {
   public interface IPositionable {
-    function get x():int;
-    function set x(val:int):void;
+    function get x():Number;
+    function get y():Number;
 
-    function get y():int;
-    function set y(val:int):void;
+    function setX(n:Number):IPositionable;
+    function setY(n:Number):IPositionable;
+    function setXY(x:Number, y:Number):IPositionable;
+
+    function map(f:Function):IPositionable;
 
     function add(v:IPositionable):IPositionable;
     function subtract(v:IPositionable):IPositionable;
-    function multiply(n:int):IPositionable;
-    function divide(n:int):IPositionable;
+    function multiply(n:*):IPositionable;
+    function divide(n:*):IPositionable;
   }
 }

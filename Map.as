@@ -16,11 +16,14 @@ package {
     private var data:Array = [];
     private var topLeftCorner:Point = new Point(0, 0);
 
+    public var sizeVector:Vec;
+
     function Map(widthInTiles:int, heightInTiles:int, tileSize:int) {
       super(0, 0, widthInTiles * tileSize, heightInTiles * tileSize);
 
       mc.graphics.clear();
 
+      this.sizeVector = new Vec(width, height);
       this.widthInTiles = widthInTiles;
       this.heightInTiles = heightInTiles;
       this.tileSize = tileSize;

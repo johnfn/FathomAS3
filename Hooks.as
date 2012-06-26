@@ -35,13 +35,10 @@ package {
 
     public static function loadNewMap(leftScreen:MovingEntity, map:Map):Function {
       return function():void {
-        var dx:int = Math.floor(leftScreen.pos.x / map.width);
-        var dy:int = Math.floor(leftScreen.pos.y / map.height);
+        var dir:Vec = leftScreen.pos.divide(map.sizeVector).map(Math.floor);
+        leftScreen.pos = leftScreen.pos.subtract(dir.multiply(map.sizeVector)) as Rect;
 
-        leftScreen.pos.x -= dx * map.width;
-        leftScreen.pos.y -= dy * map.height;
-
-        map.moveCorner(new Vec(dx, dy));
+        map.moveCorner(dir);
       }
     }
 
@@ -74,16 +71,16 @@ package {
         this.pos = this.pos.subtract(this.vel) as Rect;
 
         // Try both x and y.
-        this.pos.x += this.vel.x;
+        this.pos = this.pos.add(new Vec(this.vel.x, 0));
         if (this.touchesAnything()) {
-          this.pos.x -= this.vel.x;
-          this.vel.x = 0;
+          this.pos = this.pos.subtract(new Vec(this.vel.x, 0));
+          this.vel.setX(0);
         }
 
-        this.pos.y += this.vel.y;
+        this.pos = this.pos.add(new Vec(0, this.vel.y));
         if (this.touchesAnything()) {
-          this.pos.y -= this.vel.y;
-          this.vel.y = 0;
+          this.pos = this.pos.subtract(new Vec(0, this.vel.y));
+          this.vel.setY(0);
         }
       }
     }
@@ -95,7 +92,7 @@ package {
 
         if (Util.keyIsDown(Util.Key.Up)) {
           if (entity.nextLoc().touchesGround()) {
-            entity.vel.y -= 80;
+            entity.vel.y -= 150;
           }
         }
 

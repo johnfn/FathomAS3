@@ -3,25 +3,22 @@ package {
     import flash.geom.Point;
     import flash.utils.getQualifiedClassName;
 
-    private var _x:int;
-    private var _y:int;
+    private var _x:Number;
+    private var _y:Number;
 
-    public var width:int = 0;
-    public var height:int = 0;
-    public var right:int = 0;
-    public var bottom:int = 0;
+    public var width:Number = 0;
+    public var height:Number = 0;
+    public var right:Number = 0;
+    public var bottom:Number = 0;
 
-    public function get x():int { return _x; }
-    public function set x(val:int):void { this._x = val; }
+    public function get x():Number { return _x; }
+    public function get y():Number { return _y; }
 
-    public function get y():int { return _y; }
-    public function set y(val:int):void { this._y = val; }
-
-    function Rect(x:int, y:int, width:int, height:int = -1) {
+    function Rect(x:Number, y:Number, width:Number, height:Number = -1) {
       if (height == -1) height = width;
 
-      this.x = x;
-      this.y = y;
+      this._x = x;
+      this._y = y;
       this.width = width;
       this.height = height;
       this.right = this.x + this.width;
@@ -34,11 +31,11 @@ package {
     }
 
     public function touchesGround():Boolean {
-      var footY:int = y + this.height;
+      var footY:Number = y + this.height;
       var pts:MagicArray = new MagicArray();
       var that:Rect = this;
 
-      for (var footX:int = x + 2; footX < x + this.width - 2; footX += 2) {
+      for (var footX:Number = x + 2; footX < x + this.width - 2; footX += 2) {
         pts.push(new Point(footX, footY));
       }
 
@@ -49,11 +46,23 @@ package {
       }).any();
     }
 
-    public function touchingPoint(p:Point):Boolean {
-      return this.x <= p.x && p.x <= this.right && this.y <= p.y && p.y <= this.bottom;
+    /* IPositionable */
+
+    public function setX(n:Number):IPositionable {
+      return new Rect(n, _y, width, height);
     }
 
-    /* IPositionable */
+    public function setY(n:Number):IPositionable {
+      return new Rect(_x, n, width, height);
+    }
+
+    public function setXY(x:Number, y:Number):IPositionable {
+      return new Rect(x, y, width, height);
+    }
+
+    public function map(f:Function):IPositionable {
+      return new Rect(f(_x), f(_y), width, height);
+    }
 
     public function add(v:IPositionable):IPositionable {
       return new Rect(_x + v.x, _y + v.y, width, height);
@@ -63,12 +72,33 @@ package {
       return new Rect(_x - v.x, _y - v.y, width, height);
     }
 
-    public function multiply(n:int):IPositionable {
-      return new Rect(_x * n, _y * n, width, height);
+    // Takes either a Vector or an int (treated as a Vector(int, int))
+    public function multiply(n:*):IPositionable {
+      if (getQualifiedClassName(n) == "int") {
+        var val:int = n as int;
+
+        return new Vec(_x * n, _y * n);
+      } else if (getQualifiedClassName(n) == "Vec") {
+        var vec:Vec = n as Vec;
+
+        return new Vec(_x * vec.x, _y * vec.y);
+      } else {
+        throw new Error("Unsupported type for Vec#multiply.");
+      }
     }
 
-    public function divide(n:int):IPositionable {
-      return new Rect(_x / n, _y / n, width, height);
+    public function divide(n:*):IPositionable {
+      if (getQualifiedClassName(n) == "int") {
+        var val:Number = n as Number;
+
+        return new Vec(_x / n, _y / n);
+      } else if (getQualifiedClassName(n) == "Vec") {
+        var vec:Vec = n as Vec;
+
+        return new Vec(_x / vec.x, _y / vec.y);
+      } else {
+        throw new Error("Unsupported type for Vec#multiply.");
+      }
     }
 
     public function touchingRect(rect:Rect):Boolean {
