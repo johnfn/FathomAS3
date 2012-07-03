@@ -75,7 +75,7 @@ package {
     }
 
     public override function collidesPt(other:Point):Boolean {
-      if (!pos.containsPt(other)) return false;
+      if (!pos.containsPt(other)) return true;
 
       var xPt:int = Math.floor(other.x / this.tileSize);
       var yPt:int = Math.floor(other.y / this.tileSize);
@@ -98,6 +98,8 @@ package {
           }
         }
       }
+
+      if (!pos.makeBigger(3).containsRect(other.pos)) return true;
 
       return false;
     }

@@ -51,9 +51,18 @@ package {
       y += v.y;
     }
 
-    public function subtract(v:IPositionable):void {
-      x -= v.x;
-      y -= v.y;
+    public function subtract(v:*):void {
+      if (v is IPositionable) {
+        var vec:Vec = v as Vec;
+
+        x -= v.x;
+        y -= v.y;
+      } else if (getQualifiedClassName(v) == "int") {
+        var val:int = v as int;
+
+        x -= val;
+        y -= val;
+      }
     }
 
     // Takes either a Vector or an int (treated as a Vector(int, int))

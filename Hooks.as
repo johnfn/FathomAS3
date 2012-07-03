@@ -27,21 +27,28 @@ package {
 
     public static function onLeaveMap(who:MovingEntity, map:Map, callback:Function):Function {
       return function():void {
-        if (who.pos.x <= 0 || who.pos.y <= 0 || who.pos.x >= map.width || who.pos.y >= map.height) {
+        if (who.pos.x <= 0 || who.pos.y <= 0 || who.pos.x >= map.width - who.width || who.pos.y >= map.height - who.width) {
           callback.call(who);
         }
       }
     }
 
     public static function loadNewMap(leftScreen:MovingEntity, map:Map):Function {
+      //TODO: This code is pretty obscure.
       return function():void {
         var dir:Vec = leftScreen.pos.clone();
-        dir.divide(map.sizeVector);
+        var smallerSize:Vec = map.sizeVector.clone();
+
+        smallerSize.subtract(leftScreen.width);
+        dir.divide(smallerSize);
         dir.map(Math.floor);
+
+
+        var toOtherSide = dir.clone();
+        toOtherSide.multiply(smallerSize);
+        leftScreen.pos.subtract(toOtherSide);
+
         dir.multiply(map.sizeVector);
-
-        leftScreen.pos.subtract(dir);
-
         map.moveCorner(dir);
       }
     }
@@ -96,6 +103,7 @@ package {
         var movement:Vec = new Vec(Util.movementVector().x * speed, 5);
         entity.vel.add(movement);
 
+        // P1: You can 'glue' yourself to the top of a wall by jumping onto it.
         if (Util.keyIsDown(Util.Key.Up)) {
           if (entity.nextLoc().touchesGround()) {
             entity.vel.y -= 150;
@@ -112,7 +120,7 @@ package {
           entity.pos.x += normalizedVel.x;
           coll = entity.touchesAnything();
           if (coll.length > 0) {
-            entity.collisionList = new EntityList([]);
+            entity.collisionList = coll;
             entity.pos.x -= normalizedVel.x;
             break;
           }
@@ -122,7 +130,7 @@ package {
           entity.pos.y += normalizedVel.y;
           coll = entity.touchesAnything();
           if (coll.length > 0) {
-            entity.collisionList = new EntityList([]);
+            entity.collisionList = coll;
             entity.pos.y -= normalizedVel.y;
             break;
           }

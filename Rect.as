@@ -24,6 +24,18 @@ package {
       return x <= p.x && p.x < right && y <= p.y && p.y < bottom;
     }
 
+    /* Is r contained entirely within this Rect? */
+    public function containsRect(r:Rect):Boolean {
+      return x <= r.x      && r.x      < right &&
+             x <= r.right  && r.right  < right &&
+             y <= r.bottom && r.bottom < right &&
+             y <= r.y      && r.y      < right;
+    }
+
+    public function makeBigger(size:int):Rect {
+      return new Rect(_x - size, _y - size, width + size * 2, height + size * 2);
+    }
+
     public function touchesGround():Boolean {
       var footY:Number = y + this.height;
       var pts:MagicArray = new MagicArray();
