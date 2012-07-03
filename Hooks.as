@@ -5,7 +5,7 @@ package {
   public class Hooks {
     public static function move(direction:Vec):Function {
       return function():void {
-        this.pos.add(direction);
+        this.add(direction);
       }
     }
 
@@ -27,7 +27,7 @@ package {
 
     public static function onLeaveMap(who:MovingEntity, map:Map, callback:Function):Function {
       return function():void {
-        if (who.pos.x <= 0 || who.pos.y <= 0 || who.pos.x >= map.width - who.width || who.pos.y >= map.height - who.width) {
+        if (who.x <= 0 || who.y <= 0 || who.x >= map.width - who.width || who.y >= map.height - who.width) {
           callback.call(who);
         }
       }
@@ -36,7 +36,7 @@ package {
     public static function loadNewMap(leftScreen:MovingEntity, map:Map):Function {
       //TODO: This code is pretty obscure.
       return function():void {
-        var dir:Vec = leftScreen.pos.clone();
+        var dir:Vec = leftScreen.clone();
         var smallerSize:Vec = map.sizeVector.clone();
 
         smallerSize.subtract(leftScreen.width);
@@ -46,7 +46,7 @@ package {
 
         var toOtherSide:Vec = dir.clone();
         toOtherSide.multiply(smallerSize);
-        leftScreen.pos.subtract(toOtherSide);
+        leftScreen.subtract(toOtherSide);
 
         dir.multiply(map.sizeVector);
         map.moveCorner(dir);
@@ -60,7 +60,7 @@ package {
 
         this.vel.add(v);
 
-        this.pos.add(this.vel);
+        this.add(this.vel);
       }
     }
 
@@ -78,24 +78,24 @@ package {
     //TODO: In the case of moving off the side of a map, collision detection gets messy.
     public static function resolveCollisions():Function {
       return function():void {
-        this.pos.add(this.resetVec);
+        this.add(this.resetVec);
 
         /*
         var that:* = this;
 
         // Reset to known good collision state.
-        this.pos.subtract(this.vel);
+        this.subtract(this.vel);
 
         // Try both x and y.
-        this.pos.x += this.vel.x;
+        this.x += this.vel.x;
         if (this.touchesAnything().length) {
-          this.pos.x -= this.vel.x;
+          this.x -= this.vel.x;
           this.vel.x = 0;
         }
 
-        this.pos.y += this.vel.y;
+        this.y += this.vel.y;
         if (this.touchesAnything().length) {
-          this.pos.y -= this.vel.y;
+          this.y -= this.vel.y;
           this.vel.y = 0;
         }
         */
@@ -120,7 +120,7 @@ package {
         var steps:int = Math.max(entity.vel.x / normalizedVel.x, entity.vel.y / normalizedVel.y);
 
         for (var i:int = 0; i < steps; i++) {
-          entity.pos.x += normalizedVel.x;
+          entity.x += normalizedVel.x;
           coll = entity.touchesAnything();
           if (coll.length > 0) {
             entity.collisionList = coll;
@@ -130,7 +130,7 @@ package {
         }
 
         for (var i:int = 0; i < steps; i++) {
-          entity.pos.y += normalizedVel.y;
+          entity.y += normalizedVel.y;
           coll = entity.touchesAnything();
           if (coll.length > 0) {
             entity.collisionList = coll;
@@ -141,7 +141,7 @@ package {
 
         // P1: You can 'glue' yourself to the top of a wall by jumping onto pickupItem.
         if (Util.keyIsDown(Util.Key.Up)) {
-          if (entity.pos.touchesGround()) {
+          if (entity.touchesGround()) {
             entity.vel.y -= 150;
           }
         }

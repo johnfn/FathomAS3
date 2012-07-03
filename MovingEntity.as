@@ -29,7 +29,7 @@ package {
     public function nextLoc():Rect {
       // we need the asCloneOf() call here so that when we return this
       // we don't end up thinking that the nextLoc is colliding with the previous object.
-      return (new Rect(pos.x + vel.x, pos.y + vel.y, width, height)).asCloneOf(this) as Rect;
+      return (new Rect(x + vel.x, y + vel.y, width, height)).asCloneOf(this) as Rect;
     }
 
     public override function collides(other:Entity):Boolean {

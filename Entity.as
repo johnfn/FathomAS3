@@ -7,14 +7,11 @@ package {
   import Util;
   import MagicArray;
 
-  public class Entity implements IEqual {
+  public class Entity extends Rect implements IEqual {
     public var __fathom:Object;
 
     internal var mc:MovieClip;
-    internal var height:Number;
-    internal var width:Number;
     internal var color:Number;
-    internal var _pos:Rect;
 
     function Entity(x:Number = 0, y:Number = 0, width:Number = 20, height:Number = -1, color:Number = 0xFF0000, visible:Boolean = true):void {
       if (height == -1) height = width;
@@ -26,10 +23,7 @@ package {
       this.mc.x = x;
       this.mc.y = y;
 
-      //TODO: Just have Entity extend Rect
-      this.pos = new Rect(x, y, width, height);
-
-      super();
+      super(x, y, width);
 
       if (!Util.stage) {
       	throw new Error("Util.initialize() has not been called. Failing.");
@@ -46,14 +40,6 @@ package {
                       , entities: Util.entities
                       };
     }
-
-    public function set pos(val:Rect):void {
-      this._pos = val;
-      this.mc.x = this._pos.x;
-      this.mc.y = this._pos.y;
-    }
-
-    public function get pos():Rect { return this._pos; }
 
     private function draw(width:Number, height:Number, color:Number):void {
       mc.graphics.beginFill(color);
@@ -119,8 +105,6 @@ package {
 
     public function groups():Array { return ["updateable"]; }
 
-    public function eq(other:Entity):Boolean { return __fathom.uid == other.__fathom.uid; }
-
     public function collides(other:Entity):Boolean {
       return (!eq(other)) && mc.hitTestObject(other.mc);
     }
@@ -128,18 +112,10 @@ package {
     public function collidesPt(point:Point):Boolean { return mc.hitTestPoint(point.x, point.y); }
 
     public function update(e:EntityList):void {
-      mc.x = pos.x;
-      mc.y = pos.y;
+      mc.x = x;
+      mc.y = y;
     }
 
     public function depth():Number { return 0; }
-
-    /* IEqual */
-
-    private var _uid:int = Util.getUniqueID();
-
-    public function get uid():int { return _uid; }
-    public function equals(r:IEqual):Boolean { return uid == r.uid; }
-    public function asCloneOf(c:IEqual):IEqual { throw new Error("Nope!!!"); return this; }
   }
 }
