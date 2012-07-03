@@ -68,6 +68,7 @@ package {
     // emit("pre-update", pickupItem);
     // emit("pre-update", resolveCollisions);
 
+    //TODO: In the case of moving off the side of a map, collision detection gets messy.
     public static function resolveCollisions():Function {
       return function():void {
         var that:* = this;
@@ -77,13 +78,13 @@ package {
 
         // Try both x and y.
         this.pos.x += this.vel.x;
-        if (this.touchesAnything()) {
+        if (this.touchesAnything().length) {
           this.pos.x -= this.vel.x;
           this.vel.x = 0;
         }
 
         this.pos.y += this.vel.y;
-        if (this.touchesAnything()) {
+        if (this.touchesAnything().length) {
           this.pos.y -= this.vel.y;
           this.vel.y = 0;
         }
@@ -101,7 +102,31 @@ package {
           }
         }
 
-        entity.pos.add(entity.vel) as Rect;
+        var normalizedVel:Vec = entity.vel.clone();
+        normalizedVel.normalize();
+
+        var coll:EntityList = entity.touchesAnything();
+        var steps:int = Math.max(entity.vel.x / normalizedVel.x, entity.vel.y / normalizedVel.y);
+
+        for (var i:int = 0; i < steps; i++) {
+          entity.pos.x += normalizedVel.x;
+          coll = entity.touchesAnything();
+          if (coll.length > 0) {
+            entity.collisionList = new EntityList([]);
+            entity.pos.x -= normalizedVel.x;
+            break;
+          }
+        }
+
+        for (var i:int = 0; i < steps; i++) {
+          entity.pos.y += normalizedVel.y;
+          coll = entity.touchesAnything();
+          if (coll.length > 0) {
+            entity.collisionList = new EntityList([]);
+            entity.pos.y -= normalizedVel.y;
+            break;
+          }
+        }
       }
     }
 

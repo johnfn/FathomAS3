@@ -25,6 +25,8 @@ package {
       this.mc = new MovieClip();
       this.mc.x = x;
       this.mc.y = y;
+
+      //TODO: Just have Entity extend Rect
       this.pos = new Rect(x, y, width, height);
 
       super();
@@ -103,10 +105,12 @@ package {
       return this;
     }
 
-    public function touchesAnything():Boolean {
+    //TODO: Bad name.
+    public function touchesAnything():EntityList {
       var that:* = this;
 
-      return (Util.entities.any(function(other:Entity):Boolean {
+      // It is important that we use *their* collision method, not ours.
+      return (Util.entities.get(function(other:Entity):Boolean {
         return other.collides(that);
       }));
     }
@@ -117,7 +121,9 @@ package {
 
     public function eq(other:Entity):Boolean { return __fathom.uid == other.__fathom.uid; }
 
-    public function collides(other:Entity):Boolean { return (!eq(other)) && mc.hitTestObject(other.mc); }
+    public function collides(other:Entity):Boolean {
+      return (!eq(other)) && mc.hitTestObject(other.mc);
+    }
 
     public function collidesPt(point:Point):Boolean { return mc.hitTestPoint(point.x, point.y); }
 

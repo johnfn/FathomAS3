@@ -1,5 +1,5 @@
 package {
-  //TODO: extends Array (or Vector.<Entity>)
+  //TODO: extends Vector.<Entity>
 
   public dynamic class EntityList extends Array {
     function EntityList(entities:Array):void {
