@@ -111,6 +111,8 @@ package {
     public static function platformerLike(speed:int, entity:MovingEntity):Function {
       return function():void {
         var movement:Vec = new Vec(Util.movementVector().x * speed, 5);
+
+        entity.resetVec = new Vec(0, 0);
         entity.vel.add(movement);
 
         var normalizedVel:Vec = entity.vel.clone();
@@ -125,6 +127,7 @@ package {
           if (coll.length > 0) {
             entity.collisionList = coll;
             entity.resetVec.x = -normalizedVel.x;
+            entity.x -= normalizedVel.x;
             break;
           }
         }
@@ -135,14 +138,18 @@ package {
           if (coll.length > 0) {
             entity.collisionList = coll;
             entity.resetVec.y = -normalizedVel.y;
+            entity.y -= normalizedVel.y;
             break;
           }
         }
 
-        // P1: You can 'glue' yourself to the top of a wall by jumping onto pickupItem.
+        // Move onto the thing we just collided with.
+        entity.subtract(entity.resetVec);
+
+        //P1: You can collide and stick into something on the screen to your left.
         if (Util.keyIsDown(Util.Key.Up)) {
           if (entity.touchesGround()) {
-            entity.vel.y -= 150;
+            entity.vel.y -= 300;
           }
         }
       }
