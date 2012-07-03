@@ -35,8 +35,12 @@ package {
 
     public static function loadNewMap(leftScreen:MovingEntity, map:Map):Function {
       return function():void {
-        var dir:Vec = leftScreen.pos.divide(map.sizeVector).map(Math.floor);
-        leftScreen.pos = leftScreen.pos.subtract(dir.multiply(map.sizeVector)) as Rect;
+        var dir:Vec = leftScreen.pos.clone();
+        dir.divide(map.sizeVector);
+        dir.map(Math.floor);
+        dir.multiply(map.sizeVector);
+
+        leftScreen.pos.subtract(dir);
 
         map.moveCorner(dir);
       }
@@ -44,11 +48,12 @@ package {
 
     public static function rpgLike(speed:int):Function {
       return function():void {
-        var v:Vec = Util.movementVector().multiply(speed);
+        var v:Vec = Util.movementVector().clone();
+        v.multiply(speed);
 
-        this.vel = this.vel.add(v);
+        this.vel.add(v);
 
-        this.pos = this.pos.add(this.vel);
+        this.pos.add(this.vel);
       }
     }
 
@@ -68,27 +73,27 @@ package {
         var that:* = this;
 
         // Reset to known good collision state.
-        this.pos = this.pos.subtract(this.vel) as Rect;
+        this.pos.subtract(this.vel);
 
         // Try both x and y.
-        this.pos = this.pos.add(new Vec(this.vel.x, 0));
+        this.pos.x += this.vel.x;
         if (this.touchesAnything()) {
-          this.pos = this.pos.subtract(new Vec(this.vel.x, 0));
-          this.vel.setX(0);
+          this.pos.x -= this.vel.x;
+          this.vel.x = 0;
         }
 
-        this.pos = this.pos.add(new Vec(0, this.vel.y));
+        this.pos.y += this.vel.y;
         if (this.touchesAnything()) {
-          this.pos = this.pos.subtract(new Vec(0, this.vel.y));
-          this.vel.setY(0);
+          this.pos.y -= this.vel.y;
+          this.vel.y = 0;
         }
       }
     }
 
     public static function platformerLike(speed:int, entity:MovingEntity):Function {
       return function():void {
-        var movement:Vec = new Vec(Util.movementVector().multiply(speed).x, 5);
-        entity.vel = entity.vel.add(movement) as Vec;
+        var movement:Vec = new Vec(Util.movementVector().x * speed, 5);
+        entity.vel.add(movement);
 
         if (Util.keyIsDown(Util.Key.Up)) {
           if (entity.nextLoc().touchesGround()) {
@@ -96,7 +101,7 @@ package {
           }
         }
 
-        entity.pos = entity.pos.add(entity.vel) as Rect;
+        entity.pos.add(entity.vel) as Rect;
       }
     }
 
@@ -107,7 +112,7 @@ package {
         if (Math.abs(this.vel.x) < cutoff) { this.vel.x = 0; }
         if (Math.abs(this.vel.y) < cutoff) { this.vel.y = 0; }
 
-        this.vel = this.vel.divide(decel);
+        this.vel.divide(decel);
       }
     }
   }

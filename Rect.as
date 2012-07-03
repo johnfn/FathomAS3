@@ -1,18 +1,12 @@
 package {
-  public class Rect implements IPositionable, IEqual {
+  public class Rect extends Vec implements IEqual, IPositionable {
     import flash.geom.Point;
     import flash.utils.getQualifiedClassName;
-
-    private var _x:Number;
-    private var _y:Number;
 
     public var width:Number = 0;
     public var height:Number = 0;
     public var right:Number = 0;
     public var bottom:Number = 0;
-
-    public function get x():Number { return _x; }
-    public function get y():Number { return _y; }
 
     function Rect(x:Number, y:Number, width:Number, height:Number = -1) {
       if (height == -1) height = width;
@@ -46,59 +40,8 @@ package {
       }).any();
     }
 
-    /* IPositionable */
-
-    public function setX(n:Number):IPositionable {
-      return new Rect(n, _y, width, height);
-    }
-
-    public function setY(n:Number):IPositionable {
-      return new Rect(_x, n, width, height);
-    }
-
-    public function setXY(x:Number, y:Number):IPositionable {
-      return new Rect(x, y, width, height);
-    }
-
-    public function map(f:Function):IPositionable {
-      return new Rect(f(_x), f(_y), width, height);
-    }
-
-    public function add(v:IPositionable):IPositionable {
-      return new Rect(_x + v.x, _y + v.y, width, height);
-    }
-
-    public function subtract(v:IPositionable):IPositionable {
-      return new Rect(_x - v.x, _y - v.y, width, height);
-    }
-
-    // Takes either a Vector or an int (treated as a Vector(int, int))
-    public function multiply(n:*):IPositionable {
-      if (getQualifiedClassName(n) == "int") {
-        var val:int = n as int;
-
-        return new Vec(_x * n, _y * n);
-      } else if (getQualifiedClassName(n) == "Vec") {
-        var vec:Vec = n as Vec;
-
-        return new Vec(_x * vec.x, _y * vec.y);
-      } else {
-        throw new Error("Unsupported type for Vec#multiply.");
-      }
-    }
-
-    public function divide(n:*):IPositionable {
-      if (getQualifiedClassName(n) == "int") {
-        var val:Number = n as Number;
-
-        return new Vec(_x / n, _y / n);
-      } else if (getQualifiedClassName(n) == "Vec") {
-        var vec:Vec = n as Vec;
-
-        return new Vec(_x / vec.x, _y / vec.y);
-      } else {
-        throw new Error("Unsupported type for Vec#multiply.");
-      }
+    public override function clone():Vec {
+      return new Rect(_x, _y, width, height);
     }
 
     public function touchingRect(rect:Rect):Boolean {

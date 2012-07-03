@@ -15,6 +15,10 @@ package {
 
     public override function die():void { __fathom.entities.remove(this); }
 
+    public override function update(e:EntityList):void {
+      super.update(e);
+    }
+
     /* Return the location that this entity will be one timestep in the future, ignoring collisions. */
     public function nextLoc():Rect {
       // we need the asCloneOf() call here so that when we return this

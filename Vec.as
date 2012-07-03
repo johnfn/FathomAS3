@@ -4,8 +4,8 @@ package {
 
   /** Vector class (2d line indicating movement). */
   public class Vec implements IPositionable {
-    private var _x:Number;
-    private var _y:Number;
+    internal var _x:Number;
+    internal var _y:Number;
 
     function Vec(x:Number = 0, y:Number = 0) {
       this.x = x;
@@ -23,7 +23,7 @@ package {
     }
 
     public function toString():String {
-    	return "Vec[" + this.x + ", " + this.y + "]";
+      return "Vec[" + this.x + ", " + this.y + "]";
     }
 
     public function randomize():Vec {
@@ -37,65 +37,63 @@ package {
       return new Vec(0, 0); //This line never executes. It's just to satisfy type checker.
     }
 
-    public function map(f:Function):IPositionable {
-      return new Vec(f(_x), f(_y));
+    public function clone():Vec {
+      return new Vec(_x, _y);
     }
 
-    /* IPositionable */
-
-    public function setXY(x:Number, y:Number):IPositionable {
-      return new Vec(x, y);
+    public function map(f:Function):void {
+      x = f(x);
+      y = f(y);
     }
 
-    public function setX(n:Number):IPositionable {
-      return new Vec(n, _y);
+    public function add(v:IPositionable):void {
+      x += v.x;
+      y += v.y;
     }
 
-    public function setY(n:Number):IPositionable {
-      return new Vec(_x, n);
-    }
-
-    public function add(v:IPositionable):IPositionable {
-      return new Vec(x + v.x, y + v.y);
-    }
-
-    public function subtract(v:IPositionable):IPositionable {
-      return new Vec(x - v.x, y - v.y);
+    public function subtract(v:IPositionable):void {
+      x -= v.x;
+      y -= v.y;
     }
 
     // Takes either a Vector or an int (treated as a Vector(int, int))
-    public function multiply(n:*):IPositionable {
+    public function multiply(n:*):void {
       if (getQualifiedClassName(n) == "int") {
         var val:Number = n as Number;
 
-        return new Vec(_x * n, _y * n);
+        x *= n;
+        y *= n;
       } else if (getQualifiedClassName(n) == "Vec") {
         var vec:Vec = n as Vec;
 
-        return new Vec(_x * vec.x, _y * vec.y);
+        x *= n.x;
+        y *= n.y;
       } else {
         throw new Error("Unsupported type for Vec#multiply.");
       }
     }
 
-    public function divide(n:*):IPositionable {
+    public function divide(n:*):void {
       if (getQualifiedClassName(n) == "int") {
         var val:Number = n as Number;
 
-        return new Vec(_x / n, _y / n);
+        x /= n;
+        y /= n;
       } else if (getQualifiedClassName(n) == "Vec") {
         var vec:Vec = n as Vec;
 
-        return new Vec(_x / vec.x, _y / vec.y);
+        x /= n.x;
+        y /= n.y;
       } else {
         throw new Error("Unsupported type for Vec#multiply.");
       }
     }
 
-    public function normalize():Vec {
+    public function normalize():void {
       var mag:Number = Math.sqrt(x * x + y * y);
 
-      return new Vec(x / mag, y / mag);
+      x /= mag;
+      y /= mag;
     }
 
     public function nonzero():Boolean {

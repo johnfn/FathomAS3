@@ -105,7 +105,7 @@ package {
     public override function update(es:EntityList):void {}
 
     public function moveCorner(diff:Vec):void {
-      diff = diff.multiply(widthInTiles) as Vec;
+      diff.divide(widthInTiles);
 
       topLeftCorner.x += diff.x;
       topLeftCorner.y += diff.y;

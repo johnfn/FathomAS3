@@ -121,7 +121,10 @@ package {
 
     public function collidesPt(point:Point):Boolean { return mc.hitTestPoint(point.x, point.y); }
 
-    public function update(e:EntityList):void {}
+    public function update(e:EntityList):void {
+      mc.x = pos.x;
+      mc.y = pos.y;
+    }
 
     public function depth():Number { return 0; }
 
