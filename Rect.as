@@ -45,8 +45,15 @@ package {
         pts.push(new Point(footX, footY));
       }
 
+      //TODO: The problem is that the point is colliding with the MC, not the rect.
+      // Should resolve itself when Entity extends Rect.
       return pts.myMap(function(p:Point):Boolean {
         return Util.entities.exclude(that).any(function(other:Entity):Boolean {
+          if (other.collidesPt(p)) {
+            trace("rect uid ", _uid);
+            trace("other uid ", other.uid);
+            trace(other);
+          }
           return other.collidesPt(p);
         });
       }).any();

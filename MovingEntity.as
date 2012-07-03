@@ -10,9 +10,7 @@ package {
     /* Velocity of the MovingEntity. */
     public var vel:Vec = new Vec(0, 0);
 
-    /* How far the MovingEntity moved this time step. This
-       may be different from vel in the case of a collision. */
-    public var actualMovement:Vec = new Vec(0, 0);
+    public var resetVec:Vec = new Vec(0, 0);
 
     /* List of all entities that this entity collided with in this time step. */
     internal var collisionList:EntityList = new EntityList([]);

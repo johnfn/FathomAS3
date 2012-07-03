@@ -44,7 +44,7 @@ package {
         dir.map(Math.floor);
 
 
-        var toOtherSide = dir.clone();
+        var toOtherSide:Vec = dir.clone();
         toOtherSide.multiply(smallerSize);
         leftScreen.pos.subtract(toOtherSide);
 
@@ -78,6 +78,9 @@ package {
     //TODO: In the case of moving off the side of a map, collision detection gets messy.
     public static function resolveCollisions():Function {
       return function():void {
+        this.pos.add(this.resetVec);
+
+        /*
         var that:* = this;
 
         // Reset to known good collision state.
@@ -95,20 +98,20 @@ package {
           this.pos.y -= this.vel.y;
           this.vel.y = 0;
         }
+        */
       }
     }
 
+    /* In the event of a collision, this function will leave you stuck
+       in whatever you collided into. You should call resolveCollisions()
+       in order to fix this.
+
+       This is for a good reason that I need to explain.
+       */
     public static function platformerLike(speed:int, entity:MovingEntity):Function {
       return function():void {
         var movement:Vec = new Vec(Util.movementVector().x * speed, 5);
         entity.vel.add(movement);
-
-        // P1: You can 'glue' yourself to the top of a wall by jumping onto it.
-        if (Util.keyIsDown(Util.Key.Up)) {
-          if (entity.nextLoc().touchesGround()) {
-            entity.vel.y -= 150;
-          }
-        }
 
         var normalizedVel:Vec = entity.vel.clone();
         normalizedVel.normalize();
@@ -121,7 +124,7 @@ package {
           coll = entity.touchesAnything();
           if (coll.length > 0) {
             entity.collisionList = coll;
-            entity.pos.x -= normalizedVel.x;
+            entity.resetVec.x = -normalizedVel.x;
             break;
           }
         }
@@ -131,8 +134,15 @@ package {
           coll = entity.touchesAnything();
           if (coll.length > 0) {
             entity.collisionList = coll;
-            entity.pos.y -= normalizedVel.y;
+            entity.resetVec.y = -normalizedVel.y;
             break;
+          }
+        }
+
+        // P1: You can 'glue' yourself to the top of a wall by jumping onto pickupItem.
+        if (Util.keyIsDown(Util.Key.Up)) {
+          if (entity.pos.touchesGround()) {
+            entity.vel.y -= 150;
           }
         }
       }

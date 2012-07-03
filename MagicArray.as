@@ -2,7 +2,7 @@ package {
   public dynamic class MagicArray extends Array {
     /* MagicArray gives extra power to the standard Array class. */
 
-    //TODO: Possible to override Array's map()?
+    //TODO: needs better name.
     public function myMap(f:Function):MagicArray {
       var result:MagicArray = new MagicArray();
 
