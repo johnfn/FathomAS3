@@ -88,13 +88,13 @@ package {
 
         // Try both x and y.
         this.x += this.vel.x;
-        if (this.touchesAnything().length) {
+        if (this.currentlyTouching().length) {
           this.x -= this.vel.x;
           this.vel.x = 0;
         }
 
         this.y += this.vel.y;
-        if (this.touchesAnything().length) {
+        if (this.currentlyTouching().length) {
           this.y -= this.vel.y;
           this.vel.y = 0;
         }
@@ -118,12 +118,14 @@ package {
         var normalizedVel:Vec = entity.vel.clone();
         normalizedVel.normalize();
 
-        var coll:EntityList = entity.touchesAnything();
+        var coll:EntityList = entity.currentlyTouching();
         var steps:int = Math.max(entity.vel.x / normalizedVel.x, entity.vel.y / normalizedVel.y);
+
+        // Check for collisions in both x and y directions.
 
         for (var i:int = 0; i < steps; i++) {
           entity.x += normalizedVel.x;
-          coll = entity.touchesAnything();
+          coll = entity.currentlyTouching();
           if (coll.length > 0) {
             entity.collisionList = coll;
             entity.resetVec.x = -normalizedVel.x;
@@ -134,7 +136,7 @@ package {
 
         for (var i:int = 0; i < steps; i++) {
           entity.y += normalizedVel.y;
-          coll = entity.touchesAnything();
+          coll = entity.currentlyTouching();
           if (coll.length > 0) {
             entity.collisionList = coll;
             entity.resetVec.y = -normalizedVel.y;
@@ -143,12 +145,18 @@ package {
           }
         }
 
+        var touchesGround:Boolean;
         // Move onto the thing we just collided with.
-        entity.subtract(entity.resetVec);
+
+        entity.y -= entity.resetVec.y;
+
+        touchesGround = entity.vel.y > 0 && entity.currentlyTouching().length;
+
+        entity.x -= entity.resetVec.x;
 
         //P1: You can collide and stick into something on the screen to your left.
         if (Util.keyIsDown(Util.Key.Up)) {
-          if (entity.touchesGround()) {
+          if (touchesGround) {
             entity.vel.y -= 300;
           }
         }

@@ -91,8 +91,7 @@ package {
       return this;
     }
 
-    //TODO: Bad name.
-    public function touchesAnything():EntityList {
+    public function currentlyTouching():EntityList {
       var that:* = this;
 
       // It is important that we use *their* collision method, not ours.
