@@ -76,7 +76,7 @@ package {
     }
 
     /* The idea behind this rather strange function is that we often
-    want to do something similar to both the x and y coordinates.
+    copy code and only change x to y.
 
     With xy_to_$, vectors inside of the function you pass in will have
     a magical property "$", which will be the x of the vector the first time
@@ -110,6 +110,8 @@ package {
       vec2.$ += 5
     }, vec2)
     */
+
+    //TODO: This function cannot be nested.
     public function xy_to_$(f:Function, ...vecs):Vec {
       var i:int;
 
@@ -119,7 +121,7 @@ package {
         vecs[i].$_current_value = $_IS_X;
       }
 
-      f()
+      f();
 
       for (i = 0; i < vecs.length; i++) {
         vecs[i].$_current_value = $_IS_Y;

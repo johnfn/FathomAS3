@@ -39,14 +39,12 @@ package {
       return function():void {
         var smallerSize:Vec = map.sizeVector.clone().subtract(leftScreen.width);
         var dir:Vec = leftScreen.clone().divide(smallerSize).map(Math.floor);
-
         var toOtherSide:Vec = dir.clone().multiply(smallerSize);
 
-        if (toOtherSide.x > 0) leftScreen.x = 1;
-        if (toOtherSide.y > 0) leftScreen.y = 1;
-
-        if (toOtherSide.x < 0) leftScreen.x = map.width - map.getTileSize() + 1;
-        if (toOtherSide.y < 0) leftScreen.y = map.height - map.getTileSize() + 1;
+        leftScreen.xy_to_$(function() {
+          if (toOtherSide.$ > 0) leftScreen.$ = 1;
+          if (toOtherSide.$ < 0) leftScreen.$ = map.sizeVector.$ - map.getTileSize() + 1;
+        }, toOtherSide, map.sizeVector);
 
         map.moveCorner(dir.multiply(map.sizeVector));
       }
