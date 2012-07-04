@@ -35,6 +35,7 @@ package {
 
     public static function loadNewMap(leftScreen:MovingEntity, map:Map):Function {
       //TODO: This code is pretty obscure.
+      //TODO: This will only work if leftScreen.width is less than the tileSize.
       return function():void {
         var dir:Vec = leftScreen.clone();
         var smallerSize:Vec = map.sizeVector.clone();
@@ -43,10 +44,8 @@ package {
         dir.divide(smallerSize);
         dir.map(Math.floor);
 
-
         var toOtherSide:Vec = dir.clone();
         toOtherSide.multiply(smallerSize);
-        leftScreen.subtract(toOtherSide);
 
         if (toOtherSide.x > 0) leftScreen.x = 1;
         if (toOtherSide.y > 0) leftScreen.y = 1;

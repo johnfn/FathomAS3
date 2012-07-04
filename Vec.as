@@ -41,17 +41,21 @@ package {
       return new Vec(_x, _y);
     }
 
-    public function map(f:Function):void {
+    public function map(f:Function):Vec {
       x = f(x);
       y = f(y);
+
+      return this;
     }
 
-    public function add(v:IPositionable):void {
+    public function add(v:IPositionable):Vec {
       x += v.x;
       y += v.y;
+
+      return this;
     }
 
-    public function subtract(v:*):void {
+    public function subtract(v:*):Vec {
       if (v is IPositionable) {
         var vec:Vec = v as Vec;
 
@@ -63,10 +67,12 @@ package {
         x -= val;
         y -= val;
       }
+
+      return this;
     }
 
     // Takes either a Vector or an int (treated as a Vector(int, int))
-    public function multiply(n:*):void {
+    public function multiply(n:*):Vec {
       if (getQualifiedClassName(n) == "int") {
         var val:Number = n as Number;
 
@@ -80,9 +86,11 @@ package {
       } else {
         throw new Error("Unsupported type for Vec#multiply.");
       }
+
+      return this;
     }
 
-    public function divide(n:*):void {
+    public function divide(n:*):Vec {
       if (getQualifiedClassName(n) == "int") {
         var val:Number = n as Number;
 
@@ -96,13 +104,17 @@ package {
       } else {
         throw new Error("Unsupported type for Vec#multiply.");
       }
+
+      return this;
     }
 
-    public function normalize():void {
+    public function normalize():Vec {
       var mag:Number = Math.sqrt(x * x + y * y);
 
       x /= mag;
       y /= mag;
+
+      return this;
     }
 
     public function nonzero():Boolean {
