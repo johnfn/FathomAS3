@@ -37,6 +37,11 @@ package {
       });
     }
 
+    //TODO: Should be a getter.
+    public function getTileSize():int {
+      return tileSize;
+    }
+
     public function fromImage(mapClass:Class):Map {
       var bAsset:BitmapAsset = new mapClass();
       var bData:BitmapData = bAsset.bitmapData;

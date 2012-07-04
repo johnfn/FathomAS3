@@ -27,7 +27,7 @@ package {
 
     public static function onLeaveMap(who:MovingEntity, map:Map, callback:Function):Function {
       return function():void {
-        if (who.x <= 0 || who.y <= 0 || who.x >= map.width - who.width || who.y >= map.height - who.width) {
+        if (who.x < 0 || who.y < 0 || who.x > map.width - who.width || who.y > map.height - who.width) {
           callback.call(who);
         }
       }
@@ -47,6 +47,12 @@ package {
         var toOtherSide:Vec = dir.clone();
         toOtherSide.multiply(smallerSize);
         leftScreen.subtract(toOtherSide);
+
+        if (toOtherSide.x > 0) leftScreen.x = 1;
+        if (toOtherSide.y > 0) leftScreen.y = 1;
+
+        if (toOtherSide.x < 0) leftScreen.x = map.width - map.getTileSize() + 1;
+        if (toOtherSide.y < 0) leftScreen.y = map.height - map.getTileSize() + 1;
 
         dir.multiply(map.sizeVector);
         map.moveCorner(dir);
@@ -79,26 +85,6 @@ package {
     public static function resolveCollisions():Function {
       return function():void {
         this.add(this.resetVec);
-
-        /*
-        var that:* = this;
-
-        // Reset to known good collision state.
-        this.subtract(this.vel);
-
-        // Try both x and y.
-        this.x += this.vel.x;
-        if (this.currentlyTouching().length) {
-          this.x -= this.vel.x;
-          this.vel.x = 0;
-        }
-
-        this.y += this.vel.y;
-        if (this.currentlyTouching().length) {
-          this.y -= this.vel.y;
-          this.vel.y = 0;
-        }
-        */
       }
     }
 
