@@ -87,10 +87,12 @@ package {
       if (this == other) return false;
 
       var xStart:int = Math.floor(other.x / this.tileSize);
+      var xStop:int  = Math.floor((other.x + other.width) / this.tileSize);
       var yStart:int = Math.floor(other.y / this.tileSize);
+      var yStop:int  = Math.floor((other.y + other.height) / this.tileSize);
 
-      for (var x:int = xStart; x < xStart + 2; x++) {
-        for (var y:int = yStart; y < yStart + 2; y++) {
+      for (var x:int = xStart; x < xStop + 1; x++) {
+        for (var y:int = yStart; y < yStop + 1; y++) {
           if (0 <= x && x < widthInTiles && 0 <= y && y < heightInTiles) {
             if (tiles[x][y].type == 1) {
               return true;
