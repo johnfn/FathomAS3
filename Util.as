@@ -10,8 +10,7 @@ package {
     public static var Key:Object = {};
     public static var stage:Stage;
 
-    private static var keysDown:Array = new Array(255);
-    private static var keysRecentlyUp:Array = new Array(255);
+    private static var keyStates:Array = new Array(255);
 
     public static function id(x:*):* {
       return x;
@@ -61,13 +60,8 @@ package {
       return new Vec(x, y);
     }
 
-
     public static function randRange(low:int, high:int):int {
       return low + Math.floor(Math.random() * (high - low));
-    }
-
-    public static function keyIsDown(which:int):Boolean {
-      return keysDown[which];
     }
 
     private static function update():void {
@@ -75,29 +69,63 @@ package {
     }
 
     private static function _keyDown(event:KeyboardEvent):void {
-      keysDown[event.keyCode] = true;
+      var keystate:KeyState = keyStates[event.keyCode];
+
+      if (keystate.state != KeyState.KEYSTATE_JUST_DOWN && keystate.state != KeyState.KEYSTATE_DOWN) {
+        keystate.state = KeyState.KEYSTATE_JUST_DOWN;
+      }
+      if (keystate.timeoutID != 0) clearTimeout(keystate.timeoutID);
+      keystate.timeoutID = setTimeout(function():void {
+        keystate.state = KeyState.KEYSTATE_DOWN;
+        keystate.timeoutID = 0;
+      }, 50);
     }
 
     private static function _keyUp(event:KeyboardEvent):void {
-      keysDown[event.keyCode] = false;
+      var keystate:KeyState = keyStates[event.keyCode];
 
-      if (keysRecentlyUp[event.keyCode] != 0) {
-        clearTimeout(keysRecentlyUp[event.keyCode]);
+      if (keystate.state != KeyState.KEYSTATE_JUST_UP && keystate.state != KeyState.KEYSTATE_UP) {
+        keystate.state = KeyState.KEYSTATE_JUST_UP;
       }
-
-      keysRecentlyUp[event.keyCode] = setTimeout(function():void {
-        keysRecentlyUp[event.keyCode] = 0;
-      }, 500);
+      if (keystate.timeoutID != 0) clearTimeout(keystate.timeoutID);
+      keystate.timeoutID = setTimeout(function():void {
+        keystate.state = KeyState.KEYSTATE_UP;
+        keystate.timeoutID = 0;
+      }, 50);
     }
 
-    public static function keyRecentlyReleased(which:int):Boolean {
-      if (keysRecentlyUp[which]) {
-        clearTimeout(keysRecentlyUp[which]);
-        keysRecentlyUp[which] = 0;
+    // Is a key currently up?
+
+    public static function keyIsUp(which:int):Boolean {
+      return keyStates[which].state == KeyState.KEYSTATE_UP || keyStates[which].state == KeyState.KEYSTATE_JUST_UP;
+    }
+
+    // Is a key currently down?
+
+    public static function keyIsDown(which:int):Boolean {
+      if (keyStates[which].state == KeyState.KEYSTATE_JUST_DOWN) {
+        keyStates[which].state = KeyState.KEYSTATE_DOWN;
+
         return true;
       }
-
       return false;
+    }
+
+    // Has a key just been released?
+
+    public static function keyRecentlyUp(which:int):Boolean {
+      if (keyStates[which].state == KeyState.KEYSTATE_JUST_UP) {
+        keyStates[which].state = KeyState.KEYSTATE_UP;
+
+        return true;
+      }
+      return false;
+    }
+
+    // Has a key just been pressed?
+
+    public static function keyRecentlyDown(which:int):Boolean {
+      return keyStates[which].state == KeyState.KEYSTATE_JUST_DOWN;
     }
 
     private static function initializeKeyInput(stage:Stage):void {
@@ -105,9 +133,8 @@ package {
       stage.addEventListener(KeyboardEvent.KEY_UP, _keyUp);
 
       for (var i:int = 0; i < 255; i++) {
-        keysDown[i] = false;
+        keyStates[i] = new KeyState();
       }
-
       Key["Left"]  = 37;
       Key["Up"]    = 38;
       Key["Right"] = 39;
@@ -126,4 +153,14 @@ package {
       setInterval(update, 1000/30);
     }
   }
+}
+
+class KeyState {
+  public static var KEYSTATE_JUST_DOWN:int = 0;
+  public static var KEYSTATE_DOWN:int      = 1;
+  public static var KEYSTATE_JUST_UP:int   = 2;
+  public static var KEYSTATE_UP:int        = 3;
+
+  public var state:int = KEYSTATE_UP;
+  public var timeoutID:int = 0;
 }

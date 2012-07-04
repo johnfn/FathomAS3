@@ -9,7 +9,8 @@ package {
       }
     }
 
-    public static function keyPressed(key:Number, callback:Function):Function {
+    // Every tick the key is down.
+    public static function keyDown(key:Number, callback:Function):Function {
       return function():void {
         if (Util.keyIsDown(key)) {
           callback();
@@ -17,9 +18,18 @@ package {
       }
     }
 
-    public static function keyReleased(key:Number, callback:Function):Function {
+    // Exactly at the start of a keypress.
+    public static function keyRecentlyDown(key:Number, callback:Function):Function {
       return function():void {
-        if (Util.keyRecentlyReleased(key)) {
+        if (Util.keyRecentlyDown(key)) {
+          callback();
+        }
+      }
+    }
+
+    public static function keyRecentlyUp(key:Number, callback:Function):Function {
+      return function():void {
+        if (Util.keyRecentlyUp(key)) {
           callback();
         }
       }
@@ -41,7 +51,7 @@ package {
         var dir:Vec = leftScreen.clone().divide(smallerSize).map(Math.floor);
         var toOtherSide:Vec = dir.clone().multiply(smallerSize);
 
-        leftScreen.iterate_xy_as_$(function() {
+        leftScreen.iterate_xy_as_$(function():void {
           if (toOtherSide.$ > 0) leftScreen.$ = 1;
           if (toOtherSide.$ < 0) leftScreen.$ = map.sizeVector.$ - map.getTileSize() + 1;
         });
@@ -57,18 +67,6 @@ package {
       }
     }
 
-    // The common way to use this would be to emit rgpLike, then this function.
-    // You may be wondering why we add on the movement, then subtract, then add again.
-    // Seems a bit inefficient. The reason is that this allows us to drop in an emit
-    // for collisions with objects that we otherwise couldn't walk through.
-
-    // i.e.
-
-    // emit("pre-update", rpgLike);
-    // emit("pre-update", pickupItem);
-    // emit("pre-update", resolveCollisions);
-
-    //TODO: In the case of moving off the side of a map, collision detection gets messy.
     public static function resolveCollisions():Function {
       return function():void {
         this.add(this.resetVec);
@@ -79,7 +77,10 @@ package {
        in whatever you collided into. You should call resolveCollisions()
        in order to fix this.
 
-       This is for a good reason that I need to explain.
+       The reason that we do this is that it allows us to order our emits so that
+       we have an explicit window where we can perform collision checks.
+
+       TODO: I think that said window should just be the update() function.
        */
     public static function platformerLike(speed:int, entity:MovingEntity):Function {
       return function():void {
@@ -94,7 +95,7 @@ package {
 
         // Check for collisions in both x and y directions.
 
-        entity.iterate_xy_as_$(function(){
+        entity.iterate_xy_as_$(function():void {
           for (var i:int = 0; i < steps; i++) {
             entity.$ += normalizedVel.$;
             coll = entity.currentlyTouching();
