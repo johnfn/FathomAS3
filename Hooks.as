@@ -41,10 +41,10 @@ package {
         var dir:Vec = leftScreen.clone().divide(smallerSize).map(Math.floor);
         var toOtherSide:Vec = dir.clone().multiply(smallerSize);
 
-        leftScreen.xy_to_$(function() {
+        leftScreen.iterate_xy_as_$(function() {
           if (toOtherSide.$ > 0) leftScreen.$ = 1;
           if (toOtherSide.$ < 0) leftScreen.$ = map.sizeVector.$ - map.getTileSize() + 1;
-        }, toOtherSide, map.sizeVector);
+        });
 
         map.moveCorner(dir.multiply(map.sizeVector));
       }
@@ -94,7 +94,7 @@ package {
 
         // Check for collisions in both x and y directions.
 
-        entity.xy_to_$(function(){
+        entity.iterate_xy_as_$(function(){
           for (var i:int = 0; i < steps; i++) {
             entity.$ += normalizedVel.$;
             coll = entity.currentlyTouching();
@@ -105,7 +105,7 @@ package {
               break;
             }
           }
-        }, normalizedVel, entity.resetVec);
+        });
 
         // Move onto the thing we just collided with.
 

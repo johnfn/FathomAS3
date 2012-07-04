@@ -23,11 +23,11 @@ package {
 
     // The magic $ variable.
 
-    private var $_IS_NEITHER:int = 0;
-    private var $_IS_X:int  = 1;
-    private var $_IS_Y:int  = 2;
+    private static var $_IS_NEITHER:int = 0;
+    private static var $_IS_X:int  = 1;
+    private static var $_IS_Y:int  = 2;
 
-    private var $_current_value:int = $_IS_NEITHER;
+    private static var $_current_value:int = $_IS_NEITHER;
 
     public function get $():Number {
       Util.assert($_current_value != $_IS_NEITHER);
@@ -78,7 +78,7 @@ package {
     /* The idea behind this rather strange function is that we often
     copy code and only change x to y.
 
-    With xy_to_$, vectors inside of the function you pass in will have
+    With iterate_xy_as_$, vectors inside of the function you pass in will have
     a magical property "$", which will be the x of the vector the first time
     the function is called, and y the second time.
 
@@ -91,12 +91,12 @@ package {
 
     After:
 
-    vec.xy_to_$(function() {
+    vec.iterate_xy_as_$(function() {
       this.$ += 5;
       this.$ /= 2;
-    })
+    });
 
-    The "...vecs" argument is so many vectors can have the $ property. Before:
+    It works on many vectors with no change.
 
     vec1.x += 5
     vec2.x += 5;
@@ -105,33 +105,25 @@ package {
 
     After:
 
-    vec1.xy_to_$(function() {
+    vec1.iterate_xy_as_$(function() {
       vec1.$ += 5;
       vec2.$ += 5
-    }, vec2)
+    });
     */
 
-    //TODO: This function cannot be nested.
-    public function xy_to_$(f:Function, ...vecs):Vec {
-      var i:int;
+    public function iterate_xy_as_$(f:Function):Vec {
+      //This can't be nested.
+      Util.assert($_current_value == $_IS_NEITHER);
 
-      vecs.push(this);
-
-      for (i = 0; i < vecs.length; i++) {
-        vecs[i].$_current_value = $_IS_X;
-      }
+      $_current_value = $_IS_X;
 
       f();
 
-      for (i = 0; i < vecs.length; i++) {
-        vecs[i].$_current_value = $_IS_Y;
-      }
+      $_current_value = $_IS_Y;
 
       f();
 
-      for (i = 0; i < vecs.length; i++) {
-        vecs[i].$_current_value = $_IS_NEITHER;
-      }
+      $_current_value = $_IS_NEITHER;
 
       return this;
     }
