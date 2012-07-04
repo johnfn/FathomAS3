@@ -17,6 +17,10 @@ package {
       return x;
     }
 
+    public static function assert(b:Boolean):void {
+      if (!b) throw "Assertion failed.";
+    }
+
     public static function epsilonEq(a:Number, b:Number, threshold:Number):Boolean {
       return Math.abs(a - b) < threshold;
     }

@@ -37,15 +37,10 @@ package {
       //TODO: This code is pretty obscure.
       //TODO: This will only work if leftScreen.width is less than the tileSize.
       return function():void {
-        var dir:Vec = leftScreen.clone();
-        var smallerSize:Vec = map.sizeVector.clone();
+        var smallerSize:Vec = map.sizeVector.clone().subtract(leftScreen.width);
+        var dir:Vec = leftScreen.clone().divide(smallerSize).map(Math.floor);
 
-        smallerSize.subtract(leftScreen.width);
-        dir.divide(smallerSize);
-        dir.map(Math.floor);
-
-        var toOtherSide:Vec = dir.clone();
-        toOtherSide.multiply(smallerSize);
+        var toOtherSide:Vec = dir.clone().multiply(smallerSize);
 
         if (toOtherSide.x > 0) leftScreen.x = 1;
         if (toOtherSide.y > 0) leftScreen.y = 1;
@@ -53,18 +48,13 @@ package {
         if (toOtherSide.x < 0) leftScreen.x = map.width - map.getTileSize() + 1;
         if (toOtherSide.y < 0) leftScreen.y = map.height - map.getTileSize() + 1;
 
-        dir.multiply(map.sizeVector);
-        map.moveCorner(dir);
+        map.moveCorner(dir.multiply(map.sizeVector));
       }
     }
 
     public static function rpgLike(speed:int):Function {
       return function():void {
-        var v:Vec = Util.movementVector().clone();
-        v.multiply(speed);
-
-        this.vel.add(v);
-
+        this.vel.add(Util.movementVector().multiply(speed));
         this.add(this.vel);
       }
     }
@@ -100,13 +90,13 @@ package {
         entity.resetVec = new Vec(0, 0);
         entity.vel.add(movement);
 
-        var normalizedVel:Vec = entity.vel.clone();
-        normalizedVel.normalize();
-
+        var normalizedVel:Vec = entity.vel.clone().normalize();
         var coll:EntityList = entity.currentlyTouching();
-        var steps:int = Math.max(entity.vel.x / normalizedVel.x, entity.vel.y / normalizedVel.y);
+        var steps:int = entity.vel.clone().divide(normalizedVel).max();
 
         // Check for collisions in both x and y directions.
+
+        //TODO: Could write this in terms of a map. It'd be sick.
 
         for (var i:int = 0; i < steps; i++) {
           entity.x += normalizedVel.x;
@@ -130,20 +120,16 @@ package {
           }
         }
 
-        var touchesGround:Boolean;
         // Move onto the thing we just collided with.
 
         entity.y -= entity.resetVec.y;
 
-        touchesGround = entity.vel.y > 0 && entity.currentlyTouching().length;
+        entity.touchingGround = entity.vel.y > 0 && entity.currentlyTouching().length;
 
         entity.x -= entity.resetVec.x;
 
-        //P1: You can collide and stick into something on the screen to your left.
-        if (Util.keyIsDown(Util.Key.Up)) {
-          if (touchesGround) {
-            entity.vel.y -= 300;
-          }
+        if (Util.keyIsDown(Util.Key.Up) && entity.touchingGround) {
+          entity.vel.y -= 300;
         }
       }
     }
@@ -151,11 +137,12 @@ package {
     public static function decel(decel:Number = 2):Function {
       var cutoff:int = 0.5;
 
-      return function():void {
-        if (Math.abs(this.vel.x) < cutoff) { this.vel.x = 0; }
-        if (Math.abs(this.vel.y) < cutoff) { this.vel.y = 0; }
+      var truncate:Function = function(val:int):int {
+        return Math.abs(val) < cutoff ? 0 : val;
+      }
 
-        this.vel.divide(decel);
+      return function():void {
+        this.vel.map(truncate).divide(decel);
       }
     }
   }

@@ -3,6 +3,9 @@ package {
   import flash.utils.getQualifiedClassName;
 
   /** Vector class (2d line indicating movement). */
+
+  // TODO: Although usually used like a Vector, it is in some cases
+  // used more like a Pair, so maybe that would be a better name.
   public class Vec implements IPositionable {
     internal var _x:Number;
     internal var _y:Number;
@@ -119,6 +122,14 @@ package {
 
     public function nonzero():Boolean {
       return x != 0 || y != 0;
+    }
+
+    public function max():Number {
+      return x > y ? x : y;
+    }
+
+    public function min():Number {
+      return x < y ? x : y;
     }
   }
 }
