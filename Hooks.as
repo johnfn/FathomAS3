@@ -96,29 +96,18 @@ package {
 
         // Check for collisions in both x and y directions.
 
-        //TODO: Could write this in terms of a map. It'd be sick.
-
-        for (var i:int = 0; i < steps; i++) {
-          entity.x += normalizedVel.x;
-          coll = entity.currentlyTouching();
-          if (coll.length > 0) {
-            entity.collisionList = coll;
-            entity.resetVec.x = -normalizedVel.x;
-            entity.x -= normalizedVel.x;
-            break;
+        entity.xy_to_$(function(){
+          for (var i:int = 0; i < steps; i++) {
+            entity.$ += normalizedVel.$;
+            coll = entity.currentlyTouching();
+            if (coll.length > 0) {
+              entity.collisionList = coll;
+              entity.resetVec.$ = -normalizedVel.$;
+              entity.$ -= normalizedVel.$;
+              break;
+            }
           }
-        }
-
-        for (var i:int = 0; i < steps; i++) {
-          entity.y += normalizedVel.y;
-          coll = entity.currentlyTouching();
-          if (coll.length > 0) {
-            entity.collisionList = coll;
-            entity.resetVec.y = -normalizedVel.y;
-            entity.y -= normalizedVel.y;
-            break;
-          }
-        }
+        }, normalizedVel, entity.resetVec);
 
         // Move onto the thing we just collided with.
 
