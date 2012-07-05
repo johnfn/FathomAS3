@@ -9,6 +9,12 @@ package {
       }
     }
 
+    public static function patrol(speed:int, obj:MovingEntity):Function {
+      return function():void {
+        obj.x += 1;
+      }
+    }
+
     // Every tick the key is down.
     public static function keyDown(key:Number, callback:Function):Function {
       return function():void {
@@ -35,11 +41,10 @@ package {
       }
     }
 
-    public static function onLeaveMap(who:MovingEntity, map:Map, callback:Function):Function {
-      return function():void {
-        if (who.x < 0 || who.y < 0 || who.x > map.width - who.width || who.y > map.height - who.width) {
-          callback.call(who);
-        }
+    //TODO: onxxxx methods could be moved into an Events.as file.
+    public static function onLeaveMap(who:MovingEntity, map:Map, callback:Function):void {
+      if (who.x < 0 || who.y < 0 || who.x > map.width - who.width || who.y > map.height - who.width) {
+        callback.call(who);
       }
     }
 
@@ -82,44 +87,36 @@ package {
 
        TODO: I think that said window should just be the update() function.
        */
-    public static function platformerLike(speed:int, entity:MovingEntity):Function {
-      return function():void {
-        var movement:Vec = new Vec(Util.movementVector().x * speed, 5);
+    public static function platformerLike(movement:Vec, entity:MovingEntity):void {
+      entity.resetVec = new Vec(0, 0);
+      entity.vel.add(movement);
 
-        entity.resetVec = new Vec(0, 0);
-        entity.vel.add(movement);
+      var normalizedVel:Vec = entity.vel.clone().normalize();
+      var coll:EntityList = entity.currentlyTouching();
+      var steps:int = entity.vel.clone().divide(normalizedVel).max();
 
-        var normalizedVel:Vec = entity.vel.clone().normalize();
-        var coll:EntityList = entity.currentlyTouching();
-        var steps:int = entity.vel.clone().divide(normalizedVel).max();
+      // Check for collisions in both x and y directions.
 
-        // Check for collisions in both x and y directions.
-
-        entity.iterate_xy_as_$(function():void {
-          for (var i:int = 0; i < steps; i++) {
-            entity.$ += normalizedVel.$;
-            coll = entity.currentlyTouching();
-            if (coll.length > 0) {
-              entity.collisionList = coll;
-              entity.resetVec.$ = -normalizedVel.$;
-              entity.$ -= normalizedVel.$;
-              break;
-            }
+      entity.iterate_xy_as_$(function():void {
+        for (var i:int = 0; i < steps; i++) {
+          entity.$ += normalizedVel.$;
+          coll = entity.currentlyTouching();
+          if (coll.length > 0) {
+            entity.collisionList = coll;
+            entity.resetVec.$ = -normalizedVel.$;
+            entity.$ -= normalizedVel.$;
+            break;
           }
-        });
-
-        // Move onto the thing we just collided with.
-
-        entity.y -= entity.resetVec.y;
-
-        entity.touchingGround = entity.vel.y > 0 && entity.currentlyTouching().length;
-
-        entity.x -= entity.resetVec.x;
-
-        if (Util.keyIsDown(Util.Key.Up) && entity.touchingGround) {
-          entity.vel.y -= 300;
         }
-      }
+      });
+
+      // Move onto the thing we just collided with.
+
+      entity.y -= entity.resetVec.y;
+
+      entity.touchingGround = entity.vel.y > 0 && entity.currentlyTouching().length;
+
+      entity.x -= entity.resetVec.x;
     }
 
     public static function decel(decel:Number = 2):Function {
