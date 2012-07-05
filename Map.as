@@ -14,7 +14,7 @@ package {
     private var tileSize:int;
     private var tiles:Array = [];
     private var data:Array = [];
-    private var topLeftCorner:Point = new Point(0, 0);
+    private var topLeftCorner:Vec = new Vec(0, 0);
 
     public var sizeVector:Vec;
 
@@ -116,8 +116,7 @@ package {
     public function moveCorner(diff:Vec):void {
       diff.divide(widthInTiles);
 
-      topLeftCorner.x += diff.x;
-      topLeftCorner.y += diff.y;
+      topLeftCorner.add(diff)
 
       updateTiles();
     }

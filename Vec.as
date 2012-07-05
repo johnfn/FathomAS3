@@ -111,6 +111,13 @@ package {
     });
     */
 
+    //TODO: Maybe this?
+    /*
+      vec.iter_as_$(['x', 'y'], function() {
+        vec1.$ += 5;
+        vec2.$ += 5;
+      });
+    */
     public function iterate_xy_as_$(f:Function):Vec {
       //This can't be nested.
       Util.assert($_current_value == $_IS_NEITHER);
