@@ -103,12 +103,7 @@ package {
     // Is a key currently down?
 
     public static function keyIsDown(which:int):Boolean {
-      if (keyStates[which].state == KeyState.KEYSTATE_JUST_DOWN) {
-        keyStates[which].state = KeyState.KEYSTATE_DOWN;
-
-        return true;
-      }
-      return false;
+      return keyStates[which].state == KeyState.KEYSTATE_JUST_DOWN || keyStates[which].state == KeyState.KEYSTATE_DOWN;
     }
 
     // Has a key just been released?
@@ -125,7 +120,12 @@ package {
     // Has a key just been pressed?
 
     public static function keyRecentlyDown(which:int):Boolean {
-      return keyStates[which].state == KeyState.KEYSTATE_JUST_DOWN;
+      if (keyStates[which].state == KeyState.KEYSTATE_JUST_DOWN) {
+        keyStates[which].state = KeyState.KEYSTATE_DOWN;
+
+        return true;
+      }
+      return false;
     }
 
     private static function initializeKeyInput(stage:Stage):void {
