@@ -11,7 +11,8 @@ package {
 
     public static function patrol(speed:int, obj:MovingEntity):Function {
       return function():void {
-        obj.x += 1;
+        obj.vel.x = 4;
+        obj.vel.y = 0;
       }
     }
 
@@ -87,13 +88,12 @@ package {
 
        TODO: I think that said window should just be the update() function.
        */
-    public static function platformerLike(movement:Vec, entity:MovingEntity):void {
+    public static function platformerLike(entity:MovingEntity):void {
       entity.resetVec = new Vec(0, 0);
-      entity.vel.add(movement);
 
       var normalizedVel:Vec = entity.vel.clone().normalize();
       var coll:EntityList = entity.currentlyTouching();
-      var steps:int = entity.vel.clone().divide(normalizedVel).max();
+      var steps:int = entity.vel.clone().divide(normalizedVel).NaNsTo(0).max();
 
       // Check for collisions in both x and y directions.
 

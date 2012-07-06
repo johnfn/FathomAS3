@@ -142,6 +142,13 @@ package {
       return this;
     }
 
+    public function NaNsTo(val:int) {
+      if (isNaN(x)) x = val;
+      if (isNaN(y)) y = val;
+
+      return this;
+    }
+
     public function subtract(v:*):Vec {
       if (v is IPositionable) {
         var vec:Vec = v as Vec;

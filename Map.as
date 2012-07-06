@@ -113,6 +113,10 @@ package {
 
     public override function update(es:EntityList):void {}
 
+    public override function toString():String {
+      return "[Map]"
+    }
+
     public function moveCorner(diff:Vec):void {
       diff.divide(widthInTiles);
 
