@@ -36,24 +36,34 @@ package {
       return new Rect(_x - size, _y - size, width + size * 2, height + size * 2);
     }
 
-    public function touchesGround():Boolean {
-      var footY:Number = y + this.height;
+    // Arguments:
+    // (-1, 0) left hand side
+    // (1, 0) right hand side,
+    // (0, -1) top
+    // (0, 1) bottom.
+
+    //TODO: The arguments here don't make sense to anyone but me.
+    public function touchesSide(sideX:int, sideY:int):Boolean {
+      // This is equivalent to sideX ^ sideY, but flash doesn't support boolean xor.
+      Util.assert(((sideX == 0) || (sideY == 0)) && !((sideX == 0) && (sideY == 0)));
+      Util.assert(width == height);
+
+      //TODO: Assumption that width=height.
+
+      var constant:Number = y + (sideX == -1 || sideY == -1 ? this.height : this.height + this.width);
       var pts:MagicArray = new MagicArray();
       var that:Rect = this;
 
-      for (var footX:Number = x + 2; footX < x + this.width - 2; footX += 2) {
-        pts.push(new Point(footX, footY));
+      for (var vary:Number = 0; vary < this.width; vary += 2) {
+        if (sideY != 0) {
+          pts.push(new Point(x + vary, constant));
+        } else {
+          pts.push(new Point(constant, y + vary));
+        }
       }
 
-      //TODO: The problem is that the point is colliding with the MC, not the rect.
-      // Should resolve itself when Entity extends Rect.
       return pts.myMap(function(p:Point):Boolean {
         return Util.entities.exclude(that).any(function(other:Entity):Boolean {
-          if (other.collidesPt(p)) {
-            trace("rect uid ", _uid);
-            trace("other uid ", other.uid);
-            trace(other);
-          }
           return other.collidesPt(p);
         });
       }).any();

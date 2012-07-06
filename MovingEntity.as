@@ -10,7 +10,6 @@ package {
     /* Velocity of the MovingEntity. */
     public var vel:Vec = new Vec(0, 0);
     public var resetVec:Vec = new Vec(0, 0);
-    public var touchingGround:Boolean = false;
 
     /* List of all entities that this entity collided with in this time step. */
     internal var collisionList:EntityList = new EntityList([]);
