@@ -87,36 +87,36 @@ package {
        we have an explicit window where we can perform collision checks.
 
        TODO: I think that said window should just be the update() function.
+       TODO: platformerLike takes vel as an implicit argument.
+       I should think about whether I like that.
        */
-    public static function platformerLike(entity:MovingEntity):void {
-      entity.resetVec = new Vec(0, 0);
+    public static function platformerLike(entity:MovingEntity):Function {
+      return function():void {
+        entity.resetVec = new Vec(0, 0);
 
-      var normalizedVel:Vec = entity.vel.clone().normalize();
-      var coll:EntityList = entity.currentlyTouching();
-      var steps:int = entity.vel.clone().divide(normalizedVel).NaNsTo(0).max();
+        var normalizedVel:Vec = entity.vel.clone().normalize();
+        var coll:EntityList = entity.currentlyTouching();
+        var steps:int = entity.vel.clone().divide(normalizedVel).NaNsTo(0).max();
 
-      // Check for collisions in both x and y directions.
+        // Check for collisions in both x and y directions.
 
-      entity.iterate_xy_as_$(function():void {
-        for (var i:int = 0; i < steps; i++) {
-          entity.$ += normalizedVel.$;
-          coll = entity.currentlyTouching();
-          if (coll.length > 0) {
-            entity.collisionList = coll;
-            entity.resetVec.$ = -normalizedVel.$;
-            entity.$ -= normalizedVel.$;
-            break;
+        entity.iterate_xy_as_$(function():void {
+          for (var i:int = 0; i < steps; i++) {
+            entity.$ += normalizedVel.$;
+            coll = entity.currentlyTouching();
+            if (coll.length > 0) {
+              entity.collisionList = coll;
+              entity.resetVec.$ = -normalizedVel.$;
+              entity.$ -= normalizedVel.$;
+              break;
+            }
           }
-        }
-      });
+        });
 
-      // Move onto the thing we just collided with.
+        // Move onto the thing we just collided with.
 
-      entity.y -= entity.resetVec.y;
-
-      entity.touchingGround = entity.vel.y > 0 && entity.currentlyTouching().length;
-
-      entity.x -= entity.resetVec.x;
+        entity.subtract(entity.resetVec);
+      }
     }
 
     public static function decel(decel:Number = 2):Function {

@@ -43,6 +43,7 @@ package {
     // (0, 1) bottom.
 
     //TODO: The arguments here don't make sense to anyone but me.
+    //TODO: This minor mess would be nicer with some better way to iterate x and y.
     public function touchesSide(sideX:int, sideY:int):Boolean {
       // This is equivalent to sideX ^ sideY, but flash doesn't support boolean xor.
       Util.assert(((sideX == 0) || (sideY == 0)) && !((sideX == 0) && (sideY == 0)));
@@ -50,7 +51,7 @@ package {
 
       //TODO: Assumption that width=height.
 
-      var constant:Number = y + (sideX == -1 || sideY == -1 ? this.height : this.height + this.width);
+      var constant:Number = (sideX == 0 ? y : x) + (sideX == -1 || sideY == -1 ? 0 : this.width);
       var pts:MagicArray = new MagicArray();
       var that:Rect = this;
 

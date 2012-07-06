@@ -16,6 +16,8 @@ package {
 
     function MovingEntity(x:Number = 0, y:Number = 0, width:Number = 20, height:Number = -1, color:Number = 0xFF0000, visible:Boolean = true):void {
       super(x, y, width, height, color, visible);
+
+      on("post-update", Hooks.resolveCollisions());
     }
 
     public override function die():void { __fathom.entities.remove(this); }
