@@ -105,7 +105,7 @@ package {
     public function groups():Array { return ["updateable"]; }
 
     public function collides(other:Entity):Boolean {
-      return (!eq(other)) && mc.hitTestObject(other.mc);
+      return (!eq(other)) && touchingRect(other);
     }
 
     public function collidesPt(point:Point):Boolean { return mc.hitTestPoint(point.x, point.y); }
