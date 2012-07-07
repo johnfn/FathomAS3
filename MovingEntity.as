@@ -26,19 +26,15 @@ package {
       super.update(e);
     }
 
-    /* Return the location that this entity will be one timestep in the future, ignoring collisions. */
-    public function nextLoc():Rect {
-      // we need the asCloneOf() call here so that when we return this
-      // we don't end up thinking that the nextLoc is colliding with the previous object.
-      return (new Rect(x + vel.x, y + vel.y, width, height)).asCloneOf(this) as Rect;
-    }
-
+    /*
+    TODO: Think this through.
     public override function collides(other:Entity):Boolean {
-      if (other is MovingEntity) {
+      if (other is MovingEntity && !other.eq(this)) {
         return super.collides(other);
       }
 
       return collisionList.indexOf(other) != -1;
     }
+    */
   }
 }

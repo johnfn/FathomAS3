@@ -203,12 +203,14 @@ package {
     }
 
     public function normalize():Vec {
-      var mag:Number = Math.sqrt(x * x + y * y);
-
-      x /= mag;
-      y /= mag;
+      x /= magnitude();
+      y /= magnitude();
 
       return this;
+    }
+
+    public function magnitude():int {
+      return Math.sqrt(x * x + y * y);
     }
 
     public function nonzero():Boolean {

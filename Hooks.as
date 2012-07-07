@@ -9,13 +9,6 @@ package {
       }
     }
 
-    public static function patrol(speed:int, obj:MovingEntity):Function {
-      return function():void {
-        obj.vel.x = 4;
-        obj.vel.y = 0;
-      }
-    }
-
     // Every tick the key is down.
     public static function keyDown(key:Number, callback:Function):Function {
       return function():void {
@@ -53,6 +46,8 @@ package {
       //TODO: This code is pretty obscure.
       //TODO: This will only work if leftScreen.width is less than the tileSize.
       return function():void {
+        Util.assert(leftScreen.width < map.getTileSize());
+
         var smallerSize:Vec = map.sizeVector.clone().subtract(leftScreen.width);
         var dir:Vec = leftScreen.clone().divide(smallerSize).map(Math.floor);
         var toOtherSide:Vec = dir.clone().multiply(smallerSize);
@@ -92,15 +87,18 @@ package {
        */
     public static function platformerLike(entity:MovingEntity):Function {
       return function():void {
+        if (entity.vel.magnitude() == 0) return;
+
         entity.resetVec = new Vec(0, 0);
 
         var normalizedVel:Vec = entity.vel.clone().normalize();
-        var coll:EntityList = entity.currentlyTouching();
         var steps:int = entity.vel.clone().divide(normalizedVel).NaNsTo(0).max();
 
         // Check for collisions in both x and y directions.
 
         entity.iterate_xy_as_$(function():void {
+          var coll:EntityList;
+
           for (var i:int = 0; i < steps; i++) {
             entity.$ += normalizedVel.$;
             coll = entity.currentlyTouching();
