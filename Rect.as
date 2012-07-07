@@ -36,40 +36,6 @@ package {
       return new Rect(_x - size, _y - size, width + size * 2, height + size * 2);
     }
 
-    // Arguments:
-    // (-1, 0) left hand side
-    // (1, 0) right hand side,
-    // (0, -1) top
-    // (0, 1) bottom.
-
-    //TODO: The arguments here don't make sense to anyone but me.
-    //TODO: This minor mess would be nicer with some better way to iterate x and y.
-    public function touchesSide(sideX:int, sideY:int):Boolean {
-      // This is equivalent to sideX ^ sideY, but flash doesn't support boolean xor.
-      Util.assert(((sideX == 0) || (sideY == 0)) && !((sideX == 0) && (sideY == 0)));
-      Util.assert(width == height);
-
-      //TODO: Assumption that width=height.
-
-      var constant:Number = (sideX == 0 ? y : x) + (sideX == -1 || sideY == -1 ? 0 : this.width);
-      var pts:MagicArray = new MagicArray();
-      var that:Rect = this;
-
-      for (var vary:Number = 0; vary < this.width; vary += 2) {
-        if (sideY != 0) {
-          pts.push(new Point(x + vary, constant));
-        } else {
-          pts.push(new Point(constant, y + vary));
-        }
-      }
-
-      return pts.myMap(function(p:Point):Boolean {
-        return Util.entities.exclude(that).any(function(other:Entity):Boolean {
-          return other.collidesPt(p);
-        });
-      }).any();
-    }
-
     public override function clone():Vec {
       return new Rect(_x, _y, width, height);
     }

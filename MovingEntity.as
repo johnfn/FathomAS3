@@ -11,6 +11,11 @@ package {
     public var vel:Vec = new Vec(0, 0);
     public var resetVec:Vec = new Vec(0, 0);
 
+    public var touchingLeft:Boolean   = false;
+    public var touchingRight:Boolean  = false;
+    public var touchingTop:Boolean    = false;
+    public var touchingBottom:Boolean = false;
+
     /* List of all entities that this entity collided with in this time step. */
     internal var collisionList:EntityList = new EntityList([]);
 

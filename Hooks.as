@@ -111,6 +111,29 @@ package {
           }
         });
 
+        // After that finished, we aren't touching anything.
+
+        // Find which sides we're touching.
+
+        entity.touchingLeft   = false;
+        entity.touchingRight  = false;
+        entity.touchingTop    = false;
+        entity.touchingBottom = false;
+
+        entity.x -= entity.resetVec.x;
+        if (entity.currentlyTouching().length > 0) {
+          if (entity.vel.x < 0) entity.touchingLeft = true;
+          if (entity.vel.x > 0) entity.touchingRight = true;
+        }
+        entity.x += entity.resetVec.x;
+
+        entity.y -= entity.resetVec.y;
+        if (entity.currentlyTouching().length > 0) {
+          if (entity.vel.y < 0) entity.touchingTop = true;
+          if (entity.vel.y > 0) entity.touchingBottom = true;
+        }
+        entity.y += entity.resetVec.y;
+
         // Move onto the thing we just collided with.
 
         entity.subtract(entity.resetVec);
