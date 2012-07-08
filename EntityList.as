@@ -40,6 +40,10 @@ package {
       return this.get.apply(this, criteria).length > 0;
     }
 
+    public function none(...criteria):Boolean {
+      return this.get.apply(this, criteria).length == 0;
+    }
+
     public function update():void {
       var updaters:EntityList = this.get("updateable");
 
