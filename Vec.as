@@ -135,6 +135,13 @@ package {
       return this;
     }
 
+    public function set(v:IPositionable):Vec {
+      x = v.x;
+      y = v.y;
+
+      return this;
+    }
+
     public function add(v:IPositionable):Vec {
       x += v.x;
       y += v.y;
