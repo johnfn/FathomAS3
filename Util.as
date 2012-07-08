@@ -16,6 +16,12 @@ package {
       return x;
     }
 
+    public static function sign(x:Number):Number {
+      if (x > 0) return  1;
+      if (x < 0) return -1;
+                 return  0;
+    }
+
     public static function assert(b:Boolean):void {
       if (!b) throw "Assertion failed.";
     }
