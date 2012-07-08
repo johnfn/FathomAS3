@@ -124,10 +124,6 @@ package {
 
       updateTiles();
     }
-
-    public override function groups():Array {
-      return super.groups().concat("map");
-    }
   }
 }
 
