@@ -41,6 +41,12 @@ package {
                       };
     }
 
+    public function set visible(v:Boolean):void { mc.visible = v; }
+    public function get visible():Boolean { return mc.visible; }
+
+    public function set alpha(v:Number):void { mc.alpha = v; }
+    public function get alpha():Number { return mc.alpha; }
+
     private function draw(width:Number, height:Number, color:Number):void {
       mc.graphics.beginFill(color);
       mc.graphics.drawRect(0, 0, width, height);
@@ -112,6 +118,7 @@ package {
     public function die():void { __fathom.entities.remove(this); }
 
     //TODO: "updateable" is the norm. "noupdate" should be a group.
+    //TODO: groups should be an enumeration, not a string.
     public function groups():Array { return ["updateable"]; }
 
     public function collides(other:Entity):Boolean {

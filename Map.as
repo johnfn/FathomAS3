@@ -125,7 +125,6 @@ package {
       updateTiles();
     }
 
-    //TODO: "updateable" is the norm. "noupdate" should be a group.
     public override function groups():Array {
       return super.groups().concat("map");
     }
