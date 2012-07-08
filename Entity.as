@@ -91,17 +91,27 @@ package {
       return this;
     }
 
-    public function currentlyTouching():EntityList {
+    public function touching(...args):Boolean {
+      return currentlyTouching.apply(this, args).length > 0;
+    }
+
+    // TODO: Needs a better name.
+    public function currentlyTouching(...args):EntityList {
       var that:* = this;
 
       // It is important that we use *their* collision method, not ours.
-      return (Util.entities.get(function(other:Entity):Boolean {
+      // TODO: This will lead to disaster down the line (imagine colliding two maps!)
+
+      var touchesMe:Function = function(other:Entity):Boolean {
         return other.collides(that);
-      }));
+      };
+
+      return Util.entities.get.apply(this, args.concat(touchesMe));
     }
 
     public function die():void { __fathom.entities.remove(this); }
 
+    //TODO: "updateable" is the norm. "noupdate" should be a group.
     public function groups():Array { return ["updateable"]; }
 
     public function collides(other:Entity):Boolean {
