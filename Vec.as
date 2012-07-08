@@ -142,7 +142,7 @@ package {
       return this;
     }
 
-    public function NaNsTo(val:int) {
+    public function NaNsTo(val:int):Vec {
       if (isNaN(x)) x = val;
       if (isNaN(y)) y = val;
 
