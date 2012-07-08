@@ -118,8 +118,8 @@ package {
     public function die():void { __fathom.entities.remove(this); }
 
     //TODO: "updateable" is the norm. "noupdate" should be a group.
-    //TODO: groups should be an enumeration, not a string.
-    public function groups():Array { return ["updateable"]; }
+    //TODO: There is a possible namespace collision here. Should prob make it impossible to manually add groups.
+    public function groups():Array { return ["updateable"].concat(getQualifiedClassName(this)); }
 
     public function collides(other:Entity):Boolean {
       return (!eq(other)) && touchingRect(other);
