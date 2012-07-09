@@ -24,6 +24,10 @@ package {
       return -1;
     }
 
+    Array.prototype.contains = function(val:*):Boolean {
+      return this.getIndex(val) != -1;
+    }
+
     // Remove all occurances of item from array.
     Array.prototype.remove = function(item:*):void {
       for (var i:int = 0; i < this.length; i++) {

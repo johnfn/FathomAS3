@@ -126,7 +126,7 @@ package {
     /* This causes the Entity to cease existing in-game. The only way to
        bring it back is to call add(). */
     public function remove():void {
-      __fathom.entities.remove(this);
+      Util.entities.remove(this);
       mc.visible = false;
     }
 
@@ -142,6 +142,8 @@ package {
 
     /* This permanently removes an Entity. It can't be add()ed back. */
     public function destroy():void {
+      remove();
+
       __fathom = null;
       mc = null;
       exists = false;
