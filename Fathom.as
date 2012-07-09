@@ -21,24 +21,21 @@ package {
       gameloopID = setInterval(update, 1000 / FPS);
     }
 
+    //TODO: May want a better name than pause. freeze?
     public static function pause():void {
       _paused = true;
-
-      clearInterval(gameloopID);
     }
 
     public static function resume():void {
       _paused = false;
-
-      gameloopID = setInterval(update, 1000 / Fathom.FPS);
     }
 
     private static function update():void {
       var updaters:EntityList;
       if (_paused) {
-        updaters = this.get("updates-while-paused");
+        updaters = entities.get("updates-while-paused");
       } else {
-        updaters = this.get("updateable");
+        updaters = entities.get("updateable");
       }
 
       for (var i:int = 0; i < updaters.length; i++) {
@@ -49,7 +46,7 @@ package {
         if (e.destroyed) continue;
 
         e.emit("pre-update");
-        e.update(this);
+        e.update(entities);
         e.emit("post-update");
       }
     }

@@ -70,7 +70,7 @@ package {
     }
 
     public function addPersistentItem(item:Entity):void {
-      persistent[topLeftCorner.asKey()].push(e);
+      persistent[topLeftCorner.asKey()].push(item);
     }
 
     private function addPersistentItems(c:Color, x:int, y:int):Color {

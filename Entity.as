@@ -65,6 +65,7 @@ package {
     }
     */
 
+    //TODO: I don't think I like this interface.
     public function on(event:String, callback:Function):Entity {
       var events:Array = __fathom.events[event] || [];
       if (! (callback in events)) {
@@ -144,6 +145,7 @@ package {
     public function destroy():void {
       remove();
 
+      mc.parent.removeChild(mc);
       __fathom = null;
       mc = null;
       destroyed = true;
