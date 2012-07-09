@@ -119,7 +119,7 @@ package {
 
     //TODO: "updateable" is the norm. "noupdate" should be a group.
     //TODO: There is a possible namespace collision here. Should prob make it impossible to manually add groups.
-    public function groups():Array { return ["updateable"].concat(getQualifiedClassName(this)); }
+    public function groups():Array { return ["updateable"].concat(Util.className(this)); }
 
     public function collides(other:Entity):Boolean {
       return (!eq(other)) && touchingRect(other);

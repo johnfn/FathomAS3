@@ -4,6 +4,7 @@ package {
     import flash.events.KeyboardEvent;
     import flash.display.DisplayObject;
     import flash.display.Stage;
+    import flash.utils.getQualifiedClassName;
 
     public static var uid:Number = 0;
     public static var entities:EntityList = new EntityList([]);
@@ -20,6 +21,14 @@ package {
       if (x > 0) return  1;
       if (x < 0) return -1;
                  return  0;
+    }
+
+    public static function className(c:*):String {
+      var qualifiedName:String = getQualifiedClassName(c);
+      if (qualifiedName.indexOf(":") == -1) return qualifiedName;
+      var split:Array = qualifiedName.split(":");
+
+      return split[split.length - 1];
     }
 
     public static function assert(b:Boolean):void {
