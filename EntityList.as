@@ -30,10 +30,10 @@ package {
     }
 
     public function one(...criteria):Entity {
-      var results = this.get.apply(this, criteria).first();
+      var results:EntityList = this.get.apply(this, criteria);
       Util.assert(results.length == 1);
 
-      return results;
+      return results.first();
     }
 
     public function any(...criteria):Boolean {
