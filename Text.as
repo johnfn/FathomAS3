@@ -37,14 +37,14 @@ package {
 
       var typewriteTick:Function = function() {
         if (counter > fullContent.length) {
-          clearInterval(id);
+          off("pre-update", typewriteTick);
         }
 
         textField.appendText(fullContent.charAt(counter));
         counter++;
       }
 
-      id = setInterval(typewriteTick, 100);
+      on("pre-update", typewriteTick);
 
       return this;
     }
