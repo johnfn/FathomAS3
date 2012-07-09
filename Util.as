@@ -13,6 +13,8 @@ package {
 
     private static var keyStates:Array = new Array(255);
 
+    //TODO: Should move Array.prototype stuff into separate ArrayExtensions class.
+
     // Array::indexOf only works with String values.
     Array.prototype.getIndex = function(val:*):int {
       for (var i:int = 0; i < this.length; i++) {

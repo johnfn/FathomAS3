@@ -10,6 +10,7 @@ package {
   public class Entity extends Rect implements IEqual {
     public var __fathom:Object;
 
+    internal var exists:Boolean = true;
     internal var mc:MovieClip;
     internal var color:Number;
 
@@ -30,7 +31,7 @@ package {
       }
 
       if (visible) {
-        Util.entities.add(this);
+        create();
         draw(width, height, color);
         Util.stage.addChild(mc);
       }
@@ -81,7 +82,6 @@ package {
         throw "Don't have that event!";
       }
 
-      trace(events.getIndex(callback));
       if (callback != null) {
         __fathom.events[event].remove(callback);
       } else {
@@ -123,7 +123,29 @@ package {
       return Util.entities.get.apply(this, args.concat(touchesMe));
     }
 
-    public function die():void { __fathom.entities.remove(this); }
+    /* This causes the Entity to cease existing in-game. The only way to
+       bring it back is to call add(). */
+    public function remove():void {
+      __fathom.entities.remove(this);
+      mc.visible = false;
+    }
+
+    /* This causes the Entity to exist in the game. You should only call
+       this after previously calling remove(). */
+    public function create():void {
+      Util.assert(exists);
+
+      Util.entities.add(this);
+      mc.visible = true;
+    }
+
+
+    /* This permanently removes an Entity. It can't be add()ed back. */
+    public function destroy():void {
+      __fathom = null;
+      mc = null;
+      exists = false;
+    }
 
     //TODO: "updateable" is the norm. "noupdate" should be a group.
     //TODO: There is a possible namespace collision here. Should prob make it impossible to manually add groups.
@@ -135,6 +157,7 @@ package {
 
     public function collidesPt(point:Point):Boolean { return mc.hitTestPoint(point.x, point.y); }
 
+    //TODO: This causes scary bugs.
     public function update(e:EntityList):void {
       mc.x = x;
       mc.y = y;

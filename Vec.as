@@ -231,5 +231,10 @@ package {
     public function min():Number {
       return x < y ? x : y;
     }
+
+    /* Create a unique key to store in an object. */
+    public function asKey():String {
+      return x + "," + y;
+    }
   }
 }

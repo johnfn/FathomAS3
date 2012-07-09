@@ -25,8 +25,6 @@ package {
       on("post-update", Hooks.resolveCollisions());
     }
 
-    public override function die():void { __fathom.entities.remove(this); }
-
     public override function update(e:EntityList):void {
       super.update(e);
     }

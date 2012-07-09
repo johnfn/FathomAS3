@@ -15,6 +15,10 @@ package {
     private var tiles:Array = [];
     private var data:Array = [];
     private var topLeftCorner:Vec = new Vec(0, 0);
+    private var exploredMaps:Object = {};
+
+    private var persistentItemMapping:Object = {};
+    private var persistent:Object = {};
 
     public var sizeVector:Vec;
 
@@ -42,9 +46,11 @@ package {
       return tileSize;
     }
 
-    public function fromImage(mapClass:Class):Map {
+    public function fromImage(mapClass:Class, persistentItemMapping:Object):Map {
       var bAsset:BitmapAsset = new mapClass();
       var bData:BitmapData = bAsset.bitmapData;
+
+      this.persistentItemMapping = persistentItemMapping;
 
       data = Util.make2DArray(bData.width, bData.height, undefined);
 
@@ -63,12 +69,48 @@ package {
       tiles[x][y].setType(type);
     }
 
+    private function addPersistentItems(c:Color, x:int, y:int):Color {
+      if (!(c.toString() in persistentItemMapping)) return c;
+      var e:Entity = (new persistentItemMapping[c.toString()]).set(new Vec(x, y));
+
+      persistent[topLeftCorner.asKey()].push(e);
+
+      return new Color(255, 255, 255);
+    }
+
+    private function switchMap(diff:Vec):void {
+      // Remove all persistent items in the old room.
+      persistent[topLeftCorner.asKey()].map(function(e:*, i:int, a:Array):void {
+        e.remove();
+      });
+
+      topLeftCorner.add(diff)
+
+      if (!exploredMaps[topLeftCorner.asKey()]) return;
+
+      // Add all persistent items that exist in this room.
+      persistent[topLeftCorner.asKey()].map(function(e:*, i:int, a:Array):void {
+        e.create();
+      });
+    }
+
     private function updateTiles():void {
+      var seenBefore:Boolean = exploredMaps[topLeftCorner.asKey()];
+
+      if (!seenBefore) {
+        persistent[topLeftCorner.asKey()] = [];
+      }
+
       for (var x:int = 0; x < widthInTiles; x++) {
         for (var y:int = 0; y < heightInTiles; y++) {
           var val:int = 0;
+          var dataColor:Color = data[topLeftCorner.x + x][topLeftCorner.y + y];
 
-          if (data[topLeftCorner.x + x][topLeftCorner.y + y].eq(new Color(0, 0, 0))) {
+          if (!seenBefore) {
+            dataColor = addPersistentItems(dataColor, x * tileSize, y * tileSize);
+          }
+
+          if (dataColor.eq(new Color(0, 0, 0))) {
             val = 1;
           } else {
             val = 0;
@@ -77,6 +119,8 @@ package {
           setTile(x, y, val);
         }
       }
+
+      exploredMaps[topLeftCorner.asKey()] = true;
     }
 
     public override function collidesPt(other:Point):Boolean {
@@ -120,7 +164,7 @@ package {
     public function moveCorner(diff:Vec):void {
       diff.divide(widthInTiles);
 
-      topLeftCorner.add(diff)
+      switchMap(diff);
 
       updateTiles();
     }
