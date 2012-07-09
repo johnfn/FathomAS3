@@ -1,7 +1,7 @@
 package {
   import flash.text.TextField;
-  import flash.geom.Point;
-  import flash.utils.getQualifiedClassName;
+  import flash.utils.setInterval;
+  import flash.utils.clearInterval;
 
   import Hooks;
   import Util;
@@ -9,8 +9,11 @@ package {
 
   public class Text extends Entity implements IEqual {
     internal var textField:TextField;
+    internal var content:String = "";
 
     function Text(x:Number = 0, y:Number = 0, content:String = ""):void {
+      this.content = content;
+
       super(0, 0, 0, 0);
       mc.graphics.clear();
 
@@ -21,6 +24,29 @@ package {
       textField.text = content;
 
       Util.stage.addChild(textField);
+    }
+
+    // Causes the classic videogame-ish effect of showing only 1 character
+    // of text at a time.
+    public function typewrite():Text {
+      var fullContent:String = this.content;
+      var counter:int = 0;
+      var id:int = 0;
+
+      textField.text = "";
+
+      var typewriteTick:Function = function() {
+        if (counter > fullContent.length) {
+          clearInterval(id);
+        }
+
+        textField.appendText(fullContent.charAt(counter));
+        counter++;
+      }
+
+      id = setInterval(typewriteTick, 100);
+
+      return this;
     }
   }
 }
