@@ -52,7 +52,7 @@ package {
 
         // There is a possibility that an earlier update() caused this entity
         // to destroy itself. If so, skip it.
-        if (!e.exists) continue;
+        if (e.destroyed) continue;
 
         e.emit("pre-update");
         e.update(this);

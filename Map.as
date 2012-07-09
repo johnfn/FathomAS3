@@ -79,12 +79,22 @@ package {
     }
 
     private function switchMap(diff:Vec):void {
-      // Remove all persistent items in the old room.
-      persistent[topLeftCorner.asKey()].map(function(e:*, i:int, a:Array):void {
-        e.remove();
-      });
+      // Hide old persistent items and get rid of permanently destroyed ones.
+      var items:Array = persistent[topLeftCorner.asKey()];
+      var processedItems:Array = [];
 
+      for (var i:int = 0; i < items.length; i++) {
+        if (!items[i].destroyed) {
+          items[i].remove();
+          processedItems.push(items[i]);
+        }
+      }
+
+      persistent[topLeftCorner.asKey()] = processedItems;
+
+      // Switch maps
       topLeftCorner.add(diff)
+
 
       if (!exploredMaps[topLeftCorner.asKey()]) return;
 

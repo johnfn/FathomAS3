@@ -35,7 +35,7 @@ package {
 
       textField.text = "";
 
-      var typewriteTick:Function = function() {
+      var typewriteTick:Function = function():void {
         if (counter > fullContent.length) {
           off("pre-update", typewriteTick);
         }

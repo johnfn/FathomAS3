@@ -10,7 +10,7 @@ package {
   public class Entity extends Rect implements IEqual {
     public var __fathom:Object;
 
-    internal var exists:Boolean = true;
+    internal var destroyed:Boolean = false;
     internal var mc:MovieClip;
     internal var color:Number;
 
@@ -133,7 +133,7 @@ package {
     /* This causes the Entity to exist in the game. You should only call
        this after previously calling remove(). */
     public function create():void {
-      Util.assert(exists);
+      Util.assert(!destroyed);
 
       Fathom.entities.add(this);
       mc.visible = true;
@@ -146,7 +146,7 @@ package {
 
       __fathom = null;
       mc = null;
-      exists = false;
+      destroyed = true;
     }
 
     //TODO: "updateable" is the norm. "noupdate" should be a group.
