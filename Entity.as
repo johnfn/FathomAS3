@@ -165,8 +165,8 @@ package {
     public function clearMemory():void {
       remove();
 
-      mc.parent.removeChild(mc);
       __fathom = null;
+      if (mc.parent) mc.parent.removeChild(mc);
       mc = null;
       destroyed = true;
     }
