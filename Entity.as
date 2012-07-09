@@ -26,19 +26,19 @@ package {
 
       super(x, y, width);
 
-      if (!Util.stage) {
+      if (!Fathom.stage) {
       	throw new Error("Util.initialize() has not been called. Failing.");
       }
 
       if (visible) {
         create();
         draw(width, height, color);
-        Util.stage.addChild(mc);
+        Fathom.stage.addChild(mc);
       }
 
       this.__fathom = { uid: Util.getUniqueID()
                       , events: {}
-                      , entities: Util.entities
+                      , entities: Fathom.entities
                       };
     }
 
@@ -120,13 +120,13 @@ package {
         return other.collides(that);
       };
 
-      return Util.entities.get.apply(this, args.concat(touchesMe));
+      return Fathom.entities.get.apply(this, args.concat(touchesMe));
     }
 
     /* This causes the Entity to cease existing in-game. The only way to
        bring it back is to call add(). */
     public function remove():void {
-      Util.entities.remove(this);
+      Fathom.entities.remove(this);
       mc.visible = false;
     }
 
@@ -135,7 +135,7 @@ package {
     public function create():void {
       Util.assert(exists);
 
-      Util.entities.add(this);
+      Fathom.entities.add(this);
       mc.visible = true;
     }
 

@@ -23,7 +23,7 @@ package {
       textField.y = y;
       textField.text = content;
 
-      Util.stage.addChild(textField);
+      Fathom.stage.addChild(textField);
     }
 
     // Causes the classic videogame-ish effect of showing only 1 character

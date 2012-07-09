@@ -7,10 +7,7 @@ package {
     import flash.utils.getQualifiedClassName;
 
     public static var uid:Number = 0;
-    public static var entities:EntityList = new EntityList([]);
     public static var Key:Object = {};
-    public static var stage:Stage;
-
     private static var keyStates:Array = new Array(255);
 
     //TODO: Should move Array.prototype stuff into separate ArrayExtensions class.
@@ -104,10 +101,6 @@ package {
       return low + Math.floor(Math.random() * (high - low));
     }
 
-    private static function update():void {
-      entities.update();
-    }
-
     private static function _keyDown(event:KeyboardEvent):void {
       var keystate:KeyState = keyStates[event.keyCode];
 
@@ -168,7 +161,9 @@ package {
       return false;
     }
 
-    private static function initializeKeyInput(stage:Stage):void {
+    // You should never have to call this function.
+    // TODO: Move into Fathom, I guess.
+    public static function _initializeKeyInput(stage:Stage):void {
       stage.addEventListener(KeyboardEvent.KEY_DOWN, _keyDown);
       stage.addEventListener(KeyboardEvent.KEY_UP, _keyUp);
 
@@ -184,13 +179,6 @@ package {
       for (var k:int = 65; k <= 65 + 26; k++) {
         Key[String.fromCharCode(k)] = k;
       }
-    }
-
-    public static function initialize(stage:Stage):void {
-      Util.stage = stage;
-
-      initializeKeyInput(stage);
-      setInterval(update, 1000/30);
     }
   }
 }
