@@ -74,12 +74,12 @@ package {
       off("pre-update", this.typewriteTick);
     }
 
-    public override function destroy():void {
+    public override function clearMemory():void {
       textField.parent.removeChild(textField);
       textField = null;
       content = null;
 
-      super.destroy();
+      super.clearMemory();
     }
   }
 }

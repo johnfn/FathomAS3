@@ -41,9 +41,10 @@ package {
       for (var i:int = 0; i < updaters.length; i++) {
         var e:Entity = updaters[i];
 
-        // There is a possibility that an earlier update() caused this entity
-        // to destroy itself. If so, skip it.
-        if (e.destroyed) continue;
+        if (e.destroyed) {
+          e.clearMemory();
+          continue;
+        }
 
         e.emit("pre-update");
         e.update(entities);

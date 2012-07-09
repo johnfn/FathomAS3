@@ -14,6 +14,7 @@ package {
     internal var mc:MovieClip;
     internal var color:Number;
 
+    //TODO: Make visible represent whether an mc actually exists for this Entity.
     function Entity(x:Number = 0, y:Number = 0, width:Number = 20, height:Number = -1, color:Number = 0xFF0000, visible:Boolean = true):void {
       if (height == -1) height = width;
 
@@ -49,6 +50,14 @@ package {
 
     public function set alpha(v:Number):void { mc.alpha = v; }
     public function get alpha():Number { return mc.alpha; }
+
+    /*
+    public override function set x(v:Number):void { mc.x = v; _x = v; }
+    public override function get x():Number { return mc.x; }
+
+    public override function set y(v:Number):void { mc.y = v; _y = v; }
+    public override function get y():Number { return mc.y; }
+    */
 
     private function draw(width:Number, height:Number, color:Number):void {
       mc.graphics.beginFill(color);
@@ -148,9 +157,12 @@ package {
       mc.visible = true;
     }
 
-
     /* This permanently removes an Entity. It can't be add()ed back. */
     public function destroy():void {
+      destroyed = true;
+    }
+
+    public function clearMemory():void {
       remove();
 
       mc.parent.removeChild(mc);
