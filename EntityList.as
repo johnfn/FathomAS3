@@ -44,22 +44,6 @@ package {
       return this.get.apply(this, criteria).length == 0;
     }
 
-    public function update():void {
-      var updaters:EntityList = this.get("updateable");
-
-      for (var i:int = 0; i < updaters.length; i++) {
-        var e:Entity = updaters[i];
-
-        // There is a possibility that an earlier update() caused this entity
-        // to destroy itself. If so, skip it.
-        if (e.destroyed) continue;
-
-        e.emit("pre-update");
-        e.update(this);
-        e.emit("post-update");
-      }
-    }
-
     public function exclude(criteria:IEqual):EntityList {
       var pass:Array = [];
 

@@ -69,11 +69,15 @@ package {
       tiles[x][y].setType(type);
     }
 
+    public function addPersistentItem(item:Entity):void {
+      persistent[topLeftCorner.asKey()].push(e);
+    }
+
     private function addPersistentItems(c:Color, x:int, y:int):Color {
       if (!(c.toString() in persistentItemMapping)) return c;
       var e:Entity = (new persistentItemMapping[c.toString()]).set(new Vec(x, y));
 
-      persistent[topLeftCorner.asKey()].push(e);
+      addPersistentItem(e);
 
       return new Color(255, 255, 255);
     }

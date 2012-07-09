@@ -26,6 +26,10 @@ package {
       Fathom.stage.addChild(textField);
     }
 
+    public override function groups():Array {
+      return super.groups().concat("updates-while-paused");
+    }
+
     // Causes the classic videogame-ish effect of showing only 1 character
     // of text at a time.
     public function typewrite():Text {
