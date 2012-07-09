@@ -13,6 +13,25 @@ package {
 
     private static var keyStates:Array = new Array(255);
 
+    // Array::indexOf only works with String values.
+    Array.prototype.getIndex = function(val:*):int {
+      for (var i:int = 0; i < this.length; i++) {
+        if (this[i] == val) return i;
+      }
+
+      return -1;
+    }
+
+    // Remove all occurances of item from array.
+    Array.prototype.remove = function(item:*):void {
+      for (var i:int = 0; i < this.length; i++) {
+        if (this[i] == item) {
+          this.splice(i, 1);
+          i--;
+        }
+      }
+    }
+
     public static function id(x:*):* {
       return x;
     }
