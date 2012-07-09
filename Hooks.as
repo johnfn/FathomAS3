@@ -140,6 +140,22 @@ package {
       }
     }
 
+    public static function flicker(duration:int = 50):Function {
+      var counter:int = 0;
+
+      var fn:Function = function():void {
+        counter++;
+
+        this.visible = (Math.floor(counter / 3) % 2 == 0)
+
+        if (counter > duration) {
+          this.off("pre-update", fn);
+        }
+      }
+
+      return fn;
+    }
+
     public static function decel(decel:Number = 2):Function {
       var cutoff:int = 0.5;
 
