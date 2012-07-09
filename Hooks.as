@@ -27,6 +27,18 @@ package {
       }
     }
 
+    //TODO...
+    public static function entityDestroyed(e:Entity, callback:Function):Function {
+      var sentCallback:Boolean = false;
+
+      return function():void {
+        if (!sentCallback) {
+          callback();
+          sentCallback = true;
+        }
+      }
+    }
+
     public static function keyRecentlyUp(key:Number, callback:Function):Function {
       return function():void {
         if (Util.keyRecentlyUp(key)) {

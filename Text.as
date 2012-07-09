@@ -28,7 +28,7 @@ package {
 
       Fathom.stage.addChild(textField);
 
-      on("post-update", Hooks.keyRecentlyDown(Util.Key.Z, advanceText));
+      listen(Hooks.keyRecentlyDown(Util.Key.Z, advanceText));
     }
 
     public override function groups():Array {

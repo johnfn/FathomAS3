@@ -34,6 +34,8 @@ package {
         create();
         draw(width, height, color);
         Fathom.stage.addChild(mc);
+      } else {
+        Fathom.entities.add(this);
       }
 
       this.__fathom = { uid: Util.getUniqueID()
@@ -88,6 +90,12 @@ package {
       } else {
         __fathom.events[event] = [];
       }
+
+      return this;
+    }
+
+    public function listen(callback:Function = null):Entity {
+      on("pre-update", callback);
 
       return this;
     }
