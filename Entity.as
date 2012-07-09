@@ -57,6 +57,13 @@ package {
       return __fathom.entities;
     }
 
+
+    /*
+    public function addEvent(event:Function):Entity {
+      on("post-update", event);
+    }
+    */
+
     public function on(event:String, callback:Function):Entity {
       var events:Array = __fathom.events[event] || [];
       if (! (callback in events)) {
@@ -74,8 +81,9 @@ package {
         throw "Don't have that event!";
       }
 
+      trace(events.getIndex(callback));
       if (callback != null) {
-        __fathom.events[event] = events.splice(events.indexOf(callback), 1);
+        __fathom.events[event].remove(callback);
       } else {
         __fathom.events[event] = [];
       }

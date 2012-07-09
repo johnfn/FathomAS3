@@ -149,6 +149,7 @@ package {
         this.visible = (Math.floor(counter / 3) % 2 == 0)
 
         if (counter > duration) {
+          this.visible = true;
           this.off("pre-update", fn);
         }
       }
