@@ -171,9 +171,12 @@ package {
       destroyed = true;
     }
 
+    //TODO: Could add all superclasses.
     //TODO: "updateable" is the norm. "noupdate" should be a group.
     //TODO: There is a possible namespace collision here. Should prob make it impossible to manually add groups.
-    public function groups():Array { return ["updateable"].concat(Util.className(this)); }
+    public function groups():Array {
+      return ["updateable"].concat(Util.className(this));
+    }
 
     public function collides(other:Entity):Boolean {
       return (!eq(other)) && touchingRect(other);
@@ -182,9 +185,14 @@ package {
     public function collidesPt(point:Point):Boolean { return mc.hitTestPoint(point.x, point.y); }
 
     //TODO: This causes scary bugs.
+    //P1: Fix said scary bugs.
     public function update(e:EntityList):void {
       mc.x = x;
       mc.y = y;
+    }
+
+    public override function toString():String {
+      return "[" + Util.className(this) + super.toString() + "]";
     }
 
     public function depth():Number { return 0; }

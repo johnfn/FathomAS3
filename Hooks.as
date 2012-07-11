@@ -9,6 +9,17 @@ package {
       }
     }
 
+    //TODO...
+    public static function after(time:int, callback:Function):Function {
+      var timeLeft:int = time;
+
+      return function():void {
+        if (!timeLeft--) {
+          callback();
+        }
+      }
+    }
+
     // Every tick the key is down.
     public static function keyDown(key:Number, callback:Function):Function {
       return function():void {
@@ -105,6 +116,7 @@ package {
 
         var normalizedVel:Vec = entity.vel.clone().normalize();
         var steps:int = entity.vel.clone().divide(normalizedVel).NaNsTo(0).max();
+        var that:* = entity;
 
         // Check for collisions in both x and y directions.
 
@@ -114,6 +126,7 @@ package {
           for (var i:int = 0; i < steps; i++) {
             entity.$ += normalizedVel.$;
             coll = entity.currentlyTouching();
+
             if (coll.length > 0) {
               entity.collisionList = coll;
               entity.resetVec.$ = -normalizedVel.$;
@@ -152,7 +165,7 @@ package {
       }
     }
 
-    public static function flicker(duration:int = 50):Function {
+    public static function flicker(duration:int = 50, callback:Function=null):Function {
       var counter:int = 0;
 
       var fn:Function = function():void {
@@ -163,6 +176,7 @@ package {
         if (counter > duration) {
           this.visible = true;
           this.off("pre-update", fn);
+          if (callback != null) callback();
         }
       }
 
