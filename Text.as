@@ -7,7 +7,7 @@ package {
   import Util;
   import MagicArray;
 
-  public class Text extends Entity implements IEqual {
+  public class Text extends Entity {
     internal var textField:TextField;
     internal var content:String = "";
 

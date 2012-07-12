@@ -41,8 +41,16 @@ package {
       for (var i:int = 0; i < updaters.length; i++) {
         var e:Entity = updaters[i];
 
+        // This acts as a pseudo garbage-collector. We
+        // separate out the destroyed() call from the clearMemory() call because
+        // we sometimes want to destroy() an item halfway through its update() call,
+        // so the actual destruction would have to wait until the end of the update.
         if (e.destroyed) {
           e.clearMemory();
+          continue;
+        }
+
+        if (e.hidden) {
           continue;
         }
 

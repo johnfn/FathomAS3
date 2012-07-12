@@ -83,18 +83,28 @@ package {
     }
 
     private function switchMap(diff:Vec):void {
+      // TODO: enemies should be persistent.
       // Hide old persistent items and get rid of permanently destroyed ones.
       var items:Array = persistent[topLeftCorner.asKey()];
       var processedItems:Array = [];
+      var i:int;
 
-      for (var i:int = 0; i < items.length; i++) {
+      for (i = 0; i < items.length; i++) {
         if (!items[i].destroyed) {
-          items[i].remove();
+          items[i].hide();
           processedItems.push(items[i]);
         }
       }
 
       persistent[topLeftCorner.asKey()] = processedItems;
+
+      // Remove all impermanent items
+
+      var impermanent:EntityList = Fathom.entities.get("!permanent");
+
+      for (i = 0; i < impermanent.length; i++) {
+        impermanent[i].destroy();
+      }
 
       // Switch maps
       topLeftCorner.add(diff)
@@ -104,7 +114,7 @@ package {
 
       // Add all persistent items that exist in this room.
       persistent[topLeftCorner.asKey()].map(function(e:*, i:int, a:Array):void {
-        e.create();
+        e.show();
       });
     }
 
@@ -167,6 +177,10 @@ package {
       if (!makeBigger(3).containsRect(other)) return true;
 
       return false;
+    }
+
+    public override function groups():Array {
+      return super.groups().concat("permanent");
     }
 
     public override function update(es:EntityList):void {}

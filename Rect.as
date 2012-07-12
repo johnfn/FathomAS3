@@ -1,5 +1,5 @@
 package {
-  public class Rect extends Vec implements IEqual, IPositionable {
+  public class Rect extends Vec implements IPositionable {
     import flash.geom.Point;
     import flash.utils.getQualifiedClassName;
 
@@ -47,15 +47,12 @@ package {
          rect.y + rect.height < this.y               );
     }
 
-    /* IEqual */
+    public override function equals(v:Vec):Boolean {
+      if (Util.className(v) != "Rect") return false;
 
-    private var _uid:int = Util.getUniqueID();
+      var r:Rect = v as Rect;
 
-    public function get uid():int { return _uid; }
-    public function equals(r:IEqual):Boolean { return uid == r.uid; }
-    public function asCloneOf(c:IEqual):IEqual {
-      this._uid = c.uid;
-      return this;
+      return x == r.x && y == r.y && width == r.width && right == r.right;
     }
   }
 }

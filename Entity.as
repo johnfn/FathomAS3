@@ -7,12 +7,13 @@ package {
   import Util;
   import MagicArray;
 
-  public class Entity extends Rect implements IEqual {
+  public class Entity extends Rect {
     public var __fathom:Object;
+    public var destroyed:Boolean = false;
+    public var hidden:Boolean = false;
 
-    internal var destroyed:Boolean = false;
-    internal var mc:MovieClip;
-    internal var color:Number;
+    protected var mc:MovieClip;
+    protected var color:Number;
 
     //TODO: Make visible represent whether an mc actually exists for this Entity.
     function Entity(x:Number = 0, y:Number = 0, width:Number = 20, height:Number = -1, color:Number = 0xFF0000, visible:Boolean = true):void {
@@ -32,7 +33,7 @@ package {
       }
 
       if (visible) {
-        create();
+        show();
         draw(width, height, color);
         Fathom.stage.addChild(mc);
       } else {
@@ -52,6 +53,7 @@ package {
     public function get alpha():Number { return mc.alpha; }
 
     /*
+    // TODO: Make these work!
     public override function set x(v:Number):void { mc.x = v; _x = v; }
     public override function get x():Number { return mc.x; }
 
@@ -142,19 +144,25 @@ package {
     }
 
     /* This causes the Entity to cease existing in-game. The only way to
-       bring it back is to call add(). */
-    public function remove():void {
+       bring it back is to call show(). */
+
+    // TODO: Naming this function is very hard. I want something that
+    // connotates removing it from the global entities list, but not
+    // destroying the actual object itself (it can be brought back later.)
+    public function hide():void {
       Fathom.entities.remove(this);
       mc.visible = false;
+      hidden = true;
     }
 
     /* This causes the Entity to exist in the game. You should only call
-       this after previously calling remove(). */
-    public function create():void {
+       this after a call to hide(). */
+    public function show():void {
       Util.assert(!destroyed);
 
       Fathom.entities.add(this);
       mc.visible = true;
+      hidden = false;
     }
 
     /* This permanently removes an Entity. It can't be add()ed back. */
@@ -163,7 +171,7 @@ package {
     }
 
     public function clearMemory():void {
-      remove();
+      hide();
 
       __fathom = null;
       if (mc.parent) mc.parent.removeChild(mc);
@@ -174,18 +182,19 @@ package {
     //TODO: Could add all superclasses.
     //TODO: "updateable" is the norm. "noupdate" should be a group.
     //TODO: There is a possible namespace collision here. Should prob make it impossible to manually add groups.
+    //TODO: I've decided I don't like strings. Enumerations are better.
     public function groups():Array {
       return ["updateable"].concat(Util.className(this));
     }
 
     public function collides(other:Entity):Boolean {
-      return (!eq(other)) && touchingRect(other);
+      return (!(this == other)) && touchingRect(other);
     }
 
     public function collidesPt(point:Point):Boolean { return mc.hitTestPoint(point.x, point.y); }
 
     //TODO: This causes scary bugs.
-    //P1: Fix said scary bugs.
+    //P1: Fix said scary bugs. I don't like calling super().
     public function update(e:EntityList):void {
       mc.x = x;
       mc.y = y;

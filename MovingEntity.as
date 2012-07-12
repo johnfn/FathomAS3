@@ -32,7 +32,7 @@ package {
     /*
     TODO: Think this through.
     public override function collides(other:Entity):Boolean {
-      if (other is MovingEntity && !other.eq(this)) {
+      if (other is MovingEntity && !other.equals(this)) {
         return super.collides(other);
       }
 

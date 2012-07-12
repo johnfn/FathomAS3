@@ -45,7 +45,7 @@ package {
       }
     }
 
-    public function eq(v:Vec):Boolean {
+    public function equals(v:Vec):Boolean {
       return x == v.x && y == v.y;
     }
 
