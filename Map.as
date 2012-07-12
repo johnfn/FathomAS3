@@ -77,7 +77,7 @@ package {
       if (!(c.toString() in persistentItemMapping)) return c;
       var e:Entity = (new persistentItemMapping[c.toString()]).set(new Vec(x, y));
 
-      addPersistentItem(e);
+      if (e.groups().contains("persistent")) addPersistentItem(e);
 
       return new Color(255, 255, 255);
     }
@@ -100,7 +100,7 @@ package {
 
       // Remove all impermanent items
 
-      var impermanent:EntityList = Fathom.entities.get("!permanent");
+      var impermanent:EntityList = Fathom.entities.get("!persistent");
 
       for (i = 0; i < impermanent.length; i++) {
         impermanent[i].destroy();
@@ -180,13 +180,13 @@ package {
     }
 
     public override function groups():Array {
-      return super.groups().concat("permanent");
+      return super.groups().concat("persistent");
     }
 
     public override function update(es:EntityList):void {}
 
     public override function toString():String {
-      return "[Map]"
+      return "[Map]";
     }
 
     public function moveCorner(diff:Vec):void {
