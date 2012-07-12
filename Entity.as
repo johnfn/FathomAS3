@@ -23,8 +23,6 @@ package {
       this.width = width;
       this.color = color;
       this.mc = new MovieClip();
-      this.mc.x = x;
-      this.mc.y = y;
 
       super(x, y, width);
 
@@ -52,14 +50,15 @@ package {
     public function set alpha(v:Number):void { mc.alpha = v; }
     public function get alpha():Number { return mc.alpha; }
 
-    /*
     // TODO: Make these work!
     public override function set x(v:Number):void { mc.x = v; _x = v; }
     public override function get x():Number { return mc.x; }
 
-    public override function set y(v:Number):void { mc.y = v; _y = v; }
+    public override function set y(v:Number):void {
+      mc.y = v;
+      _y = v;
+    }
     public override function get y():Number { return mc.y; }
-    */
 
     private function draw(width:Number, height:Number, color:Number):void {
       mc.graphics.beginFill(color);
@@ -193,12 +192,7 @@ package {
 
     public function collidesPt(point:Point):Boolean { return mc.hitTestPoint(point.x, point.y); }
 
-    //TODO: This causes scary bugs.
-    //P1: Fix said scary bugs. I don't like calling super().
-    public function update(e:EntityList):void {
-      mc.x = x;
-      mc.y = y;
-    }
+    public function update(e:EntityList):void {}
 
     public override function toString():String {
       return "[" + Util.className(this) + super.toString() + "]";
