@@ -58,17 +58,17 @@ package {
 
     public function myfilter(criteria:*):EntityList {
       var pass:Array = [];
+      var desired:Boolean = true;
+
+      if (criteria is String && criteria.charAt(0) == "!") {
+        desired = false;
+        criteria = criteria.substring(1);
+      }
 
       for (var i:int = 0; i < this.length; i++){
         var entity:Entity = this[i];
 
         if (criteria is String) {
-          var desired:Boolean = true;
-          if (criteria.charAt(0) == "!") {
-            desired = false;
-            criteria = criteria.substring(1);
-          }
-
           if ((entity.groups().indexOf(criteria) != -1) == desired) {
             pass.push(entity);
           }
