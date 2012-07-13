@@ -137,6 +137,8 @@ package {
       }
     }
 
+    public static function removeUnnecessaryVelocity():Function {
+      return function():void {
         if (this.touchingRight) this.vel.x = Math.min(this.vel.x, 0);
         if (this.touchingLeft) this.vel.x = Math.max(this.vel.x, 0);
 
@@ -223,7 +225,7 @@ package {
       }
 
       return function():void {
-        this.vel.map(truncate).multiply(new Vec(0.5, 0.8));
+        this.vel.map(truncate).multiply(new Vec(0.5, 0.99));
       }
     }
   }
