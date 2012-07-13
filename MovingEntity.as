@@ -32,6 +32,10 @@ package {
       super.update(e);
     }
 
+    public override function toString():String {
+      return super.toString() + " with vel: " + vel.toString();
+    }
+
     /*
     TODO: Think this through.
     public override function collides(other:Entity):Boolean {
