@@ -11,8 +11,8 @@ package {
     public var vel:Vec = new Vec(0, 0);
     public var resetVec:Vec = new Vec(0, 0);
 
-    public var xColl:EntityList;
-    public var yColl:EntityList;
+    public var xColl:EntityList = new EntityList([]);
+    public var yColl:EntityList = new EntityList([]);
 
     public var touchingLeft:Boolean   = false;
     public var touchingRight:Boolean  = false;
