@@ -214,7 +214,7 @@ package {
       }
 
       return function():void {
-        this.vel.map(truncate).divide(decel);
+        this.vel.map(truncate).multiply(new Vec(0.5, 0.8));
       }
     }
   }
