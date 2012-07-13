@@ -216,4 +216,8 @@ class Tile extends Entity {
 
     return super.collides(e);
   }
+
+  public override function groups():Array {
+    return super.groups().concat("persistent");
+  }
 }
