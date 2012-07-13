@@ -98,7 +98,41 @@ package {
 
     public static function resolveCollisions():Function {
       return function():void {
-        this.add(this.resetVec);
+        if (this.xColl.length == 0 && this.yColl.length == 0) return;
+
+        if (this.touchingRight) {
+          var rightest = 0;
+          for (var i:int = 0; i < this.xColl.length; i++) {
+            rightest = Math.max(rightest, this.xColl[i].x - this.width - 1);
+          }
+
+          this.x = rightest;
+        } else if (this.touchingLeft) {
+          var leftist = 9999;
+          for (var i:int = 0; i < this.xColl.length; i++) {
+            leftist = Math.min(leftist, this.xColl[i].x + this.xColl[i].width + 1);
+          }
+
+          this.x = leftist;
+        }
+
+        if (this.touchingBottom) {
+          // Place this on top of the highest item we were touching.
+          var highest = 9999;
+          for (var i:int = 0; i < this.yColl.length; i++) {
+            highest = Math.min(highest, this.yColl[i].y - this.height - 1);
+          }
+
+          this.y = highest;
+        } else if (this.touchingTop) {
+          var lowest = 0;
+          for (var i:int = 0; i < this.yColl.length; i++) {
+            lowest = Math.max(lowest, this.yColl[i].y + this.yColl[i].height + 1);
+          }
+
+          this.y = lowest;
+        }
+
       }
     }
 
@@ -117,31 +151,9 @@ package {
       return function():void {
         if (entity.vel.magnitude() == 0) return;
 
-        entity.resetVec = new Vec(0, 0);
-
         var normalizedVel:Vec = entity.vel.clone().normalize();
         var steps:int = entity.vel.clone().divide(normalizedVel).NaNsTo(0).max();
         var that:* = entity;
-
-        // Check for collisions in both x and y directions.
-
-        entity.iterate_xy_as_$(function():void {
-          var coll:EntityList;
-
-          for (var i:int = 0; i < steps; i++) {
-            entity.$ += normalizedVel.$;
-            coll = entity.currentlyTouching();
-
-            if (coll.length > 0) {
-              entity.collisionList = coll;
-              entity.resetVec.$ = -normalizedVel.$;
-              entity.$ -= normalizedVel.$;
-              break;
-            }
-          }
-        });
-
-        // After that finished, we aren't touching anything.
 
         // Find which sides we're touching.
 
@@ -150,23 +162,29 @@ package {
         entity.touchingTop    = false;
         entity.touchingBottom = false;
 
-        entity.x -= entity.resetVec.x;
+        entity.x += entity.vel.x;
+        entity.xColl = entity.currentlyTouching();
         if (entity.currentlyTouching().length > 0) {
           if (entity.vel.x < 0) entity.touchingLeft = true;
           if (entity.vel.x > 0) entity.touchingRight = true;
         }
-        entity.x += entity.resetVec.x;
+        entity.x -= entity.vel.x;
 
-        entity.y -= entity.resetVec.y;
+        entity.y += entity.vel.y;
+        entity.yColl = entity.currentlyTouching();
         if (entity.currentlyTouching().length > 0) {
           if (entity.vel.y < 0) entity.touchingTop = true;
           if (entity.vel.y > 0) entity.touchingBottom = true;
         }
-        entity.y += entity.resetVec.y;
+        entity.y -= entity.vel.y;
 
-        // Move onto the thing we just collided with.
+        entity.add(entity.vel);
 
-        entity.subtract(entity.resetVec);
+        if (entity.currentlyTouching().length > 0 && (entity.yColl.length == 0 && entity.xColl.length == 0)) {
+          // We are currently on a corner. Our original plan of attack won't work unless we favor one direction over the other. We choose to favor the x direction.
+          entity.y -= entity.vel.y;
+          entity.vel.y = 0;
+        }
       }
     }
 
