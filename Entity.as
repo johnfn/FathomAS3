@@ -32,7 +32,7 @@ package {
 
       if (visible) {
         show();
-        draw(width, height, color);
+        draw();
         Fathom.stage.addChild(mc);
       } else {
         Fathom.entities.add(this);
@@ -60,7 +60,7 @@ package {
     }
     public override function get y():Number { return mc.y; }
 
-    private function draw(width:Number, height:Number, color:Number):void {
+    protected function draw():void {
       mc.graphics.beginFill(color);
       mc.graphics.drawRect(0, 0, width, height);
       mc.graphics.endFill();

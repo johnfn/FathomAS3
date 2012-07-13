@@ -28,6 +28,7 @@ package {
                  + zeroPad(b.toString(16));
     }
 
+    //TODO: maybe fromInt, not readInt.
     public function readInt(hex:int):Color {
       r = ((hex & 0xFF0000) >> 16);
       g = ((hex & 0x00FF00) >> 8);

@@ -8,7 +8,7 @@ package {
   import Color;
   import Util;
 
-  public class Map extends Entity {
+  public class Map extends Rect {
     private var widthInTiles:int;
     private var heightInTiles:int;
     private var tileSize:int;
@@ -25,19 +25,13 @@ package {
     function Map(widthInTiles:int, heightInTiles:int, tileSize:int) {
       super(0, 0, widthInTiles * tileSize, heightInTiles * tileSize);
 
-      mc.graphics.clear();
-
       this.sizeVector = new Vec(width, height);
       this.widthInTiles = widthInTiles;
       this.heightInTiles = heightInTiles;
       this.tileSize = tileSize;
 
-      var that:Map = this;
-
       tiles = Util.make2DArrayFn(widthInTiles, heightInTiles, function(x:int, y:int):Tile {
-        var t:Tile = new Tile(x * tileSize, y * tileSize, tileSize, 0);
-        that.mc.addChild(t);
-        return t;
+        return new Tile(x * tileSize, y * tileSize, tileSize, 0);
       });
     }
 
@@ -109,7 +103,6 @@ package {
       // Switch maps
       topLeftCorner.add(diff)
 
-
       if (!exploredMaps[topLeftCorner.asKey()]) return;
 
       // Add all persistent items that exist in this room.
@@ -147,7 +140,7 @@ package {
       exploredMaps[topLeftCorner.asKey()] = true;
     }
 
-    public override function collidesPt(other:Point):Boolean {
+    public function collidesPt(other:Point):Boolean {
       if (!containsPt(other)) return true;
 
       var xPt:int = Math.floor(other.x / this.tileSize);
@@ -156,9 +149,7 @@ package {
       return tiles[xPt][yPt].type == 1;
     }
 
-    public override function collides(other:Entity):Boolean {
-      if (this == other) return false;
-
+    public function collides(other:Entity):Boolean {
       var xStart:int = Math.floor(other.x / this.tileSize);
       var xStop:int  = Math.floor((other.x + other.width) / this.tileSize);
       var yStart:int = Math.floor(other.y / this.tileSize);
@@ -179,12 +170,6 @@ package {
       return false;
     }
 
-    public override function groups():Array {
-      return super.groups().concat("persistent");
-    }
-
-    public override function update(es:EntityList):void {}
-
     public override function toString():String {
       return "[Map]";
     }
@@ -199,40 +184,36 @@ package {
   }
 }
 
-class Tile extends flash.display.MovieClip {
-  public var gfxWidth:int;
-  public var gfxHeight:int;
-  public var type:int;
+class Tile extends Entity {
+  private var type:int;
 
   function Tile(x:int, y:int, w:int, type:int) {
-    super();
-
-    this.x = x;
-    this.y = y;
-
-    /* Great bug here. We can't call these width/height because
-    width and height are determined by the contents of the MovieClip.
-    Any attempt to set w/h here will see them implicitly returned to 0. */
-
-    this.gfxWidth = w;
-    this.gfxHeight = w;
-
-    setType(type);
+    super(x, y, 20, 20, typeToColor(type).toInt());
   }
 
-  public function setType(type:int):void {
+  private function typeToColor(type:int):Color {
     var color:Color;
 
     this.type = type;
 
+    // TODO: This logic should not be here, at all.
     if (type == 0) {
       color = (new Color()).randomizeRed(150, 255);
     } else {
       color = (new Color(255, 255, 0));
     }
 
-    graphics.beginFill(color.toInt());
-    graphics.drawRect(0, 0, this.gfxWidth, this.gfxHeight);
-    graphics.endFill();
+    return color;
+  }
+
+  public function setType(type:int):void {
+    this.color = typeToColor(type).toInt();
+    this.draw();
+  }
+
+  public override function collides(e:Entity):Boolean {
+    if (this.type == 0) return false;
+
+    return super.collides(e);
   }
 }
