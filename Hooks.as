@@ -98,18 +98,20 @@ package {
 
     public static function resolveCollisions():Function {
       return function():void {
+        var i:int;
+
         if (this.xColl.length == 0 && this.yColl.length == 0) return;
 
         if (this.touchingRight) {
-          var rightest = 0;
-          for (var i:int = 0; i < this.xColl.length; i++) {
+          var rightest:int = 0;
+          for (i = 0; i < this.xColl.length; i++) {
             rightest = Math.max(rightest, this.xColl[i].x - this.width - 1);
           }
 
           this.x = rightest;
         } else if (this.touchingLeft) {
-          var leftist = 9999;
-          for (var i:int = 0; i < this.xColl.length; i++) {
+          var leftist:int = 9999;
+          for (i = 0; i < this.xColl.length; i++) {
             leftist = Math.min(leftist, this.xColl[i].x + this.xColl[i].width + 1);
           }
 
@@ -118,20 +120,22 @@ package {
 
         if (this.touchingBottom) {
           // Place this on top of the highest item we were touching.
-          var highest = 9999;
-          for (var i:int = 0; i < this.yColl.length; i++) {
+          var highest:int = 9999;
+          for (i = 0; i < this.yColl.length; i++) {
             highest = Math.min(highest, this.yColl[i].y - this.height - 1);
           }
 
           this.y = highest;
         } else if (this.touchingTop) {
-          var lowest = 0;
-          for (var i:int = 0; i < this.yColl.length; i++) {
+          var lowest:int = 0;
+          for (i = 0; i < this.yColl.length; i++) {
             lowest = Math.max(lowest, this.yColl[i].y + this.yColl[i].height + 1);
           }
 
           this.y = lowest;
         }
+      }
+    }
 
         if (this.touchingRight) this.vel.x = Math.min(this.vel.x, 0);
         if (this.touchingLeft) this.vel.x = Math.max(this.vel.x, 0);
