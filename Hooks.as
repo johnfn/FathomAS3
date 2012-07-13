@@ -133,6 +133,11 @@ package {
           this.y = lowest;
         }
 
+        if (this.touchingRight) this.vel.x = Math.min(this.vel.x, 0);
+        if (this.touchingLeft) this.vel.x = Math.max(this.vel.x, 0);
+
+        if (this.touchingTop) this.vel.y = Math.max(this.vel.y, 0);
+        if (this.touchingBottom) this.vel.y = Math.min(this.vel.y, 0);
       }
     }
 
