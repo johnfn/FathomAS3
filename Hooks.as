@@ -219,9 +219,12 @@ package {
 
     public static function decel(decel:Number = 2):Function {
       var cutoff:int = 0.5;
+      var lowCutoff:int = 20;
 
       var truncate:Function = function(val:int):int {
-        return Math.abs(val) < cutoff ? 0 : val;
+        if (Math.abs(val) < cutoff) return 0;
+        if (val > lowCutoff) return lowCutoff; //TODO: This hides a problem where falling velocity gets too large.
+        return val;
       }
 
       return function():void {
