@@ -218,17 +218,19 @@ package {
     }
 
     public static function decel(decel:Number = 2):Function {
-      var cutoff:int = 0.5;
-      var lowCutoff:int = 20;
+      var cutoff:Number = 0.6;
+      var lowCutoff:Number = 20;
 
-      var truncate:Function = function(val:int):int {
-        if (Math.abs(val) < cutoff) return 0;
-        if (val > lowCutoff) return lowCutoff; //TODO: This hides a problem where falling velocity gets too large.
+      var truncate:Function = function(val:Number):Number {
+        if (Math.abs(val) < cutoff) {
+          return 0;
+        }
+        if (Math.abs(val) > lowCutoff) return Util.sign(val) * lowCutoff; //TODO: This hides a problem where falling velocity gets too large.
         return val;
       }
 
       return function():void {
-        this.vel = this.vel.clone().map(truncate).addAwayFromZero(-0.6, 0.0);
+        this.vel.map(truncate).addAwayFromZero(-0.6, 0.0);
       }
     }
   }
