@@ -149,7 +149,7 @@ package {
       return this;
     }
 
-    public function NaNsTo(val:int):Vec {
+    public function NaNsTo(val:Number):Vec {
       if (isNaN(x)) x = val;
       if (isNaN(y)) y = val;
 
@@ -163,7 +163,7 @@ package {
         x -= v.x;
         y -= v.y;
       } else if (getQualifiedClassName(v) == "int") {
-        var val:int = v as int;
+        var val:Number = v as Number;
 
         x -= val;
         y -= val;
@@ -216,7 +216,14 @@ package {
       return this;
     }
 
-    public function magnitude():int {
+    public function addAwayFromZero(dx:Number, dy:Number):Vec {
+      x += Util.sign(x) * dx;
+      y += Util.sign(y) * dy;
+
+      return this;
+    }
+
+    public function magnitude():Number {
       return Math.sqrt(x * x + y * y);
     }
 

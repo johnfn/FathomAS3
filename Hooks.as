@@ -228,7 +228,7 @@ package {
       }
 
       return function():void {
-        this.vel.map(truncate).multiply(new Vec(0.5, 0.99));
+        this.vel = this.vel.clone().map(truncate).addAwayFromZero(-0.6, 0.0);
       }
     }
   }
