@@ -158,6 +158,10 @@ package {
     // connotates removing it from the global entities list, but not
     // destroying the actual object itself (it can be brought back later.)
     public function hide():void {
+      for (var i:int = 0; i < children.length; i++){
+        children[i].hide();
+      }
+
       Fathom.entities.remove(this);
       mc.visible = false;
       hidden = true;
@@ -168,6 +172,10 @@ package {
     public function show():void {
       Util.assert(!destroyed);
 
+      for (var i:int = 0; i < children.length; i++){
+        children[i].show();
+      }
+
       Fathom.entities.add(this);
       mc.visible = true;
       hidden = false;
@@ -175,6 +183,10 @@ package {
 
     /* This permanently removes an Entity. It can't be add()ed back. */
     public function destroy():void {
+      for (var i:int = 0; i < children.length; i++){
+        children[i].destroy();
+      }
+
       destroyed = true;
     }
 
