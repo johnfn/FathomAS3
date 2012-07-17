@@ -36,6 +36,10 @@ package {
       return super.toString() + " with vel: " + vel.toString();
     }
 
+    public override function touching(...args):Boolean {
+      return xColl.any.apply(this, args) || yColl.any.apply(this, args);
+    }
+
     /*
     TODO: Think this through.
     public override function collides(other:Entity):Boolean {

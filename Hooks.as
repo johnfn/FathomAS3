@@ -160,8 +160,6 @@ package {
        */
     public static function platformerLike(entity:MovingEntity):Function {
       return function():void {
-        if (entity.vel.magnitude() == 0) return;
-
         var normalizedVel:Vec = entity.vel.clone().normalize();
         var steps:int = entity.vel.clone().divide(normalizedVel).NaNsTo(0).max();
         var that:* = entity;
