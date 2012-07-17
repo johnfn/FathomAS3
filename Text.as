@@ -13,8 +13,9 @@ package {
 
     private var typewriting:Boolean = false;
     private var typewriteTick:Function;
+    private var fixedWidth:Boolean = false;
 
-    function Text(x:Number = 0, y:Number = 0, content:String = ""):void {
+    function Text(x:Number = 0, y:Number = 0, content:String = "", width:int = -1):void {
       this.content = content;
 
       super(0, 0, 0, 0);
@@ -24,15 +25,29 @@ package {
       textField.selectable = false;
       textField.x = x;
       textField.y = y;
-      textField.text = content;
+
+      text = content;
 
       Fathom.stage.addChild(textField);
 
       listen(Hooks.keyRecentlyDown(Util.Key.Z, advanceText));
+
+      if (width == -1) {
+        fixedWidth = false;
+      } else {
+        textField.width = width;
+      }
     }
 
     public override function groups():Array {
       return super.groups().concat("updates-while-paused");
+    }
+
+    public function set text(s:String):void {
+      textField.text = s;
+      if (!fixedWidth) {
+        textField.width = textField.textWidth;
+      }
     }
 
     public function advanceText():void {
