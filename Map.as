@@ -50,7 +50,7 @@ package {
 
       for (var x:int=0; x < bData.width; x++) {
         for (var y:int=0; y < bData.height; y++) {
-          data[x][y] = (new Color()).readInt(bData.getPixel(x, y));
+          data[x][y] = (new Color()).fromInt(bData.getPixel(x, y));
         }
       }
 

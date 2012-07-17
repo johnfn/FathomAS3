@@ -223,6 +223,14 @@ package {
       return this;
     }
 
+    // TODO: I should think about how to mark "ignore this value". Here I do it with -1.
+    public function threshold(cutoffX:Number, cutoffY:Number = -1):Vec {
+      if (cutoffX != -1 && Math.abs(x) < Math.abs(cutoffX)) x = 0;
+      if (cutoffY != -1 && Math.abs(y) < Math.abs(cutoffY)) y = 0;
+
+      return this;
+    }
+
     public function magnitude():Number {
       return Math.sqrt(x * x + y * y);
     }
