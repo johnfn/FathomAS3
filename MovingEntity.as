@@ -40,6 +40,13 @@ package {
       return xColl.any.apply(this, args) || yColl.any.apply(this, args);
     }
 
+    public override function set(v:IPositionable):Vec {
+      Hooks.clearCollisions(this);
+      super.set(v);
+
+      return this;
+    }
+
     /*
     TODO: Think this through.
     public override function collides(other:Entity):Boolean {

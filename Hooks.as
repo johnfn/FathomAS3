@@ -137,6 +137,11 @@ package {
       }
     }
 
+    public static function clearCollisions(m:MovingEntity) {
+      m.xColl = new EntityList([]);
+      m.yColl = new EntityList([]);
+    }
+
     public static function removeUnnecessaryVelocity():Function {
       return function():void {
         if (this.touchingRight) this.vel.x = Math.min(this.vel.x, 0);
@@ -173,7 +178,7 @@ package {
 
         entity.x += entity.vel.x;
         entity.xColl = entity.currentlyTouching();
-        if (entity.currentlyTouching().length > 0) {
+        if (entity.xColl.length > 0) {
           if (entity.vel.x < 0) entity.touchingLeft = true;
           if (entity.vel.x > 0) entity.touchingRight = true;
         }
@@ -181,7 +186,7 @@ package {
 
         entity.y += entity.vel.y;
         entity.yColl = entity.currentlyTouching();
-        if (entity.currentlyTouching().length > 0) {
+        if (entity.yColl.length > 0) {
           if (entity.vel.y < 0) entity.touchingTop = true;
           if (entity.vel.y > 0) entity.touchingBottom = true;
         }
