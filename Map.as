@@ -186,9 +186,10 @@ package {
 
 class Tile extends Entity {
   private var type:int;
+  private const SIZE:int = 20;
 
   function Tile(x:int, y:int, w:int, type:int) {
-    super(x, y, 20, 20, typeToColor(type).toInt());
+    super(x, y, SIZE, SIZE, typeToColor(type).toInt());
   }
 
   private function typeToColor(type:int):Color {
@@ -208,7 +209,7 @@ class Tile extends Entity {
 
   public function setType(type:int):void {
     this.color = typeToColor(type).toInt();
-    this.draw();
+    this.draw(SIZE);
   }
 
   public override function collides(e:Entity):Boolean {

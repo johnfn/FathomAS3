@@ -14,17 +14,19 @@ package {
 
     protected var mc:MovieClip;
     protected var color:Number;
+    protected var children:Array = [];
+    protected var wiggle:int = 0;
 
     //TODO: Make visible represent whether an mc actually exists for this Entity.
-    function Entity(x:Number = 0, y:Number = 0, width:Number = 20, height:Number = -1, color:Number = 0xFF0000, visible:Boolean = true):void {
+    function Entity(x:Number = 0, y:Number = 0, width:Number = 20, height:Number = -1, color:Number = 0xFF0000, visible:Boolean = true, wiggle:int = 0):void {
       if (height == -1) height = width;
 
-      this.height = height;
-      this.width = width;
+      this.height = height - wiggle * 2;
+      this.width = width - wiggle * 2;
       this.color = color;
       this.mc = new MovieClip();
 
-      super(x, y, width);
+      super(x, y, this.width);
 
       if (!Fathom.stage) {
       	throw new Error("Util.initialize() has not been called. Failing.");
@@ -32,7 +34,7 @@ package {
 
       if (visible) {
         show();
-        draw();
+        draw(this.height + wiggle * 2);
         Fathom.stage.addChild(mc);
       } else {
         Fathom.entities.add(this);
@@ -50,20 +52,27 @@ package {
     public function set alpha(v:Number):void { mc.alpha = v; }
     public function get alpha():Number { return mc.alpha; }
 
-    // TODO: Make these work!
-    public override function set x(v:Number):void { mc.x = v; _x = v; }
-    public override function get x():Number { return mc.x; }
+    public override function set x(v:Number):void { mc.x = v + wiggle; _x = v; }
+    public override function get x():Number { return _x; }
 
-    public override function set y(v:Number):void {
-      mc.y = v;
-      _y = v;
-    }
-    public override function get y():Number { return mc.y; }
+    public override function set y(v:Number):void { mc.y = v + wiggle; _y = v; }
+    public override function get y():Number { return _y; }
 
-    protected function draw():void {
+    protected function draw(size:int):void {
+      trace("size is", size)
       mc.graphics.beginFill(color);
-      mc.graphics.drawRect(0, 0, width, height);
+      mc.graphics.drawRect(0, 0, size, size);
       mc.graphics.endFill();
+    }
+
+    // TODO: This function needs some work.
+    public function addChild(child:Entity):void {
+      children.push(child);
+
+      // All children are implicitly managed by the master entity list, but
+      // in this case we don't want that to be true.
+
+      Fathom.entities.remove(child);
     }
 
     public function entities():EntityList {

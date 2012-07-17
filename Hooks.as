@@ -218,7 +218,7 @@ package {
     }
 
     public static function decel(decel:Number = 2):Function {
-      var cutoff:Number = 0.6;
+      var cutoff:Number = 0.4;
       var lowCutoff:Number = 20;
 
       var truncate:Function = function(val:Number):Number {
