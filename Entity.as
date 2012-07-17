@@ -59,7 +59,6 @@ package {
     public override function get y():Number { return _y; }
 
     protected function draw(size:int):void {
-      trace("size is", size)
       mc.graphics.beginFill(color);
       mc.graphics.drawRect(0, 0, size, size);
       mc.graphics.endFill();
