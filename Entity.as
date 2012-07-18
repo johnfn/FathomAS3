@@ -12,6 +12,7 @@ package {
     public var destroyed:Boolean = false;
     public var hidden:Boolean = false;
 
+    protected var mcOffset:Vec;
     protected var mc:MovieClip;
     protected var color:Number;
     protected var children:Array = [];
@@ -25,6 +26,7 @@ package {
       this.height = height - wiggle * 2;
       this.width = width - wiggle * 2;
       this.color = color;
+      this.setMCOffset(0, 0);
 
       if (baseMC) {
         this.mc = new baseMC();
@@ -59,11 +61,15 @@ package {
     public function set alpha(v:Number):void { mc.alpha = v; }
     public function get alpha():Number { return mc.alpha; }
 
-    public override function set x(v:Number):void { mc.x = Math.floor(v + wiggle); _x = v; }
+    public override function set x(v:Number):void { mc.x = Math.floor(v + mcOffset.x + wiggle); _x = v; }
     public override function get x():Number { return _x; }
 
-    public override function set y(v:Number):void { mc.y = Math.floor(v + wiggle); _y = v; }
+    public override function set y(v:Number):void { mc.y = Math.floor(v + mcOffset.y + wiggle); _y = v; }
     public override function get y():Number { return _y; }
+
+    protected function setMCOffset(x:int, y:int):void {
+      this.mcOffset = (new Vec(wiggle, wiggle)).add(new Vec(x, y));
+    }
 
     protected function draw(size:int):void {
       if (!this.usesExternalMC) {
