@@ -16,15 +16,22 @@ package {
     protected var color:Number;
     protected var children:Array = [];
     protected var wiggle:int = 0;
+    protected var usesExternalMC:Boolean = false;
 
     //TODO: Make visible represent whether an mc actually exists for this Entity.
-    function Entity(x:Number = 0, y:Number = 0, width:Number = 20, height:Number = -1, color:Number = 0xFF0000, visible:Boolean = true, wiggle:int = 0):void {
+    function Entity(x:Number = 0, y:Number = 0, width:Number = 20, height:Number = -1, color:Number = 0xFF0000, visible:Boolean = true, wiggle:int = 0, baseMC:Class = null):void {
       if (height == -1) height = width;
 
       this.height = height - wiggle * 2;
       this.width = width - wiggle * 2;
       this.color = color;
-      this.mc = new MovieClip();
+
+      if (baseMC) {
+        this.mc = new baseMC();
+        this.usesExternalMC = true;
+      } else {
+        this.mc = new MovieClip();
+      }
 
       super(x, y, this.width);
 
@@ -52,16 +59,18 @@ package {
     public function set alpha(v:Number):void { mc.alpha = v; }
     public function get alpha():Number { return mc.alpha; }
 
-    public override function set x(v:Number):void { mc.x = v + wiggle; _x = v; }
+    public override function set x(v:Number):void { mc.x = Math.floor(v + wiggle); _x = v; }
     public override function get x():Number { return _x; }
 
-    public override function set y(v:Number):void { mc.y = v + wiggle; _y = v; }
+    public override function set y(v:Number):void { mc.y = Math.floor(v + wiggle); _y = v; }
     public override function get y():Number { return _y; }
 
     protected function draw(size:int):void {
-      mc.graphics.beginFill(color);
-      mc.graphics.drawRect(0, 0, size, size);
-      mc.graphics.endFill();
+      if (!this.usesExternalMC) {
+        mc.graphics.beginFill(color);
+        mc.graphics.drawRect(0, 0, size, size);
+        mc.graphics.endFill();
+      }
     }
 
     // TODO: This function needs some work.

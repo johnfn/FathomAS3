@@ -40,8 +40,10 @@ package {
       return tileSize;
     }
 
+    [Embed(source = "../data/map.png")] static public var MapClass:Class;
+
     public function fromImage(mapClass:Class, persistentItemMapping:Object):Map {
-      var bAsset:BitmapAsset = new mapClass();
+      var bAsset:BitmapAsset = new MapClass();
       var bData:BitmapData = bAsset.bitmapData;
 
       this.persistentItemMapping = persistentItemMapping;
@@ -186,7 +188,7 @@ package {
 
 class Tile extends Entity {
   private var type:int;
-  private const SIZE:int = 20;
+  private const SIZE:int = C.size;
 
   function Tile(x:int, y:int, w:int, type:int) {
     super(x, y, SIZE, SIZE, typeToColor(type).toInt());

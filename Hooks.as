@@ -137,7 +137,7 @@ package {
       }
     }
 
-    public static function clearCollisions(m:MovingEntity) {
+    public static function clearCollisions(m:MovingEntity):void {
       m.xColl = new EntityList([]);
       m.yColl = new EntityList([]);
     }
