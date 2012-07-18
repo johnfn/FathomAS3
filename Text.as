@@ -28,7 +28,7 @@ package {
 
       text = content;
 
-      Fathom.stage.addChild(textField);
+      Fathom.container.addChild(textField);
 
       listen(Hooks.keyRecentlyDown(Util.Key.Z, advanceText));
 

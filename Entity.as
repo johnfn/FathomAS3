@@ -35,14 +35,14 @@ package {
 
       super(x, y, this.width);
 
-      if (!Fathom.stage) {
+      if (!Fathom.container) {
       	throw new Error("Util.initialize() has not been called. Failing.");
       }
 
       if (visible) {
         show();
         draw(this.height + wiggle * 2);
-        Fathom.stage.addChild(mc);
+        Fathom.container.addChild(mc);
       } else {
         Fathom.entities.add(this);
       }
@@ -70,6 +70,9 @@ package {
         mc.graphics.beginFill(color);
         mc.graphics.drawRect(0, 0, size, size);
         mc.graphics.endFill();
+      } else {
+        mc.width = this.width;
+        mc.height = this.height;
       }
     }
 

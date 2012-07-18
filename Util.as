@@ -3,7 +3,7 @@ package {
     import flash.utils.*;
     import flash.events.KeyboardEvent;
     import flash.display.DisplayObject;
-    import flash.display.Stage;
+    import flash.display.MovieClip;
     import flash.utils.getQualifiedClassName;
 
     public static var uid:Number = 0;
@@ -163,9 +163,9 @@ package {
 
     // You should never have to call this function.
     // TODO: Move into Fathom, I guess.
-    public static function _initializeKeyInput(stage:Stage):void {
-      stage.addEventListener(KeyboardEvent.KEY_DOWN, _keyDown);
-      stage.addEventListener(KeyboardEvent.KEY_UP, _keyUp);
+    public static function _initializeKeyInput(container:MovieClip):void {
+      container.stage.addEventListener(KeyboardEvent.KEY_DOWN, _keyDown);
+      container.stage.addEventListener(KeyboardEvent.KEY_UP, _keyUp);
 
       for (var i:int = 0; i < 255; i++) {
         keyStates[i] = new KeyState();

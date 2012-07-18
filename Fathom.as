@@ -2,22 +2,22 @@ package {
   public class Fathom {
     import flash.utils.clearInterval;
     import flash.utils.setInterval;
-    import flash.display.Stage;
+    import flash.display.MovieClip;
 
     private static var gameloopID:int;
     private static var FPS:int = 0;
 
     public static var entities:EntityList = new EntityList([]);
-    public static var stage:Stage;
+    public static var container:MovieClip;
     public static var _paused:Boolean = false;
 
     public static function get paused():Boolean { return _paused; }
 
-    public static function initialize(stage:Stage, FPS:int = 30):void {
+    public static function initialize(container:MovieClip, FPS:int = 30):void {
       Fathom.FPS = FPS;
-      Fathom.stage = stage;
+      Fathom.container = container;
 
-      Util._initializeKeyInput(stage);
+      Util._initializeKeyInput(container);
       gameloopID = setInterval(update, 1000 / FPS);
     }
 
