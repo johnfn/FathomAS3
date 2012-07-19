@@ -19,6 +19,11 @@ package {
     protected var wiggle:int = 0;
     protected var usesExternalMC:Boolean = false;
 
+    protected var _isStatic:Boolean = true;
+
+    public function get isStatic():Boolean { return _isStatic; }
+    private function set isStatic(val:Boolean):void { _isStatic = val; }
+
     //TODO: Make visible represent whether an mc actually exists for this Entity.
     function Entity(x:Number = 0, y:Number = 0, width:Number = 20, height:Number = -1, color:Number = 0xFF0000, visible:Boolean = true, wiggle:int = 0, baseMC:Class = null):void {
       if (height == -1) height = width;

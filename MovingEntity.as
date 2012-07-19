@@ -24,6 +24,7 @@ package {
 
     function MovingEntity(x:Number = 0, y:Number = 0, width:Number = 20, height:Number = -1, color:Number = 0xFF0000, visible:Boolean = true, wiggle:int = 0, baseMC:Class = null):void {
       super(x, y, width, height, color, visible, wiggle, baseMC);
+      _isStatic = false;
 
       on("post-update", Hooks.resolveCollisions());
     }
