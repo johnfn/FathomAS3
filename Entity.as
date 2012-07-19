@@ -48,7 +48,7 @@ package {
 
       if (visible) {
         show();
-        draw(this.height + wiggle * 2);
+        draw();
         Fathom.container.addChild(mc);
       } else {
         Fathom.entities.add(this);
@@ -58,6 +58,16 @@ package {
                       , events: {}
                       , entities: Fathom.entities
                       };
+    }
+
+    //TODO: there is some duplication here.
+    public function setExternalMC(mcClass:Class):void {
+      this.mc.graphics.clear();
+
+      this.mc = new mcClass();
+      this.usesExternalMC = true;
+      Fathom.container.addChild(this.mc);
+      draw();
     }
 
     public function set visible(v:Boolean):void { mc.visible = v; }
@@ -76,14 +86,14 @@ package {
       this.mcOffset = (new Vec(wiggle, wiggle)).add(new Vec(x, y));
     }
 
-    protected function draw(size:int):void {
+    protected function draw():void {
       if (!this.usesExternalMC) {
         mc.graphics.beginFill(color);
-        mc.graphics.drawRect(0, 0, size, size);
+        mc.graphics.drawRect(0, 0, this.width + wiggle * 2, this.height + wiggle * 2);
         mc.graphics.endFill();
       } else {
-        mc.width = this.width;
-        mc.height = this.height;
+        mc.width = this.width + wiggle * 2;
+        mc.height = this.height + wiggle * 2;
       }
     }
 

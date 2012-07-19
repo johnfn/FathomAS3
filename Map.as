@@ -102,7 +102,13 @@ package {
     private function addPersistentItem(c:Color, x:int, y:int, seenBefore:Boolean):void {
       if (!(c.toString() in persistentItemMapping)) return;
 
-      var e:Entity = (new persistentItemMapping[c.toString()]["type"]());
+      var itemData:Object = persistentItemMapping[c.toString()];
+      var e:Entity = new itemData["type"]();
+
+      if ("gfx" in itemData) {
+        e.setExternalMC(itemData["gfx"]);
+      }
+
       e.set(new Vec(x * tileSize, y * tileSize));
 
       if (e.groups().contains("persistent")) {
