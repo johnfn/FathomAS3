@@ -12,7 +12,6 @@ package {
     private var widthInTiles:int;
     private var heightInTiles:int;
     private var tileSize:int;
-    private var tiles:Array = [];
     private var data:Array = [];
     private var topLeftCorner:Vec = new Vec(0, 0);
     private var exploredMaps:Object = {};
@@ -30,8 +29,12 @@ package {
       this.heightInTiles = heightInTiles;
       this.tileSize = tileSize;
 
+      this.clearTiles();
+    }
+
+    private function clearTiles():void {
       tiles = Util.make2DArrayFn(widthInTiles, heightInTiles, function(x:int, y:int):Tile {
-        return new Tile(x * tileSize, y * tileSize, tileSize, 0);
+        return null;
       });
     }
 
@@ -61,25 +64,20 @@ package {
       return this;
     }
 
-    public function setTile(x:int, y:int, type:int):void {
-      tiles[x][y].setType(type);
-    }
-
-    public function addPersistentItem(item:Entity):void {
-      persistent[topLeftCorner.asKey()].push(item);
-    }
-
-    private function addPersistentItems(c:Color, x:int, y:int):Color {
+    //TODO: Return value is meaningless.
+    private function addPersistentItem(c:Color, x:int, y:int, seenBefore:Boolean) {
       if (!(c.toString() in persistentItemMapping)) return c;
-      var e:Entity = (new persistentItemMapping[c.toString()]).set(new Vec(x, y));
 
-      if (e.groups().contains("persistent")) addPersistentItem(e);
+      var e:Entity = (new persistentItemMapping[c.toString()]["type"]());
+      e.set(new Vec(x * tileSize, y * tileSize));
+      tiles[x][y] = e;
 
-      return new Color(255, 255, 255);
+      if (e.groups().contains("persistent")) {
+        persistent[topLeftCorner.asKey()].push(e);
+      }
     }
 
     private function switchMap(diff:Vec):void {
-      // TODO: enemies should be persistent.
       // Hide old persistent items and get rid of permanently destroyed ones.
       var items:Array = persistent[topLeftCorner.asKey()];
       var processedItems:Array = [];
@@ -120,22 +118,14 @@ package {
         persistent[topLeftCorner.asKey()] = [];
       }
 
+      this.clearTiles();
+
       for (var x:int = 0; x < widthInTiles; x++) {
         for (var y:int = 0; y < heightInTiles; y++) {
           var val:int = 0;
           var dataColor:Color = data[topLeftCorner.x + x][topLeftCorner.y + y];
 
-          if (!seenBefore) {
-            dataColor = addPersistentItems(dataColor, x * tileSize, y * tileSize);
-          }
-
-          if (dataColor.eq(new Color(0, 0, 0))) {
-            val = 1;
-          } else {
-            val = 0;
-          }
-
-          setTile(x, y, val);
+          dataColor = addPersistentItem(dataColor, x, y, seenBefore);
         }
       }
 
@@ -148,7 +138,7 @@ package {
       var xPt:int = Math.floor(other.x / this.tileSize);
       var yPt:int = Math.floor(other.y / this.tileSize);
 
-      return tiles[xPt][yPt].type == 1;
+      return tiles[xPt][yPt] != null;
     }
 
     public function collides(other:Entity):Boolean {
@@ -160,7 +150,7 @@ package {
       for (var x:int = xStart; x < xStop + 1; x++) {
         for (var y:int = yStart; y < yStop + 1; y++) {
           if (0 <= x && x < widthInTiles && 0 <= y && y < heightInTiles) {
-            if (tiles[x][y].type == 1) {
+            if (tiles[x][y] != null) {
               return true;
             }
           }
@@ -183,44 +173,5 @@ package {
 
       updateTiles();
     }
-  }
-}
-
-class Tile extends Entity {
-  private var type:int;
-  private const SIZE:int = C.size;
-
-  function Tile(x:int, y:int, w:int, type:int) {
-    super(x, y, SIZE, SIZE, typeToColor(type).toInt());
-  }
-
-  private function typeToColor(type:int):Color {
-    var color:Color;
-
-    this.type = type;
-
-    // TODO: This logic should not be here, at all.
-    if (type == 0) {
-      color = (new Color()).randomizeRed(150, 255);
-    } else {
-      color = (new Color(255, 255, 0));
-    }
-
-    return color;
-  }
-
-  public function setType(type:int):void {
-    this.color = typeToColor(type).toInt();
-    this.draw(SIZE);
-  }
-
-  public override function collides(e:Entity):Boolean {
-    if (this.type == 0) return false;
-
-    return super.collides(e);
-  }
-
-  public override function groups():Array {
-    return super.groups().concat("persistent");
   }
 }
