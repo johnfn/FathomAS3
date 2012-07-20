@@ -97,6 +97,19 @@ package {
       }
     }
 
+    // Pass in the x-coordinate of your velocity, and this'll orient
+    // the Entity in that direction.
+    protected function face(dir:int):void {
+      if (dir > 0 && this.mc.scaleX < 0) {
+        this.mc.scaleX *= -1;
+        return;
+      }
+      if (dir < 0 && this.mc.scaleX > 0) {
+        this.mc.scaleX *= -1;
+        return;
+      }
+    }
+
     // TODO: This function needs some work.
     public function addChild(child:Entity):void {
       children.push(child);
