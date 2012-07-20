@@ -147,6 +147,8 @@ package {
       }
 
       exploredMaps[topLeftCorner.asKey()] = true;
+
+      Fathom.sortDepths();
     }
 
     public function collidesPt(other:Point):Boolean {

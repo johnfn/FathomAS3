@@ -106,6 +106,13 @@ package {
       }
     }
 
+    public function raiseToTop():void {
+      //TODO: This depends on the visibility parameter.
+      if (this.mc.parent) {
+        this.mc.parent.setChildIndex(this.mc, this.mc.parent.numChildren - 1);
+      }
+    }
+
     // TODO: This function needs some work.
     public function addChild(child:Entity):void {
       children.push(child);
@@ -262,6 +269,6 @@ package {
       return "[" + Util.className(this) + super.toString() + "]";
     }
 
-    public function depth():Number { return 0; }
+    public function depth():int { return 0; }
   }
 }
