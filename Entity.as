@@ -77,10 +77,10 @@ package {
     public function set alpha(v:Number):void { mc.alpha = v; }
     public function get alpha():Number { return mc.alpha; }
 
-    public override function set x(v:Number):void { mc.x = Math.floor(v + mcOffset.x + wiggle); _x = v; }
+    public override function set x(v:Number):void { mc.x = Math.floor(v + mcOffset.x); _x = v; }
     public override function get x():Number { return _x; }
 
-    public override function set y(v:Number):void { mc.y = Math.floor(v + mcOffset.y + wiggle); _y = v; }
+    public override function set y(v:Number):void { mc.y = Math.floor(v + mcOffset.y); _y = v; }
     public override function get y():Number { return _y; }
 
     protected function setMCOffset(x:int, y:int):void {
