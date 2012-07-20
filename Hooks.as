@@ -144,14 +144,12 @@ package {
       m.yColl = new EntityList([]);
     }
 
-    public static function removeUnnecessaryVelocity():Function {
-      return function():void {
-        if (this.touchingRight) this.vel.x = Math.min(this.vel.x, 0);
-        if (this.touchingLeft) this.vel.x = Math.max(this.vel.x, 0);
+    public static function removeUnnecessaryVelocity(entity:MovingEntity):Function {
+      if (entity.touchingRight) entity.vel.x = Math.min(entity.vel.x, 0);
+      if (entity.touchingLeft) entity.vel.x = Math.max(entity.vel.x, 0);
 
-        if (this.touchingTop) this.vel.y = Math.max(this.vel.y, 0);
-        if (this.touchingBottom) this.vel.y = Math.min(this.vel.y, 0);
-      }
+      if (entity.touchingTop) entity.vel.y = Math.max(entity.vel.y, 0);
+      if (entity.touchingBottom) entity.vel.y = Math.min(entity.vel.y, 0);
     }
 
     /* In the event of a collision, this function will leave you stuck
