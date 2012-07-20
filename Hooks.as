@@ -100,20 +100,21 @@ package {
     public static function resolveCollisions():Function {
       return function():void {
         var i:int;
+        var NUDGE:Number = 0.01;
 
         if (this.xColl.length == 0 && this.yColl.length == 0) return;
 
         if (this.touchingRight) {
           var rightest:int = 0;
           for (i = 0; i < this.xColl.length; i++) {
-            rightest = Math.max(rightest, this.xColl[i].x - this.width - 1);
+            rightest = Math.max(rightest, this.xColl[i].x - this.width - NUDGE);
           }
 
           this.x = rightest;
         } else if (this.touchingLeft) {
           var leftist:int = 9999;
           for (i = 0; i < this.xColl.length; i++) {
-            leftist = Math.min(leftist, this.xColl[i].x + this.xColl[i].width + 1);
+            leftist = Math.min(leftist, this.xColl[i].x + this.xColl[i].width + NUDGE);
           }
 
           this.x = leftist;
@@ -123,14 +124,14 @@ package {
           // Place this on top of the highest item we were touching.
           var highest:int = 9999;
           for (i = 0; i < this.yColl.length; i++) {
-            highest = Math.min(highest, this.yColl[i].y - this.height - 1);
+            highest = Math.min(highest, this.yColl[i].y - this.height - NUDGE);
           }
 
           this.y = highest;
         } else if (this.touchingTop) {
           var lowest:int = 0;
           for (i = 0; i < this.yColl.length; i++) {
-            lowest = Math.max(lowest, this.yColl[i].y + this.yColl[i].height + 1);
+            lowest = Math.max(lowest, this.yColl[i].y + this.yColl[i].height + NUDGE);
           }
 
           this.y = lowest;
@@ -256,7 +257,7 @@ package {
       }
 
       return function():void {
-        this.vel.map(truncate).addAwayFromZero(-0.6, 0.0);
+        this.vel.map(truncate)//.addAwayFromZero(0.6, 0.0);
       }
     }
   }
