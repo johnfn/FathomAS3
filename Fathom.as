@@ -3,6 +3,7 @@ package {
     import flash.utils.clearInterval;
     import flash.utils.setInterval;
     import flash.display.MovieClip;
+    import flash.events.Event;
 
     private static var gameloopID:int;
     private static var FPS:int = 0;
@@ -27,7 +28,9 @@ package {
       fpsTxt = new Text(200, 20);
 
       Util._initializeKeyInput(container);
-      gameloopID = setInterval(update, 1000 / FPS);
+
+      container.addEventListener(Event.ENTER_FRAME, update);
+      //gameloopID = setInterval(update, 1000 / FPS);
     }
 
     //TODO: May want a better name than pause. freeze?
@@ -39,7 +42,7 @@ package {
       _paused = false;
     }
 
-    private static function update():void {
+    private static function update(event:Event):void {
       var updaters:EntityList;
       if (_paused) {
         updaters = entities.get("updates-while-paused");
