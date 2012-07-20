@@ -11,8 +11,8 @@ package {
     internal var _y:Number;
 
     function Vec(x:Number = 0, y:Number = 0) {
-      this.x = x;
-      this.y = y;
+      this._x = x;
+      this._y = y;
     }
 
     public function get x():Number { return _x; }

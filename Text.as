@@ -40,7 +40,7 @@ package {
     }
 
     public override function groups():Array {
-      return super.groups().concat("updates-while-paused");
+      return super.groups().concat("updates-while-paused").concat("persistent");
     }
 
     public function set text(s:String):void {

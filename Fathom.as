@@ -6,16 +6,25 @@ package {
 
     private static var gameloopID:int;
     private static var FPS:int = 0;
+    private static var fpsFn:Function;
 
+    public static var fpsTxt:Text;
     public static var entities:EntityList = new EntityList([]);
     public static var container:MovieClip;
     public static var _paused:Boolean = false;
 
     public static function get paused():Boolean { return _paused; }
 
+    public static function set showFPS(b:Boolean) {
+      fpsTxt.visible = b;
+    }
+
     public static function initialize(container:MovieClip, FPS:int = 30):void {
       Fathom.FPS = FPS;
       Fathom.container = container;
+
+      fpsFn = Hooks.fpsCounter();
+      fpsTxt = new Text(200, 20);
 
       Util._initializeKeyInput(container);
       gameloopID = setInterval(update, 1000 / FPS);
@@ -37,6 +46,8 @@ package {
       } else {
         updaters = entities.get("updateable");
       }
+
+      fpsTxt.text = fpsFn();
 
       for (var i:int = 0; i < updaters.length; i++) {
         var e:Entity = updaters[i];

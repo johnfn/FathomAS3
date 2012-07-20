@@ -20,6 +20,7 @@ package {
     protected var usesExternalMC:Boolean = false;
 
     protected var _isStatic:Boolean = true;
+    protected var parent:MovieClip;
 
     public function get isStatic():Boolean { return _isStatic; }
     private function set isStatic(val:Boolean):void { _isStatic = val; }
@@ -28,23 +29,23 @@ package {
     function Entity(x:Number = 0, y:Number = 0, width:Number = 20, height:Number = -1, color:Number = 0xFF0000, visible:Boolean = true, wiggle:int = 0):void {
       if (height == -1) height = width;
 
+      super(x, y, this.width);
+
+      if (!Fathom.container) {
+        throw new Error("Util.initialize() has not been called. Failing.");
+      }
+
       this.height = height - wiggle * 2;
       this.width = width - wiggle * 2;
       this.color = color;
       this.setMCOffset(0, 0);
+      this.parent = Fathom.container;
 
       this.mc = new MovieClip();
-
-      super(x, y, this.width);
-
-      if (!Fathom.container) {
-      	throw new Error("Util.initialize() has not been called. Failing.");
-      }
 
       if (visible) {
         show();
         draw();
-        Fathom.container.addChild(mc);
       } else {
         Fathom.entities.add(this);
       }
@@ -59,6 +60,7 @@ package {
     public function setExternalMC(mcClass:Class, fixedSize:Boolean = false):void {
       this.mc.graphics.clear();
 
+      //TODO: Merge with show... somehow...
       this.mc = new mcClass();
       this.usesExternalMC = true;
       Fathom.container.addChild(this.mc);
@@ -202,7 +204,9 @@ package {
       }
 
       Fathom.entities.remove(this);
-      mc.visible = false;
+      this.parent = mc.parent;
+      //TODO. If not "visible", will not have parent.
+      if (this.parent) mc.parent.removeChild(mc);
       hidden = true;
     }
 
@@ -216,7 +220,7 @@ package {
       }
 
       Fathom.entities.add(this);
-      mc.visible = true;
+      this.parent.addChild(mc);
       hidden = false;
     }
 

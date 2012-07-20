@@ -1,6 +1,7 @@
 package {
   import flash.display.Sprite;
   import flash.geom.Point;
+  import flash.utils.getTimer;
 
   public class Hooks {
     public static function move(direction:Vec):Function {
@@ -200,6 +201,28 @@ package {
           entity.vel.y = 0;
         }
       }
+    }
+
+    public static function fpsCounter():Function {
+      // With thanks to http://kaioa.com/node/83
+
+      var last:uint = getTimer();
+      var ticks:uint = 0;
+      var text:String = "--.- FPS";
+
+      return (function():String {
+        var now:uint = getTimer();
+        var delta:uint = now - last;
+
+        ticks++;
+        if (delta >= 1000) {
+          var fps:Number = ticks / delta * 1000;
+          text = fps.toFixed(1) + " FPS";
+          ticks = 0;
+          last = now;
+        }
+        return text;
+      });
     }
 
     public static function flicker(duration:int = 50, callback:Function=null):Function {

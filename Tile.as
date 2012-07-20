@@ -24,7 +24,7 @@ package {
 
     public function setType(type:int):Tile {
       this.color = typeToColor(type).toInt();
-      this.draw(SIZE);
+      this.draw();
 
       return this;
     }
