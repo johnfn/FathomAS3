@@ -37,6 +37,7 @@ package {
       return super.toString() + " with vel: " + vel.toString();
     }
 
+    // TODO. This won't return anything you aren't obstructed by.
     public override function touching(...args):Boolean {
       return xColl.any.apply(this, args) || yColl.any.apply(this, args);
     }

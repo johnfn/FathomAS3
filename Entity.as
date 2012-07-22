@@ -199,6 +199,10 @@ package {
       return Fathom.entities.get.apply(this, args.concat(touchesMe));
     }
 
+    public function currentlyObstructing(...args):EntityList {
+      return currentlyTouching.apply(this, args.concat("!Ladder"));
+    }
+
     /* This causes the Entity to cease existing in-game. The only way to
        bring it back is to call show(). */
 
