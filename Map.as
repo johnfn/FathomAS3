@@ -185,6 +185,13 @@ package {
       return "[Map]";
     }
 
+    public function startingCorner(corner:Vec):Map {
+      switchMap(corner.multiply(widthInTiles));
+      updateTiles();
+
+      return this;
+    }
+
     public function moveCorner(diff:Vec):void {
       diff.divide(widthInTiles);
 
