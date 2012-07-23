@@ -73,7 +73,7 @@ package {
 
       for (i = 0; i < items.length; i++) {
         if (!items[i].destroyed) {
-          items[i].hide();
+          items[i].removeFromScene();
           processedItems.push(items[i]);
         }
       }
@@ -95,11 +95,11 @@ package {
 
       // Add all persistent items that exist in this room.
       persistent[topLeftCorner.asKey()].map(function(e:*, i:int, a:Array):void {
-        e.show();
+        e.addToScene();
       });
     }
 
-    private function addPersistentItem(c:Color, x:int, y:int, seenBefore:Boolean):void {
+    private function addPersistentItem(c:Color, x:int, y:int):void {
       if (!(c.toString() in persistentItemMapping)) return;
 
       var itemData:Object = persistentItemMapping[c.toString()];
@@ -121,18 +121,20 @@ package {
 
       this.clearTiles();
 
+      // Scan the map, adding every object to our list of persistent items for this map.
       if (!seenBefore) {
         persistent[topLeftCorner.asKey()] = [];
 
         for (var x:int = 0; x < widthInTiles; x++) {
           for (var y:int = 0; y < heightInTiles; y++) {
-            var val:int = 0;
             var dataColor:Color = data[topLeftCorner.x + x][topLeftCorner.y + y];
 
-            addPersistentItem(dataColor, x, y, seenBefore);
+            addPersistentItem(dataColor, x, y);
           }
         }
       }
+
+      // Cache every persistent item in the 2D array of tiles.
       var persistingItems:Array = persistent[topLeftCorner.asKey()];
 
       for (var i:int = 0; i < persistingItems.length; i++) {

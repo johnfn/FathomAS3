@@ -279,37 +279,31 @@
 
     /* This causes the Entity to cease existing in-game. The only way to
        bring it back is to call show(). */
-
-    // TODO: Naming this function is very hard. I want something that
-    // connotates removing it from the global entities list, but not
-    // destroying the actual object itself (it can be brought back later.)
-
-    // TODO: Aha: removeFromScene()
-    public function hide():void {
+    public function removeFromScene():void {
       for (var i:int = 0; i < children.length; i++){
-        children[i].hide();
+        children[i].removeFromScene();
       }
 
       if (this.parent) this.parent.removeChild(this);
 
-      /*
       Fathom.entities.remove(this);
+      /*
       if (this.parent) parent.removeChild(mc);
       */
       hidden = true;
     }
 
-    /* This causes the Entity to exist in the game. You should only call
-       this after a call to hide(). */
-    public function show():void {
+    /* This causes the Entity to exist in the game. There is no need to call
+       this except after a call to removeFromScene(). */
+    public function addToScene():void {
       Util.assert(!destroyed);
 
       for (var i:int = 0; i < children.length; i++){
-        children[i].show();
+        children[i].addToScene();
       }
 
-      /*
       Fathom.entities.add(this);
+      /*
       if (this.parent) parent.addChild(mc);
       */
       hidden = false;
@@ -325,7 +319,7 @@
     }
 
     public function clearMemory():void {
-      hide();
+      removeFromScene();
 
       __fathom = null;
       if (mc && mc.parent) {
