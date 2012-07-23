@@ -70,7 +70,7 @@
     }
 
     //TODO: there is some duplication here.
-    public function setExternalMC(mcClass:*, fixedSize:Boolean = false):Entity {
+    public function fromExternalMC(mcClass:*, fixedSize:Boolean = false):Entity {
       //this.mc.graphics.clear();
 
       //TODO: Merge with show... somehow...
@@ -152,6 +152,17 @@
         this.mc.scaleX *= -1;
         return;
       }
+    }
+
+    public function disappearAfter(frames:int):void {
+      var timeLeft:int = frames;
+      var that:* = this;
+
+      listen(function():void {
+        if (timeLeft-- == 0) {
+          that.destroy();
+        }
+      });
     }
 
     public function raiseToTop():void {
@@ -322,6 +333,7 @@
       if (parent) parent.removeChild(this);
       mc = null;
       destroyed = true;
+      Fathom.entities.remove(this);
     }
 
     //TODO: Could add all superclasses.

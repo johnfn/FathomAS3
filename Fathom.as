@@ -28,7 +28,7 @@
       // Inside of the Entity constructor, we assert Fathom.initialized.
       Fathom.initialized = true;
       Fathom.FPS = FPS;
-      Fathom.container = new Entity().setExternalMC(toplevel);
+      Fathom.container = new Entity().fromExternalMC(toplevel);
 
       fpsFn = Hooks.fpsCounter();
       fpsTxt = new Text(200, 20);
@@ -61,7 +61,6 @@
 
     private static function update(event:Event):void {
       var updaters:EntityList;
-
 
       // TODO: entities == Fathom.container.children
 
