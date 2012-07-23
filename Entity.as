@@ -71,10 +71,6 @@
 
     //TODO: there is some duplication here.
     public function fromExternalMC(mcClass:*, fixedSize:Boolean = false):Entity {
-      //this.mc.graphics.clear();
-
-      //TODO: Merge with show... somehow...
-
       this.usesExternalMC = true;
 
       var className:String = Util.className(mcClass);
@@ -287,9 +283,6 @@
       if (this.parent) this.parent.removeChild(this);
 
       Fathom.entities.remove(this);
-      /*
-      if (this.parent) parent.removeChild(mc);
-      */
       hidden = true;
     }
 
@@ -302,10 +295,9 @@
         children[i].addToScene();
       }
 
+      if (this.parent) this.parent.addChild(this);
+
       Fathom.entities.add(this);
-      /*
-      if (this.parent) parent.addChild(mc);
-      */
       hidden = false;
     }
 
