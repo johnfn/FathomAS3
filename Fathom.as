@@ -92,8 +92,6 @@
         e.update(entities);
         e.emit("post-update");
       }
-
-      trace(container.getmc);
     }
   }
 }

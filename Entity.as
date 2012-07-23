@@ -154,15 +154,17 @@
       }
     }
 
-    public function disappearAfter(frames:int):void {
+    public function disappearAfter(frames:int):Entity {
       var timeLeft:int = frames;
-      var that:* = this;
+      var that:Entity = this;
 
       listen(function():void {
         if (timeLeft-- == 0) {
           that.destroy();
         }
       });
+
+      return this;
     }
 
     public function raiseToTop():void {
