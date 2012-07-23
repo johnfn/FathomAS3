@@ -1,4 +1,4 @@
-package {
+﻿package {
   public class Fathom {
     import flash.utils.clearInterval;
     import flash.utils.setInterval;
@@ -11,27 +11,31 @@ package {
 
     public static var fpsTxt:Text;
     public static var entities:EntityList = new EntityList([]);
-    public static var container:MovieClip;
+    public static var container:Entity;
+    public static var initialized:Boolean = false;
+
     private static var _paused:Boolean = false;
 
     public static var MCPool:Object = {};
 
     public static function get paused():Boolean { return _paused; }
 
-    public static function set showFPS(b:Boolean) {
+    public static function set showingFPS(b:Boolean) {
       fpsTxt.visible = b;
     }
 
-    public static function initialize(container:MovieClip, FPS:int = 30):void {
+    public static function initialize(toplevel:MovieClip, FPS:int = 30):void {
+      // Inside of the Entity constructor, we assert Fathom.initialized.
+      Fathom.initialized = true;
       Fathom.FPS = FPS;
-      Fathom.container = container;
+      Fathom.container = new Entity().setExternalMC(toplevel);
 
       fpsFn = Hooks.fpsCounter();
       fpsTxt = new Text(200, 20);
 
-      Util._initializeKeyInput(container);
+      Util._initializeKeyInput(container.getmc);
 
-      container.addEventListener(Event.ENTER_FRAME, update);
+      container.getmc.addEventListener(Event.ENTER_FRAME, update);
     }
 
     //TODO: May want a better name than pause. freeze?
@@ -57,6 +61,10 @@ package {
 
     private static function update(event:Event):void {
       var updaters:EntityList;
+
+
+      // TODO: entities == Fathom.container.children
+
       if (_paused) {
         updaters = entities.get("updates-while-paused");
       } else {
@@ -85,6 +93,9 @@ package {
         e.update(entities);
         e.emit("post-update");
       }
+
+      trace(container.getmc);
     }
   }
 }
+

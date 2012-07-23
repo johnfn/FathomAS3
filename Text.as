@@ -28,8 +28,6 @@ package {
 
       text = content;
 
-      Fathom.container.addChild(textField);
-
       listen(Hooks.keyRecentlyDown(Util.Key.Z, advanceText));
 
       if (width == -1) {

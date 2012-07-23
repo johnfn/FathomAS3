@@ -1,4 +1,4 @@
-package {
+﻿package {
   import flash.display.MovieClip;
   import flash.geom.Point;
   import flash.utils.getQualifiedClassName;
@@ -20,11 +20,19 @@ package {
     protected var wiggle:int = 0;
     protected var usesExternalMC:Boolean = false;
 
+    // Allows for a fast check to see if this entity moves.
     protected var _isStatic:Boolean = true;
-    protected var parent:MovieClip;
+
+    // The Entity that contains this Entity, if there is one.
+    protected var parent:Entity;
 
     public function get isStatic():Boolean { return _isStatic; }
     private function set isStatic(val:Boolean):void { _isStatic = val; }
+
+    public function get childrenList():Array { return children; }
+    private function set childrenList(val:Array):void { children = val; }
+
+    public function get getmc():MovieClip { return mc; }
 
     //TODO: Make visible represent whether an mc actually exists for this Entity.
     function Entity(x:Number = 0, y:Number = 0, width:Number = 20, height:Number = -1, color:Number = 0xFF0000, visible:Boolean = true, wiggle:int = 0):void {
@@ -32,7 +40,7 @@ package {
 
       super(x, y, this.width);
 
-      if (!Fathom.container) {
+      if (!Fathom.initialized) {
         throw new Error("Util.initialize() has not been called. Failing.");
       }
 
@@ -41,42 +49,55 @@ package {
       this.width = width - wiggle * 2;
       this.color = color;
       this.setMCOffset(0, 0);
-      this.parent = Fathom.container;
+      this.parent = null;
 
       this.mc = new MovieClip();
 
       if (visible) {
-        show();
         draw();
-      } else {
+      }
+
+      //TODO: I had this idea about how parents should bubble down events to children.
+      if (Fathom.container) {
         Fathom.entities.add(this);
       }
 
-      this.__fathom = { uid: Util.getUniqueID()
-                      , events: {}
+      //TODO: Remove.
+      this.__fathom = { events: {}
                       , entities: Fathom.entities
                       };
+
     }
 
     //TODO: there is some duplication here.
     public function setExternalMC(mcClass:*, fixedSize:Boolean = false):Entity {
-      this.mc.graphics.clear();
+      //this.mc.graphics.clear();
 
       //TODO: Merge with show... somehow...
 
-      if (getQualifiedClassName(mcClass) == "String") {
+      this.usesExternalMC = true;
+
+      var className:String = Util.className(mcClass);
+
+      if (className == "String") {
         this.mc = new Fathom.MCPool[mcClass]();
         groupArray.push(mcClass);
+      } else if (className == "MovieClip") {
+        this.mc = mcClass;
       } else {
         this.mc = new mcClass();
       }
 
-      this.usesExternalMC = true;
-      Fathom.container.addChild(this.mc);
-
       if (fixedSize) {
         mc.width = this.width + wiggle * 2;
         mc.height = this.height + wiggle * 2;
+      }
+
+      // All Entities are added to the container, except the container itself, which
+      // has to be bootstrapped onto the Stage. If Fathom.container does not exist, `this`
+      // must be the container.
+      if (Fathom.container) {
+        Fathom.container.addChild(this);
       }
 
       return this;
@@ -143,15 +164,21 @@ package {
     // TODO: This function needs some work.
     public function addChild(child:Entity):void {
       children.push(child);
+      child.parent = this;
+
+      //TODO: Eventually remove this, visible should be default.
+      child.visible = true;
 
       // All children are initially managed by the master entity list.
       // In this case we don't want that to be true.
 
-      child.visible = true;
-      Fathom.entities.remove(child);
+      //Fathom.entities.remove(child);
+
+      mc.addChild(child.mc);
     }
 
-    // TODO: What does removing the child even connote???
+    // Remove child: The child entity does not belong to this entity as a child.
+    // It continues to exist in the game.
     public function removeChild(child:Entity):void {
       child.visible = false;
       children.remove(child);
@@ -243,15 +270,19 @@ package {
     // TODO: Naming this function is very hard. I want something that
     // connotates removing it from the global entities list, but not
     // destroying the actual object itself (it can be brought back later.)
+
+    // TODO: Aha: removeFromScene()
     public function hide():void {
       for (var i:int = 0; i < children.length; i++){
         children[i].hide();
       }
 
+      if (this.parent) this.parent.removeChild(this);
+
+      /*
       Fathom.entities.remove(this);
-      this.parent = mc.parent;
-      //TODO. If not "visible", will not have parent.
-      if (this.parent) mc.parent.removeChild(mc);
+      if (this.parent) parent.removeChild(mc);
+      */
       hidden = true;
     }
 
@@ -264,8 +295,10 @@ package {
         children[i].show();
       }
 
+      /*
       Fathom.entities.add(this);
-      this.parent.addChild(mc);
+      if (this.parent) parent.addChild(mc);
+      */
       hidden = false;
     }
 
@@ -282,7 +315,11 @@ package {
       hide();
 
       __fathom = null;
-      if (mc.parent) mc.parent.removeChild(mc);
+      if (mc && mc.parent) {
+        mc.parent.removeChild(mc);
+      }
+
+      if (parent) parent.removeChild(this);
       mc = null;
       destroyed = true;
     }
