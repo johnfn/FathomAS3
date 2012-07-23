@@ -12,6 +12,7 @@ package {
     public var destroyed:Boolean = false;
     public var hidden:Boolean = false;
 
+    protected var groupArray:Array = [];
     protected var mcOffset:Vec;
     protected var mc:MovieClip;
     protected var color:Number;
@@ -35,6 +36,7 @@ package {
         throw new Error("Util.initialize() has not been called. Failing.");
       }
 
+      groupArray.push("updateable");
       this.height = height - wiggle * 2;
       this.width = width - wiggle * 2;
       this.color = color;
@@ -57,11 +59,18 @@ package {
     }
 
     //TODO: there is some duplication here.
-    public function setExternalMC(mcClass:Class, fixedSize:Boolean = false):void {
+    public function setExternalMC(mcClass:*, fixedSize:Boolean = false):Entity {
       this.mc.graphics.clear();
 
       //TODO: Merge with show... somehow...
-      this.mc = new mcClass();
+
+      if (getQualifiedClassName(mcClass) == "String") {
+        this.mc = new Fathom.MCPool[mcClass]();
+        groupArray.push(mcClass);
+      } else {
+        this.mc = new mcClass();
+      }
+
       this.usesExternalMC = true;
       Fathom.container.addChild(this.mc);
 
@@ -69,6 +78,8 @@ package {
         mc.width = this.width + wiggle * 2;
         mc.height = this.height + wiggle * 2;
       }
+
+      return this;
     }
 
     public function set visible(v:Boolean):void { mc.visible = v; }
@@ -82,6 +93,22 @@ package {
 
     public override function set y(v:Number):void { mc.y = Math.floor(v + mcOffset.y); _y = v; }
     public override function get y():Number { return _y; }
+
+    public function set scaleX(v:Number):void { mc.scaleX = v; }
+    public function get scaleX():Number { return mc.scaleX; }
+
+    public function set scaleY(v:Number):void { mc.scaleY = v; }
+    public function get scaleY():Number { return mc.scaleY; }
+
+    public function gotoAndStop(f:int):void { mc.gotoAndStop(f); }
+    public function gotoAndPlay(f:int):void { mc.gotoAndPlay(f); }
+
+    public function get totalFrames():int { return mc.totalFrames; }
+
+    public function set currentFrame(v:int):void { mc.currentFrame = v; }
+    public function get currentFrame():int { return mc.currentFrame; }
+
+    public function play():void { mc.play(); }
 
     protected function setMCOffset(x:int, y:int):void {
       this.mcOffset = (new Vec(wiggle, wiggle)).add(new Vec(x, y));
@@ -117,10 +144,17 @@ package {
     public function addChild(child:Entity):void {
       children.push(child);
 
-      // All children are implicitly managed by the master entity list, but
-      // in this case we don't want that to be true.
+      // All children are initially managed by the master entity list.
+      // In this case we don't want that to be true.
 
+      child.visible = true;
       Fathom.entities.remove(child);
+    }
+
+    // TODO: What does removing the child even connote???
+    public function removeChild(child:Entity):void {
+      child.visible = false;
+      children.remove(child);
     }
 
     public function entities():EntityList {
@@ -258,7 +292,7 @@ package {
     //TODO: There is a possible namespace collision here. Should prob make it impossible to manually add groups.
     //TODO: I've decided I don't like strings. Enumerations are better.
     public function groups():Array {
-      return ["updateable"].concat(Util.className(this));
+      return groupArray.concat(Util.className(this));
     }
 
     public function collides(other:Entity):Boolean {

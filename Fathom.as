@@ -12,7 +12,9 @@ package {
     public static var fpsTxt:Text;
     public static var entities:EntityList = new EntityList([]);
     public static var container:MovieClip;
-    public static var _paused:Boolean = false;
+    private static var _paused:Boolean = false;
+
+    public static var MCPool:Object = {};
 
     public static function get paused():Boolean { return _paused; }
 

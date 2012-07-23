@@ -174,12 +174,14 @@ package {
 
     // Takes either a Vector or an int (treated as a Vector(int, int))
     public function multiply(n:*):Vec {
-      if (getQualifiedClassName(n) == "int") {
+      var name:String = getQualifiedClassName(n);
+
+      if (name == "int" || name == "Number") {
         var val:Number = n as Number;
 
         x *= n;
         y *= n;
-      } else if (getQualifiedClassName(n) == "Vec") {
+      } else if (name == "Vec") {
         var vec:Vec = n as Vec;
 
         x *= n.x;

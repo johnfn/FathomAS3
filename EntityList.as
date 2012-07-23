@@ -1,4 +1,6 @@
-package {
+﻿package {
+	import flash.debugger.enterDebugger;
+	
   //TODO: extends Vector.<Entity>
 
   public dynamic class EntityList extends Array {
@@ -86,3 +88,4 @@ package {
     }
   }
 }
+

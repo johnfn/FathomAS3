@@ -178,7 +178,6 @@ package {
 
         entity.x += entity.vel.x;
         entity.xColl = entity.currentlyObstructing();
-        trace(entity.xColl);
         if (entity.xColl.length > 0) {
           if (entity.vel.x < 0) entity.touchingLeft = true;
           if (entity.vel.x > 0) entity.touchingRight = true;
