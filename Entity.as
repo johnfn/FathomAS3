@@ -200,7 +200,6 @@
     // Remove child: The child entity does not belong to this entity as a child.
     // It continues to exist in the game.
     public function removeChild(child:Entity):void {
-      child.visible = false;
       children.remove(child);
 
       Fathom.container.mc.removeChild(child.mc);
