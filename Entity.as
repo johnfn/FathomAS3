@@ -191,15 +191,7 @@
       children.push(child);
       child.parent = this;
 
-      //TODO: Eventually remove this, visible should be default.
-      child.visible = true;
-
-      // All children are initially managed by the master entity list.
-      // In this case we don't want that to be true.
-
-      //Fathom.entities.remove(child);
-
-      mc.addChild(child.mc);
+      Fathom.container.mc.addChild(child.mc);
     }
 
     // Remove child: The child entity does not belong to this entity as a child.
@@ -207,6 +199,8 @@
     public function removeChild(child:Entity):void {
       child.visible = false;
       children.remove(child);
+
+      Fathom.container.mc.removeChild(child.mc);
     }
 
     public function entities():EntityList {
