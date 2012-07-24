@@ -19,6 +19,7 @@
     protected var children:Array = [];
     protected var wiggle:int = 0;
     protected var usesExternalMC:Boolean = false;
+    protected var _ignoresCollisions:Boolean = false;
 
     // Allows for a fast check to see if this entity moves.
     protected var _isStatic:Boolean = true;
@@ -150,6 +151,15 @@
       }
     }
 
+    // Chainable methods.
+    //
+    // Often you'll want a lightweight custom Entity without wanting to
+    // code up an entirely new class that extends. Chainable methods are
+    // for you. If I want to make an explosion that quickly disappears,
+    // for instance, I can do something like this:
+    //
+    // new Entity().fromExternalMC("Explosion").ignoreCollisions().disappearAfter(20);
+
     public function disappearAfter(frames:int):Entity {
       var timeLeft:int = frames;
       var that:Entity = this;
@@ -159,6 +169,12 @@
           that.destroy();
         }
       });
+
+      return this;
+    }
+
+    public function ignoreCollisions():Entity {
+      _ignoresCollisions = true;
 
       return this;
     }
@@ -333,7 +349,7 @@
     }
 
     public function collides(other:Entity):Boolean {
-      return (!(this == other)) && touchingRect(other);
+      return !_ignoresCollisions && (!(this == other)) && touchingRect(other);
     }
 
     public function collidesPt(point:Point):Boolean { return mc.hitTestPoint(point.x, point.y); }
@@ -341,7 +357,7 @@
     public function update(e:EntityList):void {}
 
     public override function toString():String {
-      return "[" + Util.className(this) + super.toString() + "]";
+      return "[" + Util.className(this) + super.toString() + " (" + groups() + ") ]";
     }
 
     public function depth():int { return 0; }
