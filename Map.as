@@ -73,7 +73,7 @@ package {
 
       for (i = 0; i < items.length; i++) {
         if (!items[i].destroyed) {
-          items[i].removeFromScene();
+          items[i].removeFromFathom();
           processedItems.push(items[i]);
         }
       }
@@ -95,7 +95,7 @@ package {
 
       // Add all persistent items that exist in this room.
       persistent[topLeftCorner.asKey()].map(function(e:*, i:int, a:Array):void {
-        e.addToScene();
+        e.addToFathom();
       });
     }
 

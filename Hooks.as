@@ -144,7 +144,7 @@ package {
       m.yColl = new EntityList([]);
     }
 
-    public static function removeUnnecessaryVelocity(entity:MovingEntity):Function {
+    public static function removeUnnecessaryVelocity(entity:MovingEntity):void {
       if (entity.touchingRight) entity.vel.x = Math.min(entity.vel.x, 0);
       if (entity.touchingLeft) entity.vel.x = Math.max(entity.vel.x, 0);
 

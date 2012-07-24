@@ -2,6 +2,7 @@
   import flash.display.MovieClip;
   import flash.geom.Point;
   import flash.utils.getQualifiedClassName;
+  import flash.debugger.enterDebugger;
 
   import Hooks;
   import Util;
@@ -123,7 +124,7 @@
 
     public function get totalFrames():int { return mc.totalFrames; }
 
-    public function set currentFrame(v:int):void { mc.currentFrame = v; }
+    //public function set currentFrame(v:int):void { mc.gotoAndStop(v); }
     public function get currentFrame():int { return mc.currentFrame; }
 
     public function play():void { mc.play(); }
@@ -188,6 +189,8 @@
 
     // TODO: This function needs some work.
     public function addChild(child:Entity):void {
+      Util.assert(!children.contains(child));
+
       children.push(child);
       child.parent = this;
 
@@ -285,27 +288,27 @@
 
     /* This causes the Entity to cease existing in-game. The only way to
        bring it back is to call show(). */
-    public function removeFromScene():void {
+    public function removeFromFathom(recursing:Boolean = false):void {
       for (var i:int = 0; i < children.length; i++){
-        children[i].removeFromScene();
+        children[i].removeFromFathom(true);
       }
 
-      if (this.parent) this.parent.removeChild(this);
+      if (!recursing && this.parent) this.parent.removeChild(this);
 
       Fathom.entities.remove(this);
       hidden = true;
     }
 
     /* This causes the Entity to exist in the game. There is no need to call
-       this except after a call to removeFromScene(). */
-    public function addToScene():void {
+       this except after a call to removeFromFathom(). */
+    public function addToFathom(recursing:Boolean = false):void {
       Util.assert(!destroyed);
 
       for (var i:int = 0; i < children.length; i++){
-        children[i].addToScene();
+        children[i].addToFathom(true);
       }
 
-      if (this.parent) this.parent.addChild(this);
+      if (!recursing && this.parent) this.parent.addChild(this);
 
       Fathom.entities.add(this);
       hidden = false;
@@ -321,17 +324,24 @@
     }
 
     public function clearMemory():void {
-      removeFromScene();
+      removeFromFathom();
 
       __fathom = null;
       if (mc && mc.parent) {
         mc.parent.removeChild(mc);
       }
 
-      if (parent) parent.removeChild(this);
       mc = null;
       destroyed = true;
       Fathom.entities.remove(this);
+    }
+
+    public function addGroups(...args):Entity {
+      for (var i:int = 0; i < args.length; i++) {
+        groupArray.push(args[i]);
+      }
+
+      return this;
     }
 
     //TODO: Could add all superclasses.
