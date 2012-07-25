@@ -10,6 +10,8 @@
 
   public class Entity extends Rect {
     public var __fathom:Object;
+    // This indicates that the object should be destroyed.
+    // The update loop in Fathom will eventually destroy it.
     public var destroyed:Boolean = false;
     public var hidden:Boolean = false;
 
@@ -71,11 +73,27 @@
 
     }
 
+    private function getChildrenOf(mc:MovieClip):Array {
+      var children:Array = [];
+
+      for (var i:int = 0; i < mc.numChildren; i++) {
+        children[i] = mc.getChildAt(i);
+      }
+
+      return children;
+    }
+
     //TODO: there is some duplication here.
     public function fromExternalMC(mcClass:*, fixedSize:Boolean = false):Entity {
       this.usesExternalMC = true;
 
       var className:String = Util.className(mcClass);
+
+      var oldChildren:Array = getChildrenOf(mc);
+
+      for (var i:int = 0; i < mc.numChildren; i++) {
+        mc.removeChild(oldChildren[i]);
+      }
 
       if (className == "String") {
         this.mc = new Fathom.MCPool[mcClass]();
@@ -85,6 +103,12 @@
       } else {
         this.mc = new mcClass();
       }
+
+      for (var i:int = 0; i < oldChildren.length; i++) {
+        this.mc.addChild(oldChildren[i]);
+      }
+
+      trace(mc.scaleX);
 
       if (fixedSize) {
         mc.width = this.width + wiggle * 2;
@@ -194,7 +218,7 @@
       children.push(child);
       child.parent = this;
 
-      Fathom.container.mc.addChild(child.mc);
+      this.mc.addChild(child.mc);
     }
 
     // Remove child: The child entity does not belong to this entity as a child.
@@ -202,7 +226,7 @@
     public function removeChild(child:Entity):void {
       children.remove(child);
 
-      Fathom.container.mc.removeChild(child.mc);
+      this.mc.removeChild(child.mc);
     }
 
     public function entities():EntityList {
