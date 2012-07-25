@@ -143,6 +143,9 @@
     public function set scaleY(v:Number):void { mc.scaleY = v; }
     public function get scaleY():Number { return mc.scaleY; }
 
+    public function set rotation(v:Number):void { mc.rotation = v; }
+    public function get rotation():Number { return mc.rotation; }
+
     public function gotoAndStop(f:int):void { mc.gotoAndStop(f); }
     public function gotoAndPlay(f:int):void { mc.gotoAndPlay(f); }
 
