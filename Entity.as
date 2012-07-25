@@ -9,7 +9,7 @@
   import MagicArray;
 
   public class Entity extends Rect {
-    private var events:Object;
+    private var events:Object = {};
     // This indicates that the object should be destroyed.
     // The update loop in Fathom will eventually destroy it.
     public var destroyed:Boolean = false;
@@ -109,7 +109,8 @@
       }
 
       // If this is the container, than the difference between our childrenContainer and our mc
-      // is moot.
+      // is moot. We could require the user to make 2 MCs, but that seems a bit silly,
+      // especially since the container object
       if (!Fathom.container) {
         this.childrenContainer = this.mc;
       }
@@ -238,19 +239,19 @@
 
     //TODO: I don't think I like this interface.
     public function on(event:String, callback:Function):Entity {
-      var events:Array = events[event] || [];
-      if (! (callback in events)) {
-        events.push(callback);
+      var prevEvents:Array = events[event] || [];
+
+      if (! (callback in prevEvents)) {
+        prevEvents.push(callback);
       }
 
-      events[event] = events;
+      events[event] = prevEvents;
 
       return this;
     }
 
     public function off(event:String, callback:Function = null):Entity {
-      var events:Array = events[event];
-      if (!events) {
+      if (!events[event]) {
         throw "Don't have that event!";
       }
 
