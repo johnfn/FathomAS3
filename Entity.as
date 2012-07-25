@@ -114,6 +114,12 @@
         Fathom.container.addChild(this);
       }
 
+      // If this is the container, than the difference between our childrenContainer and our mc
+      // is moot.
+      if (!Fathom.container) {
+        this.childrenContainer = this.mc;
+      }
+
       return this;
     }
 
@@ -125,14 +131,12 @@
 
     public override function set x(v:Number):void {
       mc.x = Math.floor(v + mcOffset.x);
-      childrenContainer.x = mc.x;
       _x = v;
     }
     public override function get x():Number { return _x; }
 
     public override function set y(v:Number):void {
       mc.y = Math.floor(v + mcOffset.y);
-      childrenContainer.y = mc.y;
       _y = v;
     }
 
