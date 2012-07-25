@@ -9,7 +9,7 @@
   import MagicArray;
 
   public class Entity extends Rect {
-    public var __fathom:Object;
+    private var events:Object;
     // This indicates that the object should be destroyed.
     // The update loop in Fathom will eventually destroy it.
     public var destroyed:Boolean = false;
@@ -69,12 +69,6 @@
       if (Fathom.container) {
         Fathom.entities.add(this);
       }
-
-      //TODO: Remove.
-      this.__fathom = { events: {}
-                      , entities: Fathom.entities
-                      };
-
     }
 
     private function getChildrenOf(mc:MovieClip):Array {
@@ -236,10 +230,6 @@
       this.childrenContainer.removeChild(child.childrenContainer);
     }
 
-    public function entities():EntityList {
-      return __fathom.entities;
-    }
-
     /*
     public function addEvent(event:Function):Entity {
       on("post-update", event);
@@ -248,26 +238,26 @@
 
     //TODO: I don't think I like this interface.
     public function on(event:String, callback:Function):Entity {
-      var events:Array = __fathom.events[event] || [];
+      var events:Array = events[event] || [];
       if (! (callback in events)) {
         events.push(callback);
       }
 
-      __fathom.events[event] = events;
+      events[event] = events;
 
       return this;
     }
 
     public function off(event:String, callback:Function = null):Entity {
-      var events:Array = __fathom.events[event];
+      var events:Array = events[event];
       if (!events) {
         throw "Don't have that event!";
       }
 
       if (callback != null) {
-        __fathom.events[event].remove(callback);
+        events[event].remove(callback);
       } else {
-        __fathom.events[event] = [];
+        events[event] = [];
       }
 
       return this;
@@ -280,8 +270,8 @@
     }
 
     public function emit(event:String):Entity {
-      if (event in __fathom.events) {
-        var hooks:Array = __fathom.events[event];
+      if (event in events) {
+        var hooks:Array = events[event];
 
         for (var i:int = 0; i < hooks.length; i++){
           var hook:Function = hooks[i];
@@ -356,7 +346,7 @@
     public function clearMemory():void {
       removeFromFathom();
 
-      __fathom = null;
+      events = null;
       if (mc && mc.parent) {
         mc.parent.removeChild(mc);
       }
