@@ -35,6 +35,10 @@ package {
       }
     }
 
+    MovieClip.prototype.asVec = function():Vec {
+      return new Vec(this.x, this.y);
+    }
+
     public static function id(x:*):* {
       return x;
     }
@@ -84,6 +88,17 @@ package {
           fn(i, j, a[i][j]);
         }
       }
+    }
+
+    // With thanks to http://kirill-poletaev.blogspot.com/2010/07/rotate-object-to-mouse-using-as3.html
+    public static function rotateToFace(pointer:Vec, target:Vec):Number {
+      var cx:Number = target.x - pointer.x;
+      var cy:Number = target.y - pointer.y;
+
+      var radians:Number = Math.atan2(cy, cx);
+      var degrees:Number = radians * 180 / Math.PI;
+
+      return degrees;
     }
 
     public static function make2DArray(width:int, height:int, defaultValue:*):Array {
