@@ -16,13 +16,16 @@
     public var hidden:Boolean = false;
 
     protected var groupArray:Array = [];
-    protected var mcOffset:Vec;
-    protected var mc:MovieClip;
     protected var color:Number;
     protected var children:Array = [];
     protected var wiggle:int = 0;
     protected var usesExternalMC:Boolean = false;
     protected var _ignoresCollisions:Boolean = false;
+
+    protected var mcOffset:Vec;
+    protected var mc:MovieClip;
+    protected var childrenContainer:MovieClip = new MovieClip();
+    protected var initialSize:Vec;
 
     // Allows for a fast check to see if this entity moves.
     protected var _isStatic:Boolean = true;
@@ -51,6 +54,7 @@
       groupArray.push("updateable");
       this.height = height - wiggle * 2;
       this.width = width - wiggle * 2;
+      this.initialSize = new Vec(this.height, this.width);
       this.color = color;
       this.setMCOffset(0, 0);
       this.parent = null;
@@ -89,12 +93,6 @@
 
       var className:String = Util.className(mcClass);
 
-      var oldChildren:Array = getChildrenOf(mc);
-
-      for (var i:int = 0; i < mc.numChildren; i++) {
-        mc.removeChild(oldChildren[i]);
-      }
-
       if (className == "String") {
         this.mc = new Fathom.MCPool[mcClass]();
         groupArray.push(mcClass);
@@ -103,12 +101,6 @@
       } else {
         this.mc = new mcClass();
       }
-
-      for (var i:int = 0; i < oldChildren.length; i++) {
-        this.mc.addChild(oldChildren[i]);
-      }
-
-      trace(mc.scaleX);
 
       if (fixedSize) {
         mc.width = this.width + wiggle * 2;
@@ -131,10 +123,19 @@
     public function set alpha(v:Number):void { mc.alpha = v; }
     public function get alpha():Number { return mc.alpha; }
 
-    public override function set x(v:Number):void { mc.x = Math.floor(v + mcOffset.x); _x = v; }
+    public override function set x(v:Number):void {
+      mc.x = Math.floor(v + mcOffset.x);
+      childrenContainer.x = mc.x;
+      _x = v;
+    }
     public override function get x():Number { return _x; }
 
-    public override function set y(v:Number):void { mc.y = Math.floor(v + mcOffset.y); _y = v; }
+    public override function set y(v:Number):void {
+      mc.y = Math.floor(v + mcOffset.y);
+      childrenContainer.y = mc.y;
+      _y = v;
+    }
+
     public override function get y():Number { return _y; }
 
     public function set scaleX(v:Number):void { mc.scaleX = v; }
@@ -218,7 +219,8 @@
       children.push(child);
       child.parent = this;
 
-      this.mc.addChild(child.mc);
+      this.childrenContainer.addChild(child.mc);
+      this.childrenContainer.addChild(child.childrenContainer);
     }
 
     // Remove child: The child entity does not belong to this entity as a child.
@@ -226,13 +228,13 @@
     public function removeChild(child:Entity):void {
       children.remove(child);
 
-      this.mc.removeChild(child.mc);
+      this.childrenContainer.removeChild(child.mc);
+      this.childrenContainer.removeChild(child.childrenContainer);
     }
 
     public function entities():EntityList {
       return __fathom.entities;
     }
-
 
     /*
     public function addEvent(event:Function):Entity {
@@ -346,6 +348,7 @@
       destroyed = true;
     }
 
+    //TODO: Does not entirely clear memory.
     public function clearMemory():void {
       removeFromFathom();
 
