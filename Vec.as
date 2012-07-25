@@ -212,8 +212,10 @@ package {
     }
 
     public function normalize():Vec {
-      x /= magnitude();
-      y /= magnitude();
+      var mag:Number = magnitude();
+
+      x /= mag;
+      y /= mag;
 
       return this;
     }
