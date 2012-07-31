@@ -201,5 +201,9 @@ package {
 
       updateTiles();
     }
+
+    public function getTopLeftCorner():Vec {
+      return this.topLeftCorner;
+    }
   }
 }

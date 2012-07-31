@@ -4,7 +4,7 @@ package {
     private const SIZE:int = C.size;
 
     function Tile(x:int=0, y:int=0, type:int=0) {
-      super(x, y, SIZE, SIZE, typeToColor(type).toInt());
+      super(x, y, SIZE, SIZE, true);
     }
 
     private function typeToColor(type:int):Color {
@@ -27,10 +27,6 @@ package {
       this.draw();
 
       return this;
-    }
-
-    public override function groups():Array {
-      return super.groups().concat("persistent");
     }
   }
 }

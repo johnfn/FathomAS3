@@ -38,7 +38,7 @@ package {
     }
 
     public override function groups():Array {
-      return super.groups().concat("updates-while-paused").concat("persistent");
+      return super.groups().concat("updates-while-paused");
     }
 
     public function set text(s:String):void {

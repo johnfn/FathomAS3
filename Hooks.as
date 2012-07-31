@@ -242,20 +242,33 @@ package {
       return fn;
     }
 
-    public static function decel(decel:Number = 2):Function {
+    public static function decel(decel:Number = 2.0):Function {
+
+      var truncate:Function = function(val:Number):Number {
+        if (Math.abs(val) <= decel) return 0;
+        return val;
+      }
+
+      return function():void {
+        this.vel.map(truncate).addAwayFromZero(-decel, -decel);
+      }
+    }
+
+    public static function truncate():Function {
       var cutoff:Number = 0.4;
       var lowCutoff:Number = 20;
 
-      var truncate:Function = function(val:Number):Number {
+      var cutoffFn:Function = function(val:Number):Number {
         if (Math.abs(val) < cutoff) {
           return 0;
         }
+
         if (Math.abs(val) > lowCutoff) return Util.sign(val) * lowCutoff; //TODO: This hides a problem where falling velocity gets too large.
         return val;
       }
 
       return function():void {
-        this.vel.map(truncate)//.addAwayFromZero(0.6, 0.0);
+        this.vel.map(cutoffFn)//.addAwayFromZero(0.6, 0.0);
       }
     }
   }

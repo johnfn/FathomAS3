@@ -15,7 +15,7 @@
     public var destroyed:Boolean = false;
     public var hidden:Boolean = false;
 
-    protected var groupArray:Array = [];
+    protected var groupArray:Array = ["updateable", "persistent"];
     protected var color:Number;
     protected var children:Array = [];
     protected var wiggle:int = 0;
@@ -51,7 +51,6 @@
         throw new Error("Util.initialize() has not been called. Failing.");
       }
 
-      groupArray.push("updateable");
       this.height = height - wiggle * 2;
       this.width = width - wiggle * 2;
       this.initialSize = new Vec(this.height, this.width);
