@@ -100,7 +100,12 @@ package {
     }
 
     private function addPersistentItem(c:Color, x:int, y:int):void {
-      if (!(c.toString() in persistentItemMapping)) return;
+      if (!(c.toString() in persistentItemMapping)) {
+        if (c.toString() != "#ffffff") {
+          trace("Color without data: " + c.toString());
+        }
+        return;
+      }
 
       var itemData:Object = persistentItemMapping[c.toString()];
       var e:Entity = new itemData["type"]();

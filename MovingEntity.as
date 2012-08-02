@@ -22,7 +22,7 @@ package {
     /* List of all entities that this entity collided with in this time step. */
     internal var collisionList:EntityList = new EntityList([]);
 
-    function MovingEntity(x:Number = 0, y:Number = 0, width:Number = 20, height:Number = -1, visible:Boolean = true, wiggle:int = 1):void {
+    function MovingEntity(x:Number = 0, y:Number = 0, width:Number = 20, height:Number = -1, visible:Boolean = true, wiggle:int = 2):void {
       super(x, y, width, height, visible, wiggle);
       _isStatic = false;
 
