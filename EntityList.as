@@ -1,6 +1,6 @@
 ﻿package {
 	import flash.debugger.enterDebugger;
-	
+
   //TODO: extends Vector.<Entity>
 
   public dynamic class EntityList extends Array {
@@ -9,6 +9,12 @@
         for (var i:int = 0; i < entities.length; i++) {
           this[i] = entities[i];
         }
+      }
+    }
+
+    public function each(f:Function):void {
+      for (var i:int = 0; i < entities.length; i++) {
+        f(this[i]);
       }
     }
 
@@ -33,7 +39,12 @@
 
     public function one(...criteria):Entity {
       var results:EntityList = this.get.apply(this, criteria);
-      Util.assert(results.length == 1);
+
+      if (results.length == 0) {
+        throw new Error("EntityList#one called with criteria "+ criteria.toString()+ ", but no results found.");
+      } else if (results.length > 1) {
+        throw new Error("EntityList#one called with criteria "+ criteria.toString()+ ", and "+ results.length+ " results found.");
+      }
 
       return results.first();
     }

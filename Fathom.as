@@ -8,6 +8,7 @@
     private static var gameloopID:int;
     private static var FPS:int = 0;
     private static var fpsFn:Function;
+    private static var mapRef:Map;
 
     public static var fpsTxt:Text;
     public static var entities:EntityList = new EntityList([]);
@@ -24,11 +25,13 @@
       fpsTxt.visible = b;
     }
 
-    public static function initialize(toplevel:MovieClip, FPS:int = 30):void {
+    public static function initialize(toplevel:MovieClip, m:Map, FPS:int = 30):void {
       // Inside of the Entity constructor, we assert Fathom.initialized.
       Fathom.initialized = true;
       Fathom.FPS = FPS;
       Fathom.container = new Entity().fromExternalMC(toplevel);
+      Fathom.mapRef = m;
+      Fathom.mapRef.updateTiles();
 
       fpsFn = Hooks.fpsCounter();
       fpsTxt = new Text(200, 20);
@@ -92,6 +95,8 @@
         e.update(entities);
         e.emit("post-update");
       }
+
+      mapRef.update();
     }
   }
 }

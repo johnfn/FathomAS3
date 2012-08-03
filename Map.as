@@ -7,6 +7,7 @@ package {
 
   import Color;
   import Util;
+  import Entity;
 
   public class Map extends Rect {
     private var widthInTiles:int;
@@ -60,18 +61,14 @@ package {
         }
       }
 
-      updateTiles();
-
       return this;
     }
 
-    private function switchMap(diff:Vec):void {
-      // Hide old persistent items and get rid of permanently destroyed ones.
-      var items:Array = persistent[topLeftCorner.asKey()];
+    private function hideOldPersistentItems():void {
       var processedItems:Array = [];
-      var i:int;
+      var items:Array = persistent[topLeftCorner.asKey()];
 
-      for (i = 0; i < items.length; i++) {
+      for (var i:int = 0; i < items.length; i++) {
         if (!items[i].destroyed) {
           items[i].removeFromFathom();
           processedItems.push(items[i]);
@@ -79,24 +76,16 @@ package {
       }
 
       persistent[topLeftCorner.asKey()] = processedItems;
+    }
 
-      // Remove all impermanent items
+    private function updatePersistentItems(diff:Vec):void {
+      hideOldPersistentItems();
 
-      var impermanent:EntityList = Fathom.entities.get("!persistent");
+      Fathom.entities.get("!persistent").each(function(e:Entity):void {
+        e.destroy();
+      })
 
-      for (i = 0; i < impermanent.length; i++) {
-        impermanent[i].destroy();
-      }
-
-      // Switch maps
-      topLeftCorner.add(diff)
-
-      if (!exploredMaps[topLeftCorner.asKey()]) return;
-
-      // Add all persistent items that exist in this room.
-      persistent[topLeftCorner.asKey()].map(function(e:*, i:int, a:Array):void {
-        e.addToFathom();
-      });
+      addNewPersistentItems();
     }
 
     private function addPersistentItem(c:Color, x:int, y:int):void {
@@ -121,7 +110,7 @@ package {
       }
     }
 
-    private function updateTiles():void {
+    public function addNewPersistentItems():void {
       var seenBefore:Boolean = exploredMaps[topLeftCorner.asKey()];
 
       this.clearTiles();
@@ -137,6 +126,11 @@ package {
             addPersistentItem(dataColor, x, y);
           }
         }
+      } else {
+        // Add all persistent items that exist in this room.
+        persistent[topLeftCorner.asKey()].map(function(e:*, i:int, a:Array):void {
+          e.addToFathom();
+        });
       }
 
       // Cache every persistent item in the 2D array of tiles.
@@ -156,6 +150,15 @@ package {
       exploredMaps[topLeftCorner.asKey()] = true;
 
       Fathom.sortDepths();
+    }
+
+    public function itemSwitchedMaps(leftScreen:Entity):Function {
+      return function():void {
+        var smallerSize:Vec = sizeVector.clone().subtract(leftScreen.width);
+        var dir:Vec = leftScreen.clone().divide(smallerSize).map(Math.floor);
+
+        trace(dir);
+      }
     }
 
     public function collidesPt(other:Point):Boolean {
@@ -188,23 +191,33 @@ package {
       return false;
     }
 
+    public function update():void {
+      var items:Array = persistent[topLeftCorner.asKey()];
+
+      for (var i:int = 0; i < items.length; i++) {
+        if (Hooks.hasLeftMap(items[i], this)) {
+          Util.assert(items[i].groups().indexOf("Character") != -1);
+          this.itemSwitchedMaps(items[i]);
+        }
+      }
+    }
+
     public override function toString():String {
       return "[Map]";
     }
 
     public function startingCorner(corner:Vec):Map {
-      switchMap(corner.multiply(widthInTiles));
-      updateTiles();
+      topLeftCorner = corner.multiply(widthInTiles);
 
       return this;
     }
 
-    public function moveCorner(diff:Vec):void {
+    public function loadNewMap(diff:Vec):void {
       diff.divide(widthInTiles);
 
-      switchMap(diff);
+      updatePersistentItems(diff);
 
-      updateTiles();
+      topLeftCorner.add(diff)
     }
 
     public function getTopLeftCorner():Vec {

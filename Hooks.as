@@ -86,7 +86,7 @@ package {
           if (toOtherSide.$ < 0) leftScreen.$ = map.sizeVector.$ - map.getTileSize() + 1;
         });
 
-        map.moveCorner(dir.multiply(map.sizeVector));
+        map.loadNewMap(dir.multiply(map.sizeVector));
       }
     }
 
