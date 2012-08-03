@@ -31,7 +31,7 @@
       Fathom.FPS = FPS;
       Fathom.container = new Entity().fromExternalMC(toplevel);
       Fathom.mapRef = m;
-      Fathom.mapRef.updateTiles();
+      Fathom.mapRef.loadNewMap(new Vec(0, 0));
 
       fpsFn = Hooks.fpsCounter();
       fpsTxt = new Text(200, 20);

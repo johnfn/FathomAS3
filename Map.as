@@ -66,7 +66,7 @@ package {
 
     private function hideOldPersistentItems():void {
       var processedItems:Array = [];
-      var items:Array = persistent[topLeftCorner.asKey()];
+      var items:Array = persistent[topLeftCorner.asKey()] || [];
 
       for (var i:int = 0; i < items.length; i++) {
         if (!items[i].destroyed) {
@@ -110,7 +110,7 @@ package {
       }
     }
 
-    public function addNewPersistentItems():void {
+    private function addNewPersistentItems():void {
       var seenBefore:Boolean = exploredMaps[topLeftCorner.asKey()];
 
       this.clearTiles();

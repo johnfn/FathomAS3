@@ -60,12 +60,12 @@ package {
     }
 
     //TODO: Not a Hook.
-    public static function hasLeftMap(who:MovingEntity, map:Map):Boolean {
+    public static function hasLeftMap(who:Entity, map:Map):Boolean {
       return who.x < 0 || who.y < 0 || who.x > map.width - who.width || who.y > map.height - who.width;
     }
 
     //TODO: onxxxx methods could be moved into an Events.as file.
-    public static function onLeaveMap(who:MovingEntity, map:Map, callback:Function):void {
+    public static function onLeaveMap(who:Entity, map:Map, callback:Function):void {
       if (who.x < 0 || who.y < 0 || who.x > map.width - who.width || who.y > map.height - who.width) {
         callback.call(who);
       }

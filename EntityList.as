@@ -13,7 +13,7 @@
     }
 
     public function each(f:Function):void {
-      for (var i:int = 0; i < entities.length; i++) {
+      for (var i:int = 0; i < length; i++) {
         f(this[i]);
       }
     }
