@@ -171,7 +171,7 @@ package {
       var smallerSize:Vec = sizeVector.clone().subtract(leftScreen.width);
       var dir:Vec = leftScreen.clone().divide(smallerSize).map(Math.floor);
       var newMapLoc:Vec = topLeftCorner.clone().add(dir.clone().multiply(widthInTiles));
-      var newItemLoc:Vec = leftScreen.clone().add(dir.clone().multiply(-1).multiply(sizeVector.clone().subtract(tileSize)));
+      var newItemLoc:Vec = leftScreen.clone().add(dir.clone().multiply(-1).multiply(sizeVector.clone().subtract(tileSize * 2)));
 
       persistent[topLeftCorner.asKey()].remove(leftScreen);
       if (!persistent[newMapLoc.asKey()]) {
