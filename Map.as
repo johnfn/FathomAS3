@@ -83,7 +83,9 @@ package {
 
       Fathom.entities.get("!persistent").each(function(e:Entity):void {
         e.destroy();
-      })
+      });
+
+      topLeftCorner.add(diff)
 
       addNewPersistentItems();
     }
@@ -165,6 +167,8 @@ package {
       persistent[newMapLoc.asKey()].push(leftScreen);
 
       leftScreen.set(newItemLoc);
+
+      leftScreen.removeFromFathom();
     }
 
     public function collidesPt(other:Point):Boolean {
@@ -222,8 +226,6 @@ package {
       diff.divide(widthInTiles);
 
       updatePersistentItems(diff);
-
-      topLeftCorner.add(diff)
     }
 
     public function getTopLeftCorner():Vec {
