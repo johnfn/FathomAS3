@@ -26,12 +26,23 @@ package {
     function Map(widthInTiles:int, heightInTiles:int, tileSize:int) {
       super(0, 0, widthInTiles * tileSize, heightInTiles * tileSize);
 
+      Util.assert(widthInTiles == heightInTiles);
+
       this.sizeVector = new Vec(width, height);
       this.widthInTiles = widthInTiles;
       this.heightInTiles = heightInTiles;
       this.tileSize = tileSize;
 
       this.clearTiles();
+
+      // Initialize the persistent object
+
+      for (var i:int = 0; i < 1000; i += widthInTiles) {
+        for (var j:int = 0; j < 1000; j += heightInTiles) {
+          persistent[new Vec(i, j).asKey()] = [];
+        }
+      }
+
     }
 
     private function clearTiles():void {
@@ -64,9 +75,9 @@ package {
       return this;
     }
 
-    private function hideOldPersistentItems():void {
+    private function hideCurrentPersistentItems():void {
       var processedItems:Array = [];
-      var items:Array = persistent[topLeftCorner.asKey()] || [];
+      var items:Array = persistent[topLeftCorner.asKey()];
 
       for (var i:int = 0; i < items.length; i++) {
         if (!items[i].destroyed) {
@@ -79,7 +90,7 @@ package {
     }
 
     private function updatePersistentItems(diff:Vec):void {
-      hideOldPersistentItems();
+      hideCurrentPersistentItems();
 
       Fathom.entities.get("!persistent").each(function(e:Entity):void {
         e.destroy();
@@ -110,6 +121,8 @@ package {
       if (e.groups().contains("persistent")) {
         persistent[topLeftCorner.asKey()].push(e);
       }
+
+      e.removeFromFathom();
     }
 
     private function addNewPersistentItems():void {
@@ -119,7 +132,7 @@ package {
 
       // Scan the map, adding every object to our list of persistent items for this map.
       if (!seenBefore) {
-        persistent[topLeftCorner.asKey()] = [];
+        // If we haven't seen it before, load in all the persistent items.
 
         for (var x:int = 0; x < widthInTiles; x++) {
           for (var y:int = 0; y < heightInTiles; y++) {
@@ -128,12 +141,12 @@ package {
             addPersistentItem(dataColor, x, y);
           }
         }
-      } else {
-        // Add all persistent items that exist in this room.
-        persistent[topLeftCorner.asKey()].map(function(e:*, i:int, a:Array):void {
-          e.addToFathom();
-        });
       }
+
+      // Add all persistent items.
+      persistent[topLeftCorner.asKey()].map(function(e:*, i:int, a:Array):void {
+        e.addToFathom();
+      });
 
       // Cache every persistent item in the 2D array of tiles.
       var persistingItems:Array = persistent[topLeftCorner.asKey()];
@@ -157,8 +170,8 @@ package {
     public function itemSwitchedMaps(leftScreen:Entity):void {
       var smallerSize:Vec = sizeVector.clone().subtract(leftScreen.width);
       var dir:Vec = leftScreen.clone().divide(smallerSize).map(Math.floor);
-      var newMapLoc:Vec = topLeftCorner.clone().add(dir.clone().multiply(tileSize));
-      var newItemLoc:Vec = leftScreen.clone().add(dir.multiply(sizeVector.clone().subtract(tileSize)));
+      var newMapLoc:Vec = topLeftCorner.clone().add(dir.clone().multiply(widthInTiles));
+      var newItemLoc:Vec = leftScreen.clone().add(dir.clone().multiply(-1).multiply(sizeVector.clone().subtract(tileSize)));
 
       persistent[topLeftCorner.asKey()].remove(leftScreen);
       if (!persistent[newMapLoc.asKey()]) {
@@ -202,7 +215,7 @@ package {
     }
 
     public function update():void {
-      var items:Array = persistent[topLeftCorner.asKey()] || [];
+      var items:Array = persistent[topLeftCorner.asKey()];
 
       for (var i:int = 0; i < items.length; i++) {
         if (Hooks.hasLeftMap(items[i], this)) {

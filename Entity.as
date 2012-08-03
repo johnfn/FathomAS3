@@ -309,7 +309,7 @@
     }
 
     /* This causes the Entity to cease existing in-game. The only way to
-       bring it back is to call show(). */
+       bring it back is to call addToFathom(). */
     public function removeFromFathom(recursing:Boolean = false):void {
       for (var i:int = 0; i < children.length; i++){
         children[i].removeFromFathom(true);
