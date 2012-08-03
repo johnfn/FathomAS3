@@ -152,13 +152,19 @@ package {
       Fathom.sortDepths();
     }
 
-    public function itemSwitchedMaps(leftScreen:Entity):Function {
-      return function():void {
-        var smallerSize:Vec = sizeVector.clone().subtract(leftScreen.width);
-        var dir:Vec = leftScreen.clone().divide(smallerSize).map(Math.floor);
+    public function itemSwitchedMaps(leftScreen:Entity):void {
+      var smallerSize:Vec = sizeVector.clone().subtract(leftScreen.width);
+      var dir:Vec = leftScreen.clone().divide(smallerSize).map(Math.floor);
+      var newMapLoc:Vec = topLeftCorner.clone().add(dir.clone().multiply(tileSize));
+      var newItemLoc:Vec = leftScreen.clone().add(dir.multiply(sizeVector.clone().subtract(tileSize)));
 
-        trace(dir);
+      persistent[topLeftCorner.asKey()].remove(leftScreen);
+      if (!persistent[newMapLoc.asKey()]) {
+        persistent[newMapLoc.asKey()] = [];
       }
+      persistent[newMapLoc.asKey()].push(leftScreen);
+
+      leftScreen.set(newItemLoc);
     }
 
     public function collidesPt(other:Point):Boolean {
@@ -192,11 +198,11 @@ package {
     }
 
     public function update():void {
-      var items:Array = persistent[topLeftCorner.asKey()];
+      var items:Array = persistent[topLeftCorner.asKey()] || [];
 
       for (var i:int = 0; i < items.length; i++) {
         if (Hooks.hasLeftMap(items[i], this)) {
-          Util.assert(items[i].groups().indexOf("Character") != -1);
+          Util.assert(items[i].groups().indexOf("Character") == -1);
           this.itemSwitchedMaps(items[i]);
         }
       }
