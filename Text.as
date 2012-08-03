@@ -26,9 +26,11 @@ package {
       textField.x = x;
       textField.y = y;
 
+      mc.addChild(textField);
+
       text = content;
 
-      listen(Hooks.keyRecentlyDown(Util.Key.Z, advanceText));
+      //listen(Hooks.keyRecentlyDown(Util.Key.Z, advanceText));
 
       if (width == -1) {
         fixedWidth = false;
@@ -56,7 +58,7 @@ package {
       }
     }
 
-    // Causes the classic videogame-ish effect of showing only 1 character
+    // The classic videogame-ish effect of showing only 1 character
     // of text at a time.
     public function typewrite():Text {
       var counter:int = 0;

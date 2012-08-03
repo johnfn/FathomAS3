@@ -80,6 +80,12 @@
       return children;
     }
 
+    public function withNoMC():Entity {
+      Fathom.container.addChild(this);
+
+      return this;
+    }
+
     //TODO: there is some duplication here.
     public function fromExternalMC(mcClass:*, fixedSize:Boolean = false):Entity {
       this.usesExternalMC = true;
