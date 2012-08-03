@@ -30,13 +30,17 @@ package {
 
       text = content;
 
-      //listen(Hooks.keyRecentlyDown(Util.Key.Z, advanceText));
-
       if (width == -1) {
         fixedWidth = false;
       } else {
         textField.width = width;
       }
+    }
+
+    public function advanceOnKeypress(key:int):Text {
+      listen(Hooks.keyRecentlyDown(Util.Key.Z, advanceText));
+
+      return this;
     }
 
     public override function groups():Array {
