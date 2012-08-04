@@ -177,7 +177,7 @@ package {
         entity.touchingBottom = false;
 
         entity.x += entity.vel.x;
-        entity.xColl = entity.currentlyObstructing();
+        entity.xColl = entity.currentlyBlocking();
         if (entity.xColl.length > 0) {
           if (entity.vel.x < 0) entity.touchingLeft = true;
           if (entity.vel.x > 0) entity.touchingRight = true;
@@ -185,7 +185,7 @@ package {
         entity.x -= entity.vel.x;
 
         entity.y += entity.vel.y;
-        entity.yColl = entity.currentlyObstructing();
+        entity.yColl = entity.currentlyBlocking();
         if (entity.yColl.length > 0) {
           if (entity.vel.y < 0) entity.touchingTop = true;
           if (entity.vel.y > 0) entity.touchingBottom = true;
@@ -194,7 +194,7 @@ package {
 
         entity.add(entity.vel);
 
-        if (entity.currentlyObstructing().length > 0 && (entity.yColl.length == 0 && entity.xColl.length == 0)) {
+        if (entity.currentlyBlocking().length > 0 && (entity.yColl.length == 0 && entity.xColl.length == 0)) {
           // We are currently on a corner. Our original plan of attack won't work unless we favor one direction over the other. We choose to favor the x direction.
           entity.y -= entity.vel.y;
           entity.vel.y = 0;
