@@ -36,9 +36,9 @@
       fpsFn = Hooks.fpsCounter();
       fpsTxt = new Text(200, 20);
 
-      Util._initializeKeyInput(container.getmc);
+      Util._initializeKeyInput(container.mc);
 
-      container.getmc.addEventListener(Event.ENTER_FRAME, update);
+      container.mc.addEventListener(Event.ENTER_FRAME, update);
     }
 
     //TODO: May want a better name than pause. freeze?

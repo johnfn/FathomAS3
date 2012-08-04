@@ -23,7 +23,7 @@
     protected var _ignoresCollisions:Boolean = false;
 
     protected var mcOffset:Vec;
-    protected var mc:MovieClip;
+    protected var _mc:MovieClip;
     protected var childrenContainer:MovieClip = new MovieClip();
     protected var initialSize:Vec;
 
@@ -39,7 +39,7 @@
     public function get childrenList():Array { return children; }
     private function set childrenList(val:Array):void { children = val; }
 
-    public function get getmc():MovieClip { return mc; }
+    public function get mc():MovieClip { return _mc; }
 
     //TODO: Make visible represent whether an mc actually exists for this Entity.
     function Entity(x:Number = 0, y:Number = 0, width:Number = 20, height:Number = -1, visible:Boolean = true, wiggle:int = 0):void {
@@ -58,7 +58,7 @@
       this.setMCOffset(0, 0);
       this.parent = null;
 
-      this.mc = new MovieClip();
+      this._mc = new MovieClip();
 
       if (visible) {
         draw();
@@ -93,17 +93,17 @@
       var className:String = Util.className(mcClass);
 
       if (className == "String") {
-        this.mc = new Fathom.MCPool[mcClass]();
+        this._mc = new Fathom.MCPool[mcClass]();
         groupArray.push(mcClass);
       } else if (className == "MovieClip") {
-        this.mc = mcClass;
+        this._mc = mcClass;
       } else {
-        this.mc = new mcClass();
+        this._mc = new mcClass();
       }
 
       if (fixedSize) {
-        mc.width = this.width + wiggle * 2;
-        mc.height = this.height + wiggle * 2;
+        _mc.width = this.width + wiggle * 2;
+        _mc.height = this.height + wiggle * 2;
       }
 
       // All Entities are added to the container, except the container itself, which
@@ -117,7 +117,7 @@
       // is moot. We could require the user to make 2 MCs, but that seems a bit silly,
       // especially since the container object
       if (!Fathom.container) {
-        this.childrenContainer = this.mc;
+        this.childrenContainer = this._mc;
       }
 
       return this;
@@ -142,44 +142,44 @@
 
     public override function get y():Number { return _y; }
 
-    public function set scaleX(v:Number):void { mc.scaleX = v; }
-    public function get scaleX():Number { return mc.scaleX; }
+    public function set scaleX(v:Number):void { _mc.scaleX = v; }
+    public function get scaleX():Number { return _mc.scaleX; }
 
-    public function set scaleY(v:Number):void { mc.scaleY = v; }
-    public function get scaleY():Number { return mc.scaleY; }
+    public function set scaleY(v:Number):void { _mc.scaleY = v; }
+    public function get scaleY():Number { return _mc.scaleY; }
 
-    public function set rotation(v:Number):void { mc.rotation = v; }
-    public function get rotation():Number { return mc.rotation; }
+    public function set rotation(v:Number):void { _mc.rotation = v; }
+    public function get rotation():Number { return _mc.rotation; }
 
-    public function gotoAndStop(f:int):void { mc.gotoAndStop(f); }
-    public function gotoAndPlay(f:int):void { mc.gotoAndPlay(f); }
+    public function gotoAndStop(f:int):void { _mc.gotoAndStop(f); }
+    public function gotoAndPlay(f:int):void { _mc.gotoAndPlay(f); }
 
-    public function get totalFrames():int { return mc.totalFrames; }
+    public function get totalFrames():int { return _mc.totalFrames; }
 
     //public function set currentFrame(v:int):void { mc.gotoAndStop(v); }
-    public function get currentFrame():int { return mc.currentFrame; }
+    public function get currentFrame():int { return _mc.currentFrame; }
 
-    public function play():void { mc.play(); }
+    public function play():void { _mc.play(); }
 
     protected function setMCOffset(x:int, y:int):void {
       this.mcOffset = (new Vec(wiggle, wiggle)).add(new Vec(x, y));
     }
 
     protected function draw():void {
-      mc.graphics.beginFill(color);
-      mc.graphics.drawRect(0, 0, this.width + wiggle * 2, this.height + wiggle * 2);
-      mc.graphics.endFill();
+      _mc.graphics.beginFill(color);
+      _mc.graphics.drawRect(0, 0, this.width + wiggle * 2, this.height + wiggle * 2);
+      _mc.graphics.endFill();
     }
 
     // Pass in the x-coordinate of your velocity, and this'll orient
     // the Entity in that direction.
     protected function face(dir:int):void {
-      if (dir > 0 && this.mc.scaleX < 0) {
-        this.mc.scaleX *= -1;
+      if (dir > 0 && this._mc.scaleX < 0) {
+        this._mc.scaleX *= -1;
         return;
       }
-      if (dir < 0 && this.mc.scaleX > 0) {
-        this.mc.scaleX *= -1;
+      if (dir < 0 && this._mc.scaleX > 0) {
+        this._mc.scaleX *= -1;
         return;
       }
     }
@@ -214,8 +214,8 @@
 
     public function raiseToTop():void {
       //TODO: This depends on the visibility parameter.
-      if (this.mc.parent) {
-        this.mc.parent.setChildIndex(this.mc, this.mc.parent.numChildren - 1);
+      if (this._mc.parent) {
+        this._mc.parent.setChildIndex(this._mc, this._mc.parent.numChildren - 1);
       }
     }
 
@@ -226,7 +226,7 @@
       children.push(child);
       child.parent = this;
 
-      this.childrenContainer.addChild(child.mc);
+      this.childrenContainer.addChild(child._mc);
       this.childrenContainer.addChild(child.childrenContainer);
     }
 
@@ -235,7 +235,7 @@
     public function removeChild(child:Entity):void {
       children.remove(child);
 
-      this.childrenContainer.removeChild(child.mc);
+      this.childrenContainer.removeChild(child._mc);
       this.childrenContainer.removeChild(child.childrenContainer);
     }
 
@@ -356,11 +356,11 @@
       removeFromFathom();
 
       events = null;
-      if (mc && mc.parent) {
-        mc.parent.removeChild(mc);
+      if (_mc && _mc.parent) {
+        _mc.parent.removeChild(_mc);
       }
 
-      mc = null;
+      _mc = null;
       destroyed = true;
       Fathom.entities.remove(this);
     }
@@ -385,7 +385,7 @@
       return !_ignoresCollisions && (!(this == other)) && touchingRect(other);
     }
 
-    public function collidesPt(point:Point):Boolean { return mc.hitTestPoint(point.x, point.y); }
+    public function collidesPt(point:Point):Boolean { return _mc.hitTestPoint(point.x, point.y); }
 
     public function update(e:EntityList):void {}
 
