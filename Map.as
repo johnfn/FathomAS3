@@ -12,6 +12,7 @@ package {
   public class Map extends Rect {
     private var widthInTiles:int;
     private var heightInTiles:int;
+
     private var tileSize:int;
     private var data:Array = []; // Color data from the map.
     private var tiles:Array = []; // Cached array of collideable tiles.
@@ -236,7 +237,7 @@ package {
     }
 
     public function loadNewMap(diff:Vec):void {
-      diff.divide(tileSize);
+      diff.multiply(new Vec(widthInTiles, heightInTiles));
 
       updatePersistentItems(diff);
     }
