@@ -236,7 +236,7 @@ package {
     }
 
     public function loadNewMap(diff:Vec):void {
-      diff.divide(widthInTiles);
+      diff.divide(tileSize);
 
       updatePersistentItems(diff);
     }
