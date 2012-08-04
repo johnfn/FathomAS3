@@ -7,7 +7,7 @@ package {
     import flash.utils.getQualifiedClassName;
 
     public static var uid:Number = 0;
-    public static var Key:Object = {};
+    public static var Key:Object = keysToKeyCodes();
     private static var keyStates:Array = new Array(255);
 
     //TODO: Should move Array.prototype stuff into separate ArrayExtensions class.
@@ -185,15 +185,22 @@ package {
       for (var i:int = 0; i < 255; i++) {
         keyStates[i] = new KeyState();
       }
-      Key["Left"]  = 37;
-      Key["Up"]    = 38;
-      Key["Right"] = 39;
-      Key["Down"]  = 40;
+    }
+
+    private static function keysToKeyCodes():Object {
+      var res:Object = {};
+
+      res["Left"]  = 37;
+      res["Up"]    = 38;
+      res["Right"] = 39;
+      res["Down"]  = 40;
 
       // Add A - Z.
       for (var k:int = 65; k <= 65 + 26; k++) {
-        Key[String.fromCharCode(k)] = k;
+        res[String.fromCharCode(k)] = k;
       }
+
+      return res;
     }
   }
 }

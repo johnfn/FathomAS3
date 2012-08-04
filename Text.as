@@ -38,7 +38,7 @@ package {
     }
 
     public function advanceOnKeypress(key:int):Text {
-      listen(Hooks.keyRecentlyDown(Util.Key.Z, advanceText));
+      listen(Hooks.keyRecentlyDown(key, advanceText));
 
       return this;
     }
