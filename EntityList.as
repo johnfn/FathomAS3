@@ -57,18 +57,6 @@
       return this.get.apply(this, criteria).length == 0;
     }
 
-    public function exclude(criteria:IEqual):EntityList {
-      var pass:Array = [];
-
-      for (var i:int = 0; i < this.length; i++) {
-        if (! criteria.equals(this[i])) {
-          pass.push(this[i]);
-        }
-      }
-
-      return new EntityList(pass);
-    }
-
     public function myfilter(criteria:*):EntityList {
       var pass:Array = [];
       var desired:Boolean = true;

@@ -46,7 +46,6 @@ package {
       return this;
     }
 
-    //TODO: implement IEqual
     public function eq(c:Color):Boolean {
       return r == c.r && g == c.g && b == c.b && a == c.a;
     }
