@@ -123,6 +123,13 @@
       return this;
     }
 
+    public override function set(v:IPositionable):Vec {
+      x = v.x;
+      y = v.y;
+
+      return this;
+    }
+
     public function set visible(v:Boolean):void { mc.visible = v; }
     public function get visible():Boolean { return mc.visible; }
 
@@ -138,6 +145,14 @@
     public override function set y(v:Number):void {
       mc.y = Math.floor(v + mcOffset.y);
       _y = v;
+    }
+
+    public function get mcX():Number {
+      return Math.floor(_x + mcOffset.x);
+    }
+
+    public function get mcY():Number {
+      return Math.floor(_y + mcOffset.y);
     }
 
     public override function get y():Number { return _y; }

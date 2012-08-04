@@ -9,6 +9,9 @@
     private static var FPS:int = 0;
     private static var fpsFn:Function;
     private static var mapRef:Map;
+    private static var _camera:Camera;
+
+    public static function get camera():Camera { return _camera; }
 
     public static var fpsTxt:Text;
     public static var entities:EntityList = new EntityList([]);
@@ -21,14 +24,25 @@
 
     public static function get paused():Boolean { return _paused; }
 
+    public static function get scaleX():Number {
+      return container.mc.scaleX;
+    }
+
+    public static function get scaleY():Number {
+      return container.mc.scaleY;
+    }
+
     public static function set showingFPS(b:Boolean) {
       fpsTxt.visible = b;
     }
 
     public static function initialize(toplevel:MovieClip, m:Map, FPS:int = 30):void {
-      // Inside of the Entity constructor, we assert Fathom.initialized.
+      // Inside of the Entity constructor, we assert Fathom.initialized, because all
+      // MCs must be added to the container MC.
+
       Fathom.initialized = true;
       Fathom.FPS = FPS;
+      Fathom._camera = new Camera(toplevel.stage);
       Fathom.container = new Entity().fromExternalMC(toplevel);
       Fathom.mapRef = m;
       Fathom.mapRef.loadNewMap(new Vec(0, 0));
@@ -97,6 +111,7 @@
       }
 
       mapRef.update();
+      camera.update();
     }
   }
 }
