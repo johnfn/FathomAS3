@@ -4,7 +4,7 @@ package {
     private const SIZE:int = C.size;
 
     function Tile(x:int=0, y:int=0, type:int=0) {
-      super(x, y, SIZE, SIZE, true);
+      super(x, y, SIZE, SIZE);
     }
 
     private function typeToColor(type:int):Color {

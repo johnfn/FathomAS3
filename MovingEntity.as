@@ -22,8 +22,8 @@ package {
     /* List of all entities that this entity collided with in this time step. */
     internal var collisionList:EntityList = new EntityList([]);
 
-    function MovingEntity(x:Number = 0, y:Number = 0, width:Number = 20, height:Number = -1, visible:Boolean = true, wiggle:int = 2):void {
-      super(x, y, width, height, visible, wiggle);
+    function MovingEntity(x:Number = 0, y:Number = 0, width:Number = 20, height:Number = -1, wiggle:int = 2):void {
+      super(x, y, width, height, wiggle);
       _isStatic = false;
 
       on("post-update", Hooks.resolveCollisions());

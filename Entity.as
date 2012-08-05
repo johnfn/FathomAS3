@@ -42,7 +42,7 @@
     public function get mc():MovieClip { return _mc; }
 
     //TODO: Make visible represent whether an mc actually exists for this Entity.
-    function Entity(x:Number = 0, y:Number = 0, width:Number = 20, height:Number = -1, visible:Boolean = true, wiggle:int = 0):void {
+    function Entity(x:Number = 0, y:Number = 0, width:Number = 20, height:Number = -1, wiggle:int = 0):void {
       if (height == -1) height = width;
 
       super(x, y, this.width);
