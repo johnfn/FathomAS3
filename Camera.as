@@ -10,9 +10,21 @@ package {
     // This is the rect that the camera will always stay inside.
     private var _boundingRect:Rect = null;
 
+    // This is an array of all events currently happening to this camera.
+    private var events:Array = [];
+
     // These two variables are the focal points of the camera.
     private var _focalX:int;
     private var _focalY:int;
+
+    // If our camera lags behing the player, this is where it will eventually want to be.
+    private var goalFocalX:int;
+    private var goalFocalY:int;
+
+    private var FOLLOW_MODE_NONE:int = 0;
+    private var FOLLOW_MODE_SLIDE:int = 1;
+
+    private var followMode:int = FOLLOW_MODE_SLIDE;
 
     // The Rect we extend from is the area from the game the camera displays.
 
@@ -79,17 +91,62 @@ package {
 
     // Sets the center of the Camera to look at `loc`.
     public function setFocus(loc:Vec):void {
-      focalX = loc.x;
-      focalY = loc.y;
+      goalFocalX = loc.x;
+      goalFocalY = loc.y;
+    }
+
+    public function shake(duration:int = 30, range:int = 5):void {
+      var that:Camera = this;
+
+      var fn = function():void {
+        that.focalX = that._focalX + Util.randRange(-range, range);
+        that.focalY = that._focalY + Util.randRange(-range, range);
+
+        if (duration < 0) {
+          that.events.remove(fn);
+        }
+
+        duration--;
+      };
+
+      events.push(fn);
+    }
+
+    private function updateXY():void {
+      if (followMode == FOLLOW_MODE_SLIDE) {
+        focalX = _focalX + (goalFocalX - _focalX) / 15;
+        focalY = _focalY + (goalFocalY - _focalY) / 15;
+
+        return;
+      }
+
+      if (followMode == FOLLOW_MODE_NONE) {
+        focalX = goalFocalX;
+        focalY = goalFocalY;
+
+        return;
+      }
+
+      throw new Error("Invalid Camera mode: " + followMode);
     }
 
     // TODO: mcX properties are sloppy.
     public function update():void {
       var that:Camera = this;
 
-      Fathom.entities.each(function(e:Entity):void {
+      for (var i:int = 0; i < events.length; i++) {
+        events[i]();
+      }
+
+      updateXY();
+
+      Fathom.entities.get("!no-camera").each(function(e:Entity):void {
         e.mc.x = e.mcX - that.x;
         e.mc.y = e.mcY - that.y;
+      });
+
+      Fathom.entities.get("no-camera").each(function(e:Entity):void {
+        e.setAbsolutePosition(that);
       });
     }
   }

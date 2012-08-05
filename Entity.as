@@ -80,8 +80,9 @@
       return children;
     }
 
-    public function withNoMC():Entity {
+    public function removeMC():Entity {
       Fathom.container.addChild(this);
+      this._mc.visible = false;
 
       return this;
     }
@@ -234,7 +235,6 @@
       }
     }
 
-    // TODO: This function needs some work.
     public function addChild(child:Entity):void {
       Util.assert(!children.contains(child));
 
@@ -386,6 +386,14 @@
       }
 
       return this;
+    }
+
+    public function setAbsolutePosition(loc:Vec):void {
+      mc.x = loc.x;
+      mc.y = loc.y;
+
+      childrenContainer.x = loc.x;
+      childrenContainer.y = loc.y;
     }
 
     //TODO: Could add all superclasses.
