@@ -28,7 +28,7 @@ package {
     }
 
     public function isBound() {
-      return false ;//_boundingRect != null;
+      return _boundingRect != null;
     }
 
     // Updating the focus updates the x, y coordinates also, and vice versa.
@@ -71,21 +71,16 @@ package {
     // We reduce the size so that we can compare the center coordinate of the
     // camera to see if it's in bounds.
     public function set boundingRect(val:Rect):void {
-      val.divide(Fathom.scaleX);
-
-      _boundingRect = new Rect( val.x + this.width
-                              , val.y + this.height
+      _boundingRect = new Rect( val.x + this.width / 2
+                              , val.y + this.height / 2
                               , val.width - this.width
-                              , val.y - this.height);
+                              , val.height - this.height);
     }
 
     // Sets the center of the Camera to look at `loc`.
     public function setFocus(loc:Vec):void {
       focalX = loc.x;
       focalY = loc.y;
-
-      trace (_x)
-      trace (_y)
     }
 
     // TODO: mcX properties are sloppy.

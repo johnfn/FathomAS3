@@ -47,6 +47,10 @@ package {
          rect.y + rect.height < this.y               );
     }
 
+    public override function toString():String {
+      return "[Rect (" + x + ", " + y + ") w: " + width + " h: " + height + "]";
+    }
+
     public override function equals(v:Vec):Boolean {
       if (Util.className(v) != "Rect") return false;
 
