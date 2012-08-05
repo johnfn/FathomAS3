@@ -17,7 +17,7 @@ package {
     // The Rect we extend from is the area from the game the camera displays.
 
     public function Camera(stage:Stage) {
-      super(0, 0, stage.stageWidth, stage.stageHeight);
+      super(0, 0, stage.stageWidth / Fathom.scaleX, stage.stageHeight / Fathom.scaleY);
     }
 
     public function bind(val:Number, low:Number, high:Number):Number {
@@ -28,7 +28,7 @@ package {
     }
 
     public function isBound() {
-      return _boundingRect != null;
+      return false ;//_boundingRect != null;
     }
 
     // Updating the focus updates the x, y coordinates also, and vice versa.
@@ -36,29 +36,35 @@ package {
     public function set focalX(val:Number):void {
       _focalX = isBound() ? bind(val, _boundingRect.x, _boundingRect.right) : val;
 
-      _x = _focalX - width  / (2 * Fathom.scaleX);
+      _x = _focalX - width  / 2;
     }
 
     public function set focalY(val:Number):void {
       _focalY = isBound() ? bind(val, _boundingRect.y, _boundingRect.bottom) : val;
 
-      _y = _focalY - height / (2 * Fathom.scaleY);
+      _y = _focalY - height / 2;
     }
 
     public override function set x(val:Number):void {
-      var newFocusX = x + width / (2 * Fathom.scaleX);
+      var newFocusX = x + width / 2;
 
       _focalX = isBound() ? bind(newFocusX, _boundingRect.x, _boundingRect.right) : val;
 
-      _x = _focalX - width / (2 * Fathom.scaleX);
+      _x = _focalX - width / 2;
     }
 
     public override function set y(val:Number):void {
-      var newFocusY = y + height / (2 * Fathom.scaleY);
+      var newFocusY = y + height / 2;
 
       _focalY = isBound() ? bind(newFocusY, _boundingRect.y, _boundingRect.bottom) : val;
 
-      _y = _focalY - width / (2 * Fathom.scaleY);
+      _y = _focalY - width / 2;
+    }
+
+    public function beBoundedBy(m:Map):Camera {
+      this.boundingRect = new Rect(0, 0, m.sizeVector.x, m.sizeVector.y);
+
+      return this;
     }
 
     // Set the bounding rectangle that the camera can't move outside of.
@@ -77,6 +83,9 @@ package {
     public function setFocus(loc:Vec):void {
       focalX = loc.x;
       focalY = loc.y;
+
+      trace (_x)
+      trace (_y)
     }
 
     // TODO: mcX properties are sloppy.

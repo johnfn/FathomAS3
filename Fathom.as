@@ -42,9 +42,9 @@
 
       Fathom.initialized = true;
       Fathom.FPS = FPS;
-      Fathom._camera = new Camera(toplevel.stage);
       Fathom.container = new Entity().fromExternalMC(toplevel);
       Fathom.mapRef = m;
+
       Fathom.mapRef.loadNewMap(new Vec(0, 0));
 
       fpsFn = Hooks.fpsCounter();
@@ -53,6 +53,8 @@
       Util._initializeKeyInput(container.mc);
 
       container.mc.addEventListener(Event.ENTER_FRAME, update);
+
+      Fathom._camera = new Camera(toplevel.stage).beBoundedBy(m);
     }
 
     //TODO: May want a better name than pause. freeze?
