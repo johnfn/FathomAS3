@@ -240,6 +240,7 @@ package {
       diff.multiply(new Vec(widthInTiles, heightInTiles));
 
       updatePersistentItems(diff);
+      Fathom.camera.boundingRect = new Rect(0, 0, sizeVector.x, sizeVector.y);
     }
 
     public function getTopLeftCorner():Vec {

@@ -2,10 +2,9 @@ package {
   import flash.display.Sprite;
   import flash.utils.getQualifiedClassName;
 
-  /** Vector class (2d line indicating movement). */
+  /** Vector. Vector is a pair of 2 numbers, typically (x, y), used
+      to represent both position and direction. */
 
-  // TODO: Although usually used like a Vector, it is in some cases
-  // used more like a Pair, so maybe that would be a better name.
   public class Vec implements IPositionable {
     internal var _x:Number;
     internal var _y:Number;
