@@ -28,13 +28,34 @@
     }
 
     public function get(...criteria):EntityList {
-      var eList:EntityList = new EntityList(this);
+      var eList:EntityList = clone();
 
       for (var i:int = 0; i < criteria.length; i++) {
         eList = eList.myfilter(criteria[i]);
       }
 
       return eList;
+    }
+
+    public function clone():EntityList {
+      return new EntityList(this);
+    }
+
+    public function union(...criteria):EntityList {
+      var eList:EntityList = clone();
+      var resultList:EntityList = new EntityList([]);
+
+      for (var i:int = 0; i < criteria.length; i++) {
+        var filteredList:EntityList = eList.filter(criteria[i]);
+
+        for (var j:int = 0; j < filteredList.length; j++) {
+          if (!resultList.contains(filteredList[j])) {
+            resultList.append(filteredList[j]);
+          }
+        }
+      }
+
+      return resultList;
     }
 
     public function one(...criteria):Entity {
@@ -56,6 +77,17 @@
     public function none(...criteria):Boolean {
       return this.get.apply(this, criteria).length == 0;
     }
+
+    // Filters a list by 1 criteria item. Does not mutate the list.
+    //
+    // Criteria types:
+    //
+    // * String   -> match all entities with that group
+    //
+    // * !String  -> in the case that the string starts with "!",
+    //              perform the inverse of the above.
+    //
+    // * Function -> match all entities e such that f(e) == true.
 
     public function myfilter(criteria:*):EntityList {
       var pass:Array = [];
