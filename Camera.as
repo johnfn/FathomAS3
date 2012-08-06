@@ -95,6 +95,14 @@ package {
       goalFocalY = loc.y;
     }
 
+    /* Force the camera to go snap to the desired focal point, ignoring any
+     * lag. This is expected for example when a new map is loaded.
+     */
+    public function snapTo(e:Entity):void {
+      focalX = e.x;
+      focalY = e.y;
+    }
+
     public function shake(duration:int = 30, range:int = 5):void {
       var that:Camera = this;
 
