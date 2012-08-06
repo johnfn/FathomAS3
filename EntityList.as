@@ -46,11 +46,11 @@
       var resultList:EntityList = new EntityList([]);
 
       for (var i:int = 0; i < criteria.length; i++) {
-        var filteredList:EntityList = eList.filter(criteria[i]);
+        var filteredList:EntityList = eList.myfilter(criteria[i]);
 
         for (var j:int = 0; j < filteredList.length; j++) {
           if (!resultList.contains(filteredList[j])) {
-            resultList.append(filteredList[j]);
+            resultList.push(filteredList[j]);
           }
         }
       }
