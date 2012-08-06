@@ -21,6 +21,9 @@ package {
     private var goalFocalX:int;
     private var goalFocalY:int;
 
+    private var normalWidth:int;
+    private var normalHeight:int;
+
     private var FOLLOW_MODE_NONE:int = 0;
     private var FOLLOW_MODE_SLIDE:int = 1;
 
@@ -30,6 +33,12 @@ package {
 
     public function Camera(stage:Stage) {
       super(0, 0, stage.stageWidth / Fathom.scaleX, stage.stageHeight / Fathom.scaleY);
+
+      this.normalHeight = this.height;
+      this.normalWidth  = this.width;
+
+      this.width = this.normalWidth / 2;
+      this.height = this.normalHeight / 2;
     }
 
     public function bind(val:Number, low:Number, high:Number):Number {
@@ -98,6 +107,7 @@ package {
     /* Force the camera to go snap to the desired focal point, ignoring any
      * lag. This is expected for example when a new map is loaded.
      */
+
     public function snapTo(e:Entity):void {
       focalX = e.x;
       focalY = e.y;
@@ -148,9 +158,15 @@ package {
 
       updateXY();
 
+      var camScaleX:int = normalWidth / width;
+      var camScaleY:int = normalHeight / height;
+
       Fathom.entities.get("!no-camera").each(function(e:Entity):void {
-        e.mc.x = e.mcX - that.x;
-        e.mc.y = e.mcY - that.y;
+        e.mc.x = (e.mcX - that.x) * camScaleX;
+        e.mc.y = (e.mcY - that.y) * camScaleY;
+
+        if (e.scaleX != camScaleX) e.scaleX = camScaleX;
+        if (e.scaleY != camScaleY) e.scaleY = camScaleY;
       });
 
       Fathom.entities.get("no-camera").each(function(e:Entity):void {

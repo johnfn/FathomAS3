@@ -15,6 +15,9 @@
     public var destroyed:Boolean = false;
     public var hidden:Boolean = false;
 
+    protected var initialScaleX:Number = 1.0;
+    protected var initialScaleY:Number = 1.0;
+
     protected var groupArray:Array = ["updateable", "persistent"];
     protected var color:Number;
     protected var children:Array = [];
@@ -105,6 +108,9 @@
         _mc.height = this.height + wiggle * 2;
       }
 
+      this.initialScaleX = _mc.scaleX;
+      this.initialScaleY = _mc.scaleY;
+
       // All Entities are added to the container, except the container itself, which
       // has to be bootstrapped onto the Stage. If Fathom.container does not exist, `this`
       // must be the container.
@@ -156,11 +162,11 @@
 
     public override function get y():Number { return _y; }
 
-    public function set scaleX(v:Number):void { _mc.scaleX = v; }
-    public function get scaleX():Number { return _mc.scaleX; }
+    public function set scaleX(v:Number):void { _mc.scaleX = v * initialScaleX; }
+    public function get scaleX():Number { return _mc.scaleX / initialScaleX; }
 
-    public function set scaleY(v:Number):void { _mc.scaleY = v; }
-    public function get scaleY():Number { return _mc.scaleY; }
+    public function set scaleY(v:Number):void { _mc.scaleY = v * initialScaleY; }
+    public function get scaleY():Number { return _mc.scaleY * initialScaleY; }
 
     public function set rotation(v:Number):void { _mc.rotation = v; }
     public function get rotation():Number { return _mc.rotation; }
