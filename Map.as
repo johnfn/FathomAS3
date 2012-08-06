@@ -13,7 +13,7 @@ package {
     private var widthInTiles:int;
     private var heightInTiles:int;
 
-    private var tileSize:int;
+    private var _tileSize:int;
     private var data:Array = []; // Color data from the map.
     private var tiles:Array = []; // Cached array of collideable tiles.
     private var topLeftCorner:Vec = new Vec(0, 0);
@@ -32,7 +32,7 @@ package {
       this.sizeVector = new Vec(width, height);
       this.widthInTiles = widthInTiles;
       this.heightInTiles = heightInTiles;
-      this.tileSize = tileSize;
+      this._tileSize = tileSize;
 
       this.clearTiles();
 
@@ -52,9 +52,8 @@ package {
       });
     }
 
-    //TODO: Should be a getter.
-    public function getTileSize():int {
-      return tileSize;
+    public function get tileSize() {
+      return _tileSize;
     }
 
     [Embed(source = "../data/map.png")] static public var MapClass:Class;

@@ -75,7 +75,7 @@ package {
       //TODO: This code is pretty obscure.
       //TODO: This will only work if leftScreen.width is less than the tileSize.
       return function():void {
-        Util.assert(leftScreen.width < map.getTileSize());
+        Util.assert(leftScreen.width < map.tileSize);
 
         var smallerSize:Vec = map.sizeVector.clone().subtract(leftScreen.width);
         var dir:Vec = leftScreen.clone().divide(smallerSize).map(Math.floor);
@@ -83,7 +83,7 @@ package {
 
         leftScreen.iterate_xy_as_$(function():void {
           if (toOtherSide.$ > 0) leftScreen.$ = 1;
-          if (toOtherSide.$ < 0) leftScreen.$ = map.sizeVector.$ - map.getTileSize() + 1;
+          if (toOtherSide.$ < 0) leftScreen.$ = map.sizeVector.$ - map.tileSize + 1;
         });
 
         map.loadNewMap(dir);

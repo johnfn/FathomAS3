@@ -41,7 +41,6 @@
 
     public function get mc():MovieClip { return _mc; }
 
-    //TODO: Make visible represent whether an mc actually exists for this Entity.
     function Entity(x:Number = 0, y:Number = 0, width:Number = 20, height:Number = -1, wiggle:int = 0):void {
       if (height == -1) height = width;
 
@@ -87,7 +86,6 @@
       return this;
     }
 
-    //TODO: there is some duplication here.
     public function fromExternalMC(mcClass:*, fixedSize:Boolean = false):Entity {
       this.usesExternalMC = true;
 
@@ -116,7 +114,7 @@
 
       // If this is the container, than the difference between our childrenContainer and our mc
       // is moot. We could require the user to make 2 MCs, but that seems a bit silly,
-      // especially since the container object
+      // especially since the container object will never be anything other than a contaienr.
       if (!Fathom.container) {
         this.childrenContainer = this._mc;
       }
