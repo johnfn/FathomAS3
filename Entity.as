@@ -166,7 +166,7 @@
     public function get scaleX():Number { return _mc.scaleX / initialScaleX; }
 
     public function set scaleY(v:Number):void { _mc.scaleY = v * initialScaleY; }
-    public function get scaleY():Number { return _mc.scaleY * initialScaleY; }
+    public function get scaleY():Number { return _mc.scaleY / initialScaleY; }
 
     public function set rotation(v:Number):void { _mc.rotation = v; }
     public function get rotation():Number { return _mc.rotation; }

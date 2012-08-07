@@ -7,6 +7,8 @@ package {
   import flash.display.Stage;
 
   public class Camera extends Rect {
+    private var CAM_LAG:int = 60;
+
     // This is the rect that the camera will always stay inside.
     private var _boundingRect:Rect = null;
 
@@ -14,15 +16,15 @@ package {
     private var events:Array = [];
 
     // These two variables are the focal points of the camera.
-    private var _focalX:int;
-    private var _focalY:int;
+    private var _focalX:Number;
+    private var _focalY:Number;
 
     // If our camera lags behing the player, this is where it will eventually want to be.
-    private var goalFocalX:int;
-    private var goalFocalY:int;
+    private var goalFocalX:Number;
+    private var goalFocalY:Number;
 
-    private var normalWidth:int;
-    private var normalHeight:int;
+    private var normalWidth:Number;
+    private var normalHeight:Number;
 
     private var FOLLOW_MODE_NONE:int = 0;
     private var FOLLOW_MODE_SLIDE:int = 1;
@@ -132,8 +134,17 @@ package {
 
     private function updateXY():void {
       if (followMode == FOLLOW_MODE_SLIDE) {
-        focalX = _focalX + (goalFocalX - _focalX) / 15;
-        focalY = _focalY + (goalFocalY - _focalY) / 15;
+        if (Math.abs(goalFocalX - _focalX) > .0000001) {
+          focalX = _focalX + (goalFocalX - _focalX) / CAM_LAG;
+        } else {
+          focalX = goalFocalX;
+        }
+
+        if (Math.abs(goalFocalY - _focalY) > .0000001) {
+          focalY = _focalY + (goalFocalY - _focalY) / CAM_LAG;
+        } else {
+          focalY = goalFocalY;
+        }
 
         return;
       }
@@ -158,15 +169,15 @@ package {
 
       updateXY();
 
-      var camScaleX:int = normalWidth / width;
-      var camScaleY:int = normalHeight / height;
+      var camScaleX:Number = normalWidth / width;
+      var camScaleY:Number = normalHeight / height;
 
       Fathom.entities.get("!no-camera").each(function(e:Entity):void {
         e.mc.x = (e.mcX - that.x) * camScaleX;
         e.mc.y = (e.mcY - that.y) * camScaleY;
 
-        if (e.scaleX != camScaleX) e.scaleX = camScaleX;
-        if (e.scaleY != camScaleY) e.scaleY = camScaleY;
+        if (e.scaleX != camScaleX) e.scaleX = Util.sign(e.scaleX) * camScaleX;
+        if (e.scaleY != camScaleY) e.scaleY = Util.sign(e.scaleY) * camScaleY;
       });
 
       Fathom.entities.get("no-camera").each(function(e:Entity):void {
