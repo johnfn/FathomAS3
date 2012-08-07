@@ -117,17 +117,15 @@ package {
     }
 
     public override function set width(val:Number):void {
-      var newFocusX = x + val / 2;
+      _width = isBound() ? bind(val, _boundingRect.x, _boundingRect.width) : val;
 
-      _focalX = isBound() ? bind(newFocusX, boundingRect.x, boundingRect.right) : val;
-      _width = val;
+      _focalX = _x + _width / 2;
     }
 
     public override function set height(val:Number):void {
-      var newFocusY = y + val / 2;
+      _height = isBound() ? bind(val, _boundingRect.y, _boundingRect.height) : val;
 
-      _focalY = isBound() ? bind(newFocusY, boundingRect.y, boundingRect.bottom) : val;
-      _height = val;
+      _focalX = _y + _height / 2;
     }
 
     public function beBoundedBy(m:Map):Camera {
@@ -152,8 +150,8 @@ package {
 
     // Sets the center of the Camera to look at `loc`.
     public function setFocus(loc:Vec):void {
-      goalFocalX = loc.x;
-      goalFocalY = loc.y;
+      goalFocalX = isBound() ? bind(loc.x, boundingRect.x, boundingRect.right) : loc.x;
+      goalFocalY = isBound() ? bind(loc.y, boundingRect.y, boundingRect.bottom) : loc.x;
     }
 
     /* Force the camera to go snap to the desired focal point, ignoring any
@@ -214,6 +212,8 @@ package {
     /* Adjust camera such that the entity e is in the scene. */
     public function keepInScene(e:Entity):void {
       var resized:Boolean = false;
+
+      //TODO I am missing 2 cases here.
 
       // Not even worth it to try.
       if (!_boundingRect.containsRect(e)) return;
