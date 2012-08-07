@@ -64,12 +64,12 @@ package {
       this.scaledWidth = this.width;
       this.scaledHeight = this.height;
 
-      if (innerBoundingRect) {
-        innerBoundingRect.x *= val;
-        innerBoundingRect.y *= val;
+      if (_boundingRect) {
+        _boundingRect.x *= val;
+        _boundingRect.y *= val;
 
-        innerBoundingRect.width *= val;
-        innerBoundingRect.height *= val;
+        _boundingRect.width *= val;
+        _boundingRect.height *= val;
       }
 
       return this;
@@ -83,19 +83,19 @@ package {
     }
 
     public function isBound() {
-      return innerBoundingRect != null;
+      return _boundingRect != null;
     }
 
     // Updating the focus updates the x, y coordinates also, and vice versa.
 
     public function set focalX(val:Number):void {
-      _focalX = isBound() ? bind(val, innerBoundingRect.x, innerBoundingRect.right) : val;
+      _focalX = isBound() ? bind(val, boundingRect.x, boundingRect.right) : val;
 
       _x = _focalX - width  / 2;
     }
 
     public function set focalY(val:Number):void {
-      _focalY = isBound() ? bind(val, innerBoundingRect.y, innerBoundingRect.bottom) : val;
+      _focalY = isBound() ? bind(val, boundingRect.y, boundingRect.bottom) : val;
 
       _y = _focalY - height / 2;
     }
@@ -103,7 +103,7 @@ package {
     public override function set x(val:Number):void {
       var newFocusX = x + width / 2;
 
-      _focalX = isBound() ? bind(newFocusX, innerBoundingRect.x, innerBoundingRect.right) : val;
+      _focalX = isBound() ? bind(newFocusX, boundingRect.x, boundingRect.right) : val;
 
       _x = _focalX - width / 2;
     }
@@ -111,7 +111,7 @@ package {
     public override function set y(val:Number):void {
       var newFocusY = y + height / 2;
 
-      _focalY = isBound() ? bind(newFocusY, innerBoundingRect.y, innerBoundingRect.bottom) : val;
+      _focalY = isBound() ? bind(newFocusY, boundingRect.y, boundingRect.bottom) : val;
 
       _y = _focalY - width / 2;
     }
@@ -119,19 +119,15 @@ package {
     public override function set width(val:Number):void {
       var newFocusX = x + val / 2;
 
-      _focalX = isBound() ? bind(newFocusX, innerBoundingRect.x, innerBoundingRect.right) : val;
+      _focalX = isBound() ? bind(newFocusX, boundingRect.x, boundingRect.right) : val;
       _width = val;
-
-      calculateInnerBoundRect();
     }
 
     public override function set height(val:Number):void {
       var newFocusY = y + val / 2;
 
-      _focalY = isBound() ? bind(newFocusY, innerBoundingRect.y, innerBoundingRect.bottom) : val;
+      _focalY = isBound() ? bind(newFocusY, boundingRect.y, boundingRect.bottom) : val;
       _height = val;
-
-      calculateInnerBoundRect();
     }
 
     public function beBoundedBy(m:Map):Camera {
@@ -145,17 +141,13 @@ package {
     // camera to see if it's in bounds.
     public function set boundingRect(val:Rect):void {
       _boundingRect = val;
-
-      calculateInnerBoundRect();
     }
 
-    private function calculateInnerBoundRect():void {
-      if (!_boundingRect) return;
-
-      innerBoundingRect = new Rect( _boundingRect.x + this.width / 2
-                                  , _boundingRect.y + this.height / 2
-                                  , _boundingRect.width - this.width
-                                  , _boundingRect.height - this.height);
+    public function get boundingRect():Rect {
+      return new Rect( _boundingRect.x + this.width / 2
+                     , _boundingRect.y + this.height / 2
+                     , _boundingRect.width - this.width
+                     , _boundingRect.height - this.height);
     }
 
     // Sets the center of the Camera to look at `loc`.
