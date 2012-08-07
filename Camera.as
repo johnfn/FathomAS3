@@ -10,11 +10,7 @@ package {
     private var CAM_LAG:int = 90;
 
     // This is the rect that the camera will always stay inside.
-    private var _boundingRect:Rect = null;
-
-    //TODO this is more trouble than it's worth.
-    // This is the rect the *focal point* will always stay inside.
-    private var innerBoundingRect:Rect = null;
+    private var _camBoundingRect:Rect = null;
 
     // This is an array of all events currently happening to this camera.
     private var events:Array = [];
@@ -64,12 +60,12 @@ package {
       this.scaledWidth = this.width;
       this.scaledHeight = this.height;
 
-      if (_boundingRect) {
-        _boundingRect.x *= val;
-        _boundingRect.y *= val;
+      if (_camBoundingRect) {
+        _camBoundingRect.x *= val;
+        _camBoundingRect.y *= val;
 
-        _boundingRect.width *= val;
-        _boundingRect.height *= val;
+        _camBoundingRect.width *= val;
+        _camBoundingRect.height *= val;
       }
 
       return this;
@@ -83,19 +79,19 @@ package {
     }
 
     public function isBound() {
-      return _boundingRect != null;
+      return _camBoundingRect != null;
     }
 
     // Updating the focus updates the x, y coordinates also, and vice versa.
 
     public function set focalX(val:Number):void {
-      _focalX = isBound() ? bind(val, boundingRect.x, boundingRect.right) : val;
+      _focalX = isBound() ? bind(val, focalBoundingRect.x, focalBoundingRect.right) : val;
 
       _x = _focalX - width  / 2;
     }
 
     public function set focalY(val:Number):void {
-      _focalY = isBound() ? bind(val, boundingRect.y, boundingRect.bottom) : val;
+      _focalY = isBound() ? bind(val, focalBoundingRect.y, focalBoundingRect.bottom) : val;
 
       _y = _focalY - height / 2;
     }
@@ -103,7 +99,7 @@ package {
     public override function set x(val:Number):void {
       var newFocusX = x + width / 2;
 
-      _focalX = isBound() ? bind(newFocusX, boundingRect.x, boundingRect.right) : val;
+      _focalX = isBound() ? bind(newFocusX, focalBoundingRect.x, focalBoundingRect.right) : val;
 
       _x = _focalX - width / 2;
     }
@@ -111,25 +107,25 @@ package {
     public override function set y(val:Number):void {
       var newFocusY = y + height / 2;
 
-      _focalY = isBound() ? bind(newFocusY, boundingRect.y, boundingRect.bottom) : val;
+      _focalY = isBound() ? bind(newFocusY, focalBoundingRect.y, focalBoundingRect.bottom) : val;
 
       _y = _focalY - width / 2;
     }
 
     public override function set width(val:Number):void {
-      _width = isBound() ? bind(val, _boundingRect.x, _boundingRect.width) : val;
+      _width = isBound() ? bind(val, _camBoundingRect.x, _camBoundingRect.width) : val;
 
       _focalX = _x + _width / 2;
     }
 
     public override function set height(val:Number):void {
-      _height = isBound() ? bind(val, _boundingRect.y, _boundingRect.height) : val;
+      _height = isBound() ? bind(val, _camBoundingRect.y, _camBoundingRect.height) : val;
 
       _focalX = _y + _height / 2;
     }
 
     public function beBoundedBy(m:Map):Camera {
-      this.boundingRect = new Rect(0, 0, m.sizeVector.x, m.sizeVector.y);
+      this.focalBoundingRect = new Rect(0, 0, m.sizeVector.x, m.sizeVector.y);
 
       return this;
     }
@@ -137,21 +133,23 @@ package {
     // Set the bounding rectangle that the camera can't move outside of.
     // We reduce the size so that we can compare the center coordinate of the
     // camera to see if it's in bounds.
-    public function set boundingRect(val:Rect):void {
-      _boundingRect = val;
+    public function set focalBoundingRect(val:Rect):void {
+      _camBoundingRect = val;
     }
 
-    public function get boundingRect():Rect {
-      return new Rect( _boundingRect.x + this.width / 2
-                     , _boundingRect.y + this.height / 2
-                     , _boundingRect.width - this.width
-                     , _boundingRect.height - this.height);
+    // Since the focalBoundingRect depends on the width and height, we need to
+    // recalculate it every time someone calls this getter method.
+    public function get focalBoundingRect():Rect {
+      return new Rect( _camBoundingRect.x + this.width / 2
+                     , _camBoundingRect.y + this.height / 2
+                     , _camBoundingRect.width - this.width
+                     , _camBoundingRect.height - this.height);
     }
 
     // Sets the center of the Camera to look at `loc`.
     public function setFocus(loc:Vec):void {
-      goalFocalX = isBound() ? bind(loc.x, boundingRect.x, boundingRect.right) : loc.x;
-      goalFocalY = isBound() ? bind(loc.y, boundingRect.y, boundingRect.bottom) : loc.x;
+      goalFocalX = isBound() ? bind(loc.x, focalBoundingRect.x, focalBoundingRect.right) : loc.x;
+      goalFocalY = isBound() ? bind(loc.y, focalBoundingRect.y, focalBoundingRect.bottom) : loc.x;
     }
 
     /* Force the camera to go snap to the desired focal point, ignoring any
@@ -216,7 +214,7 @@ package {
       //TODO I am missing 2 cases here.
 
       // Not even worth it to try.
-      if (!_boundingRect.containsRect(e)) return;
+      if (!_camBoundingRect.containsRect(e)) return;
 
       // Move bottom right to fit the Entity.
       if (e.x >= x + scaledWidth || e.y >= y + scaledWidth) {
