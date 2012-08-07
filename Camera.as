@@ -112,6 +112,16 @@ package {
       _y = _focalY - width / 2;
     }
 
+    public override function set width(val:Number):void {
+      focalX = x + val / 2;
+      _width = val;
+    }
+
+    public override function set height(val:Number):void {
+      focalY = y + val / 2;
+      _height = val;
+    }
+
     public function beBoundedBy(m:Map):Camera {
       this.boundingRect = new Rect(0, 0, m.sizeVector.x, m.sizeVector.y);
 
