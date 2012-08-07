@@ -12,6 +12,10 @@ package {
     // This is the rect that the camera will always stay inside.
     private var _boundingRect:Rect = null;
 
+    //TODO this is more trouble than it's worth.
+    // This is the rect the *focal point* will always stay inside.
+    private var innerBoundingRect:Rect = null;
+
     // This is an array of all events currently happening to this camera.
     private var events:Array = [];
 
@@ -60,12 +64,12 @@ package {
       this.scaledWidth = this.width;
       this.scaledHeight = this.height;
 
-      if (_boundingRect) {
-        _boundingRect.x *= val;
-        _boundingRect.y *= val;
+      if (innerBoundingRect) {
+        innerBoundingRect.x *= val;
+        innerBoundingRect.y *= val;
 
-        _boundingRect.width *= val;
-        _boundingRect.height *= val;
+        innerBoundingRect.width *= val;
+        innerBoundingRect.height *= val;
       }
 
       return this;
@@ -79,19 +83,19 @@ package {
     }
 
     public function isBound() {
-      return _boundingRect != null;
+      return innerBoundingRect != null;
     }
 
     // Updating the focus updates the x, y coordinates also, and vice versa.
 
     public function set focalX(val:Number):void {
-      _focalX = isBound() ? bind(val, _boundingRect.x, _boundingRect.right) : val;
+      _focalX = isBound() ? bind(val, innerBoundingRect.x, innerBoundingRect.right) : val;
 
       _x = _focalX - width  / 2;
     }
 
     public function set focalY(val:Number):void {
-      _focalY = isBound() ? bind(val, _boundingRect.y, _boundingRect.bottom) : val;
+      _focalY = isBound() ? bind(val, innerBoundingRect.y, innerBoundingRect.bottom) : val;
 
       _y = _focalY - height / 2;
     }
@@ -99,7 +103,7 @@ package {
     public override function set x(val:Number):void {
       var newFocusX = x + width / 2;
 
-      _focalX = isBound() ? bind(newFocusX, _boundingRect.x, _boundingRect.right) : val;
+      _focalX = isBound() ? bind(newFocusX, innerBoundingRect.x, innerBoundingRect.right) : val;
 
       _x = _focalX - width / 2;
     }
@@ -107,19 +111,27 @@ package {
     public override function set y(val:Number):void {
       var newFocusY = y + height / 2;
 
-      _focalY = isBound() ? bind(newFocusY, _boundingRect.y, _boundingRect.bottom) : val;
+      _focalY = isBound() ? bind(newFocusY, innerBoundingRect.y, innerBoundingRect.bottom) : val;
 
       _y = _focalY - width / 2;
     }
 
     public override function set width(val:Number):void {
-      focalX = x + val / 2;
+      var newFocusX = x + val / 2;
+
+      _focalX = isBound() ? bind(newFocusX, innerBoundingRect.x, innerBoundingRect.right) : val;
       _width = val;
+
+      calculateInnerBoundRect();
     }
 
     public override function set height(val:Number):void {
-      focalY = y + val / 2;
+      var newFocusY = y + val / 2;
+
+      _focalY = isBound() ? bind(newFocusY, innerBoundingRect.y, innerBoundingRect.bottom) : val;
       _height = val;
+
+      calculateInnerBoundRect();
     }
 
     public function beBoundedBy(m:Map):Camera {
@@ -132,10 +144,18 @@ package {
     // We reduce the size so that we can compare the center coordinate of the
     // camera to see if it's in bounds.
     public function set boundingRect(val:Rect):void {
-      _boundingRect = new Rect( val.x + this.width / 2
-                              , val.y + this.height / 2
-                              , val.width - this.width
-                              , val.height - this.height);
+      _boundingRect = val;
+
+      calculateInnerBoundRect();
+    }
+
+    private function calculateInnerBoundRect():void {
+      if (!_boundingRect) return;
+
+      innerBoundingRect = new Rect( _boundingRect.x + this.width / 2
+                                  , _boundingRect.y + this.height / 2
+                                  , _boundingRect.width - this.width
+                                  , _boundingRect.height - this.height);
     }
 
     // Sets the center of the Camera to look at `loc`.
@@ -210,6 +230,7 @@ package {
         if (newSize > scaledWidth) {
           width = newSize;
           height = newSize;
+
           resized = true;
         }
       }
