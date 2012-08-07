@@ -54,7 +54,7 @@
 
       container.mc.addEventListener(Event.ENTER_FRAME, update);
 
-      Fathom._camera = new Camera(toplevel.stage).beBoundedBy(m);
+      Fathom._camera = new Camera(toplevel.stage).beBoundedBy(m).scaleBy(1/2);
     }
 
     //TODO: May want a better name than pause. freeze?

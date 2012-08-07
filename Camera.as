@@ -7,7 +7,7 @@ package {
   import flash.display.Stage;
 
   public class Camera extends Rect {
-    private var CAM_LAG:int = 60;
+    private var CAM_LAG:int = 90;
 
     // This is the rect that the camera will always stay inside.
     private var _boundingRect:Rect = null;
@@ -19,12 +19,22 @@ package {
     private var _focalX:Number;
     private var _focalY:Number;
 
+    private var scaleX:Number;
+    private var scaleY:Number;
+
     // If our camera lags behing the player, this is where it will eventually want to be.
     private var goalFocalX:Number;
     private var goalFocalY:Number;
 
+    // If the camera is normalWidth by normalHeight, then no MovieClips will have to be scaled.
     private var normalWidth:Number;
     private var normalHeight:Number;
+
+    // These dimensions are the default scaled width of the camera. The camera may temporarily adjust
+    // itself out of these dimensions, if, say, it's told to keepInScene() an Entity
+    // that wandered out of the Camera bounds.
+    private var scaledWidth:Number;
+    private var scaledHeight:Number;
 
     private var FOLLOW_MODE_NONE:int = 0;
     private var FOLLOW_MODE_SLIDE:int = 1;
@@ -33,14 +43,33 @@ package {
 
     // The Rect we extend from is the area from the game the camera displays.
 
+    // TODO: This camera does not at all take into consideration non-square
+    // dimensions. That would make life a bit harder.
+
     public function Camera(stage:Stage) {
       super(0, 0, stage.stageWidth / Fathom.scaleX, stage.stageHeight / Fathom.scaleY);
 
-      this.normalHeight = this.height;
       this.normalWidth  = this.width;
+      this.normalHeight = this.height;
 
-      this.width = this.normalWidth / 2;
-      this.height = this.normalHeight / 2;
+      this.scaledWidth = this.width;
+      this.scaledHeight = this.height;
+
+      this.scaleX = this.scaledWidth / this.normalWidth;
+      this.scaleY = this.scaledHeight / this.normalHeight;
+    }
+
+    public function scaleBy(val:Number):Camera {
+      this.width = this.normalWidth / val;
+      this.height = this.normalHeight / val;
+
+      this.scaledWidth = this.width;
+      this.scaledHeight = this.height;
+
+      this.scaleX = this.scaledWidth / this.normalWidth;
+      this.scaleY = this.scaledHeight / this.normalHeight;
+
+      return this;
     }
 
     public function bind(val:Number, low:Number, high:Number):Number {
@@ -115,6 +144,8 @@ package {
       focalY = e.y;
     }
 
+    /* Shake the camera for duration ticks, up to range pixels
+     * away from where it started */
     public function shake(duration:int = 30, range:int = 5):void {
       var that:Camera = this;
 
@@ -157,6 +188,20 @@ package {
       }
 
       throw new Error("Invalid Camera mode: " + followMode);
+    }
+
+    /* Adjust camera such that the entity e is in the scene. */
+    public function keepInScene(e:Entity):void {
+      if (e.x >= x || e.y >= y) {
+        // newSize is in Entity Space, as is scaledWidth.
+
+        var newSize:Number = Math.max(e.x - x, e.y - y);
+        if (newSize < scaledWidth) return;
+
+        // Don't set scaledWidth. scaledWidth is the default width that we compare with.
+        width = newSize * scaleX;
+        height = newSize * scaleY;
+      }
     }
 
     // TODO: mcX properties are sloppy.
