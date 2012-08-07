@@ -223,6 +223,9 @@ package {
     public function keepInScene(e:Entity):void {
       var resized:Boolean = false;
 
+      // Not even worth it to try.
+      if (!_boundingRect.containsRect(e)) return;
+
       // Move bottom right to fit the Entity.
       if (e.x >= x + scaledWidth || e.y >= y + scaledWidth) {
         // newSize is in Entity Space, as is scaledWidth.

@@ -76,7 +76,9 @@ package {
       return x <= p.x && p.x < right && y <= p.y && p.y < bottom;
     }
 
-    /* Is r contained entirely within this Rect? */
+    /* Is r contained entirely within this Rect?
+     *
+     * This is NOT a collision detection test. This is a contains test. */
     public function containsRect(r:Rect):Boolean {
       return x <= r.x      && r.x      < right &&
              x <= r.right  && r.right  < right &&
