@@ -3,10 +3,10 @@ package {
     import flash.geom.Point;
     import flash.utils.getQualifiedClassName;
 
-    public var width:Number = 0;
-    public var height:Number = 0;
-    public var right:Number = 0;
-    public var bottom:Number = 0;
+    public var _width:Number = 0;
+    public var _height:Number = 0;
+    public var _right:Number = 0;
+    public var _bottom:Number = 0;
 
     function Rect(x:Number, y:Number, width:Number, height:Number = -1) {
       if (height == -1) height = width;
@@ -17,6 +17,58 @@ package {
       this.height = height;
       this.right = this.x + this.width;
       this.bottom = this.y + this.height;
+    }
+
+    /* Try to be smart about updating coordinates.
+     *
+     * If you set the width, that changes right also. If you set
+     * right, that conversely changes the width. And so forth.
+     */
+
+    public override function set x(val:Number):void {
+      this._x = val;
+      this._right = this._x + this._width;
+    }
+
+    public override function set y(val:Number):void {
+      this._y = val;
+      this._right = this._y + this._height;
+    }
+
+    public function set width(val:Number):void {
+      this._width = val;
+      this._right = this._x + this._width;
+    }
+
+    public function get width():Number {
+      return this._width;
+    }
+
+    public function set height(val:Number):void {
+      this._height = val;
+      this._bottom = this._y + this._height;
+    }
+
+    public function get height():Number {
+      return this._height;
+    }
+
+    public function set right(val:Number):void {
+      this._right = val;
+      this._width = this._right - this._x;
+    }
+
+    public function get right():Number {
+      return this._right;
+    }
+
+    public function set bottom(val:Number):void {
+      this._bottom = val;
+      this._height = this._bottom - this._y;
+    }
+
+    public function get bottom():Number {
+      return this._bottom;
     }
 
     /* Does Rect contain point p? */

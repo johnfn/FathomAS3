@@ -54,7 +54,8 @@
 
       container.mc.addEventListener(Event.ENTER_FRAME, update);
 
-      Fathom._camera = new Camera(toplevel.stage).beBoundedBy(m).scaleBy(1/2);
+      // TODO: Swapping these calls causes insta-death. WUT.
+      Fathom._camera = new Camera(toplevel.stage).scaleBy(1/2).beBoundedBy(m);
     }
 
     //TODO: May want a better name than pause. freeze?
