@@ -207,53 +207,42 @@ package {
       throw new Error("Invalid Camera mode: " + followMode);
     }
 
-    /* Adjust camera such that the entity e is in the scene. */
-    public function keepInScene(e:Entity):void {
-      var resized:Boolean = false;
+    /* Adjust camera to follow the focus, and have the other points
+       all also be visible. */
+    public function follow(focus:Vec, ...points):void {
+      points.push(new Vec(focus.x - scaledWidth / 2, focus.y - scaledHeight / 2));
+      points.push(new Vec(focus.x - scaledWidth / 2, focus.y + scaledHeight / 2));
+      points.push(new Vec(focus.x + scaledWidth / 2, focus.y - scaledHeight / 2));
+      points.push(new Vec(focus.x + scaledWidth / 2, focus.y + scaledHeight / 2));
 
-      //TODO I am missing 2 cases here.
+      var VERY_BIG:Number = 99999999999;
 
-      // Not even worth it to try.
-      if (!_camBoundingRect.containsRect(e)) return;
+      var left:Number = VERY_BIG;
+      var right:Number = -VERY_BIG;
 
-      // Move bottom right to fit the Entity.
-      if (e.x >= x + scaledWidth || e.y >= y + scaledWidth) {
-        // newSize is in Entity Space, as is scaledWidth.
-        var newSize:Number = Math.max(e.x - x, e.y - y);
+      var top:Number = VERY_BIG;
+      var bottom:Number = -VERY_BIG;
 
-        width = newSize;
-        height = newSize;
+      for (var i:int = 0; i < points.length; i++) {
+        if (points[i].x < left)   left   = points[i].x;
+        if (points[i].x > right)  right  = points[i].x;
 
-        resized = true;
+        if (points[i].y < top)    top    = points[i].y;
+        if (points[i].y > bottom) bottom = points[i].y;
       }
 
-      // Move top left to fit the Entity.
+      var newDimension:Number = Math.max(right - left, bottom - top);
 
-      // Although these two things seem similar, Rectangles are currently
-      // not abstract enough to showcase that similarity.
-      if (e.x <= x || e.y <= y) {
-        var distance:Number = 0;
+      // Recalculate the camera.
 
-        if (x - e.x > y - e.y) {
-          distance = x - e.x;
-        } else {
-          distance = y - e.y;
-        }
+      _x = left;
+      _y = top;
 
-        x -= distance;
-        y -= distance;
-        width += distance;
-        height += distance;
+      _width  = newDimension;
+      _height = newDimension;
 
-        resized = true;
-      }
-
-      if (!resized) {
-        width = scaledWidth;
-        height = scaledHeight;
-      } else {
-        trace ("RESIZE");
-      }
+      _focalX = _x + _width  / 2;
+      _focalY = _y + _height / 2;
     }
 
     // TODO: mcX properties are sloppy.
@@ -264,7 +253,8 @@ package {
         events[i]();
       }
 
-      updateXY();
+      // TODO
+      //updateXY();
 
       var camScaleX:Number = normalWidth / width;
       var camScaleY:Number = normalHeight / height;
