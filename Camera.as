@@ -231,6 +231,12 @@ package {
         if (points[i].y > bottom) bottom = points[i].y;
       }
 
+      if (left < _camBoundingRect.x) left = _camBoundingRect.x;
+      if (right > _camBoundingRect.right) right = _camBoundingRect.right;
+
+      if (top < _camBoundingRect.y) top = _camBoundingRect.y;
+      if (bottom > _camBoundingRect.bottom) bottom = _camBoundingRect.bottom;
+
       var newDimension:Number = Math.max(right - left, bottom - top);
 
       // Recalculate the camera.
