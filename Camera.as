@@ -19,9 +19,6 @@ package {
     private var _focalX:Number;
     private var _focalY:Number;
 
-    private var scaleX:Number;
-    private var scaleY:Number;
-
     // If our camera lags behing the player, this is where it will eventually want to be.
     private var goalFocalX:Number;
     private var goalFocalY:Number;
@@ -54,20 +51,22 @@ package {
 
       this.scaledWidth = this.width;
       this.scaledHeight = this.height;
-
-      this.scaleX = this.scaledWidth / this.normalWidth;
-      this.scaleY = this.scaledHeight / this.normalHeight;
     }
 
     public function scaleBy(val:Number):Camera {
-      this.width = this.normalWidth / val;
-      this.height = this.normalHeight / val;
+      this.width = this.normalWidth * val;
+      this.height = this.normalHeight * val;
 
       this.scaledWidth = this.width;
       this.scaledHeight = this.height;
 
-      this.scaleX = this.scaledWidth / this.normalWidth;
-      this.scaleY = this.scaledHeight / this.normalHeight;
+      if (_boundingRect) {
+        _boundingRect.x *= val;
+        _boundingRect.y *= val;
+
+        _boundingRect.width *= val;
+        _boundingRect.height *= val;
+      }
 
       return this;
     }
@@ -192,15 +191,24 @@ package {
 
     /* Adjust camera such that the entity e is in the scene. */
     public function keepInScene(e:Entity):void {
+      var resized:Boolean = false;
+
       if (e.x >= x || e.y >= y) {
         // newSize is in Entity Space, as is scaledWidth.
-
         var newSize:Number = Math.max(e.x - x, e.y - y);
-        if (newSize < scaledWidth) return;
 
-        // Don't set scaledWidth. scaledWidth is the default width that we compare with.
-        width = newSize * scaleX;
-        height = newSize * scaleY;
+        if (newSize > scaledWidth) {
+          width = newSize;
+          height = newSize;
+          resized = true;
+        }
+      }
+
+      if (!resized) {
+        width = scaledWidth;
+        height = scaledHeight;
+      } else {
+        trace ("RESIZE");
       }
     }
 
