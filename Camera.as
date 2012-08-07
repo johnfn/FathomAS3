@@ -223,16 +223,36 @@ package {
     public function keepInScene(e:Entity):void {
       var resized:Boolean = false;
 
-      if (e.x >= x || e.y >= y) {
+      // Move bottom right to fit the Entity.
+      if (e.x >= x + scaledWidth || e.y >= y + scaledWidth) {
         // newSize is in Entity Space, as is scaledWidth.
         var newSize:Number = Math.max(e.x - x, e.y - y);
 
-        if (newSize > scaledWidth) {
-          width = newSize;
-          height = newSize;
+        width = newSize;
+        height = newSize;
 
-          resized = true;
+        resized = true;
+      }
+
+      // Move top left to fit the Entity.
+
+      // Although these two things seem similar, Rectangles are currently
+      // not abstract enough to showcase that similarity.
+      if (e.x <= x || e.y <= y) {
+        var distance:Number = 0;
+
+        if (x - e.x > y - e.y) {
+          distance = x - e.x;
+        } else {
+          distance = y - e.y;
         }
+
+        x -= distance;
+        y -= distance;
+        width += distance;
+        height += distance;
+
+        resized = true;
       }
 
       if (!resized) {
