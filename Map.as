@@ -163,8 +163,6 @@ package {
       }
 
       exploredMaps[topLeftCorner.asKey()] = true;
-
-      Fathom.sortDepths();
     }
 
     public function itemSwitchedMaps(leftScreen:Entity):void {
@@ -239,6 +237,7 @@ package {
       diff.multiply(new Vec(widthInTiles, heightInTiles));
 
       updatePersistentItems(diff);
+      Fathom.sortDepths();
     }
 
     public function getTopLeftCorner():Vec {
