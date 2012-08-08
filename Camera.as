@@ -7,6 +7,7 @@ package {
   import flash.display.Stage;
 
   public class Camera extends Rect {
+    // The larger this number, the longer the camera takes to catch up.
     private var CAM_LAG:int = 90;
 
     // This is the rect that the camera will always stay inside.
@@ -231,13 +232,17 @@ package {
         if (points[i].y > bottom) bottom = points[i].y;
       }
 
+      // This implies we were passed in bad data, but it can't hurt to check.
       if (left < _camBoundingRect.x) left = _camBoundingRect.x;
       if (right > _camBoundingRect.right) right = _camBoundingRect.right;
 
       if (top < _camBoundingRect.y) top = _camBoundingRect.y;
       if (bottom > _camBoundingRect.bottom) bottom = _camBoundingRect.bottom;
 
+      // Calculate the new w/h of the square camera.
       var newDimension:Number = Math.max(right - left, bottom - top);
+
+      if (newDimension < scaledWidth) newDimension = scaledWidth;
 
       // Recalculate the camera.
 
@@ -247,8 +252,22 @@ package {
       _width  = newDimension;
       _height = newDimension;
 
+      // It's posisble that we went off the edge, so we force the camera's rect to
+      // be valid.
+
+      if (_x + _width > _camBoundingRect._right) {
+        _x = _camBoundingRect._right - _width;
+      }
+
+      if (_y + _height > _camBoundingRect._bottom) {
+        _y = _camBoundingRect._bottom - _height;
+      }
+
       _focalX = _x + _width  / 2;
       _focalY = _y + _height / 2;
+
+      _right = _x + _width;
+      _bottom = _y + _height;
     }
 
     // TODO: mcX properties are sloppy.
