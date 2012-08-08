@@ -291,8 +291,8 @@ package {
         e.mc.x = (e.mcX - that.x) * camScaleX;
         e.mc.y = (e.mcY - that.y) * camScaleY;
 
-        if (e.scaleX != camScaleX) e.scaleX = Util.sign(e.scaleX) * camScaleX;
-        if (e.scaleY != camScaleY) e.scaleY = Util.sign(e.scaleY) * camScaleY;
+        e.mc.scaleX = e.cameraSpaceScaleX * camScaleX
+        e.mc.scaleY = e.cameraSpaceScaleY * camScaleY
       });
     }
   }

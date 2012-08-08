@@ -18,6 +18,9 @@
     protected var initialScaleX:Number = 1.0;
     protected var initialScaleY:Number = 1.0;
 
+    protected var _scaleX:Number = 1.0;
+    protected var _scaleY:Number = 1.0;
+
     protected var groupArray:Array = ["updateable", "persistent"];
     protected var color:Number;
     protected var children:Array = [];
@@ -111,6 +114,9 @@
       this.initialScaleX = _mc.scaleX;
       this.initialScaleY = _mc.scaleY;
 
+      this._scaleX = this.initialScaleX;
+      this._scaleY = this.initialScaleY;
+
       // All Entities are added to the container, except the container itself, which
       // has to be bootstrapped onto the Stage. If Fathom.container does not exist, `this`
       // must be the container.
@@ -147,6 +153,8 @@
     }
     public override function get x():Number { return _x; }
 
+    public override function get y():Number { return _y; }
+
     public override function set y(v:Number):void {
       mc.y = Math.floor(v + mcOffset.y);
       _y = v;
@@ -160,13 +168,16 @@
       return Math.floor(_y + mcOffset.y);
     }
 
-    public override function get y():Number { return _y; }
+    // These functions are in Entity space.
+    public function set scaleX(v:Number):void { _scaleX = v * initialScaleX; }
+    public function get scaleX():Number { return _scaleX / initialScaleX; }
 
-    public function set scaleX(v:Number):void { _mc.scaleX = v * initialScaleX; }
-    public function get scaleX():Number { return _mc.scaleX / initialScaleX; }
+    public function set scaleY(v:Number):void { _scaleY = v * initialScaleY; }
+    public function get scaleY():Number { return _scaleY / initialScaleY; }
 
-    public function set scaleY(v:Number):void { _mc.scaleY = v * initialScaleY; }
-    public function get scaleY():Number { return _mc.scaleY / initialScaleY; }
+    // These two are in Camera space.
+    public function get cameraSpaceScaleX():Number { return _scaleX; }
+    public function get cameraSpaceScaleY():Number { return _scaleY; }
 
     public function set rotation(v:Number):void { _mc.rotation = v; }
     public function get rotation():Number { return _mc.rotation; }
