@@ -160,11 +160,11 @@
       _y = v;
     }
 
-    public function get mcX():Number {
+    public function get cameraSpaceX():Number {
       return Math.floor(_x + mcOffset.x);
     }
 
-    public function get mcY():Number {
+    public function get cameraSpaceY():Number {
       return Math.floor(_y + mcOffset.y);
     }
 

@@ -105,6 +105,9 @@ package {
       return _y + height / 2;
     }
 
+    // We have to ensure that setting these properties does not cause the camera to
+    // exceed its bounding box.
+
     public override function set x(val:Number):void {
       _x = isBound() ? bind(val, _camBoundingRect.x, _camBoundingRect.right) : val;
     }
@@ -288,11 +291,11 @@ package {
       var camScaleY:Number = normalHeight / height;
 
       Fathom.entities.get("!no-camera").each(function(e:Entity):void {
-        e.mc.x = (e.mcX - that.x) * camScaleX;
-        e.mc.y = (e.mcY - that.y) * camScaleY;
+        e.mc.x = (e.cameraSpaceX - that.x) * camScaleX;
+        e.mc.y = (e.cameraSpaceY - that.y) * camScaleY;
 
-        e.mc.scaleX = e.cameraSpaceScaleX * camScaleX
-        e.mc.scaleY = e.cameraSpaceScaleY * camScaleY
+        e.mc.scaleX = e.cameraSpaceScaleX * camScaleX;
+        e.mc.scaleY = e.cameraSpaceScaleY * camScaleY;
       });
     }
   }
