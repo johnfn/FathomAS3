@@ -8,11 +8,11 @@
     private static var gameloopID:int;
     private static var FPS:int = 0;
     private static var fpsFn:Function;
-    private static var mapRef:Map;
     private static var _camera:Camera;
 
     public static function get camera():Camera { return _camera; }
 
+    public static var mapRef:Map;
     public static var fpsTxt:Text;
     public static var entities:EntityList = new EntityList([]);
     public static var container:Entity;
