@@ -71,19 +71,27 @@ package {
       return this._bottom;
     }
 
-    /* Does Rect contain point p? */
-    public function containsPt(p:Point):Boolean {
-      return x <= p.x && p.x < right && y <= p.y && p.y < bottom;
-    }
-
-    /* Is r contained entirely within this Rect?
+    /* Is i contained entirely within this Rect? i can be either a Rect
+     * or a Point.
      *
      * This is NOT a collision detection test. This is a contains test. */
-    public function containsRect(r:Rect):Boolean {
-      return x <= r.x      && r.x      < right &&
-             x <= r.right  && r.right  < right &&
-             y <= r.bottom && r.bottom < right &&
-             y <= r.y      && r.y      < right;
+    public function contains(i:*):Boolean {
+      if (i is Vec) {
+        var p:Vec = i as Vec;
+
+        return x <= p.x && p.x < right && y <= p.y && p.y < bottom;
+      }
+
+      if (i is Rect) {
+        var r:Rect = i as Rect;
+
+        return x <= r.x      && r.x      < right &&
+               x <= r.right  && r.right  < right &&
+               y <= r.bottom && r.bottom < right &&
+               y <= r.y      && r.y      < right;
+      }
+
+      throw new Error("Unsupported type for contains.");
     }
 
     public function makeBigger(size:int):Rect {

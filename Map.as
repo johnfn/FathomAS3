@@ -182,8 +182,8 @@ package {
       leftScreen.removeFromFathom();
     }
 
-    public function collidesPt(other:Point):Boolean {
-      if (!containsPt(other)) return true;
+    private function collidesPt(other:Vec):Boolean {
+      if (!contains(other)) return true;
 
       var xPt:int = Math.floor(other.x / this.tileSize);
       var yPt:int = Math.floor(other.y / this.tileSize);
@@ -191,7 +191,7 @@ package {
       return tiles[xPt][yPt] != null;
     }
 
-    public function collides(other:Entity):Boolean {
+    private function collidesRect(other:Rect):Boolean {
       var xStart:int = Math.floor(other.x / this.tileSize);
       var xStop:int  = Math.floor((other.x + other.width) / this.tileSize);
       var yStart:int = Math.floor(other.y / this.tileSize);
@@ -207,9 +207,21 @@ package {
         }
       }
 
-      if (!makeBigger(3).containsRect(other)) return true;
+      if (!makeBigger(3).contains(other)) return true;
 
       return false;
+    }
+
+    public function collides(i:*):Boolean {
+      if (i is Vec) {
+        return collidesPt(i as Vec);
+      }
+
+      if (i is Rect) {
+        return collidesRect(i as Rect);
+      }
+
+      throw new Error("Unsupported type for Map#collides.")
     }
 
     public function update():void {
