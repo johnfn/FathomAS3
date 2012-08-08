@@ -294,10 +294,6 @@ package {
         if (e.scaleX != camScaleX) e.scaleX = Util.sign(e.scaleX) * camScaleX;
         if (e.scaleY != camScaleY) e.scaleY = Util.sign(e.scaleY) * camScaleY;
       });
-
-      Fathom.entities.get("no-camera").each(function(e:Entity):void {
-        e.setAbsolutePosition(that);
-      });
     }
   }
 }
