@@ -121,6 +121,14 @@ package {
       _height = isBound() ? bind(_y + val, _camBoundingRect.y, _camBoundingRect.bottom) - _y: val;
     }
 
+    public override function get right():Number {
+      return _width + _x;
+    }
+
+    public override function get bottom():Number {
+      return _bottom + _y;
+    }
+
     public function beBoundedBy(m:Map):Camera {
       this.focalBoundingRect = new Rect(0, 0, m.sizeVector.x, m.sizeVector.y);
 
@@ -177,7 +185,7 @@ package {
       events.push(fn);
     }
 
-    private function updateXY():void {
+    private function easeXY():void {
       if (followMode == FOLLOW_MODE_SLIDE) {
         if (Math.abs(goalFocalX - _focalX) > .0000001) {
           focalX = _focalX + (goalFocalX - _focalX) / CAM_LAG;
@@ -240,30 +248,30 @@ package {
 
       if (newDimension < scaledWidth) newDimension = scaledWidth;
 
-      // Recalculate the camera.
-
-      _x = left;
-      _y = top;
-
-      _width  = newDimension;
-      _height = newDimension;
+      // Recalculate the camera's bounds.
 
       // It's posisble that we went off the edge, so we force the camera's rect to
       // be valid.
 
-      if (_x + _width > _camBoundingRect._right) {
-        _x = _camBoundingRect._right - _width;
+      if (left + _width > _camBoundingRect._right) {
+        left = _camBoundingRect._right - _width;
       }
 
-      if (_y + _height > _camBoundingRect._bottom) {
-        _y = _camBoundingRect._bottom - _height;
+      if (top + _height > _camBoundingRect._bottom) {
+        top = _camBoundingRect._bottom - _height;
       }
 
-      _focalX = _x + _width  / 2;
-      _focalY = _y + _height / 2;
+      // At this point, a Rect with top left coords (top, left) and width
+      // (_width, _height) would satisfy all of the provided constraints.
 
-      _right = _x + _width;
-      _bottom = _y + _height;
+      // But it's possible that this camera eases, so we just set the goalFocal
+      // position and let easeXY do the rest of the work.
+
+      _width  = newDimension;
+      _height = newDimension;
+
+      goalFocalX = left + _width  / 2;
+      goalFocalY = top +  _height / 2;
     }
 
     // TODO: mcX properties are sloppy.
@@ -274,8 +282,7 @@ package {
         events[i]();
       }
 
-      // TODO
-      //updateXY();
+      easeXY();
 
       var camScaleX:Number = normalWidth / width;
       var camScaleY:Number = normalHeight / height;
