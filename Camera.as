@@ -83,12 +83,16 @@ package {
       return _camBoundingRect != null;
     }
 
-    // Updating the focus updates the x, y coordinates also, and vice versa.
+    // Updating the focus updates the x, y coordinates also.
 
     public function set focalX(val:Number):void {
       _focalX = isBound() ? bind(val, focalBoundingRect.x, focalBoundingRect.right) : val;
 
       _x = _focalX - width  / 2;
+    }
+
+    public function get focalX():Number {
+      return _x + width / 2;
     }
 
     public function set focalY(val:Number):void {
@@ -97,32 +101,24 @@ package {
       _y = _focalY - height / 2;
     }
 
+    public function get focalY():Number {
+      return _y + height / 2;
+    }
+
     public override function set x(val:Number):void {
-      var newFocusX = x + width / 2;
-
-      _focalX = isBound() ? bind(newFocusX, focalBoundingRect.x, focalBoundingRect.right) : val;
-
-      _x = _focalX - width / 2;
+      _x = isBound() ? bind(val, _camBoundingRect.x, _camBoundingRect.right) : val;
     }
 
     public override function set y(val:Number):void {
-      var newFocusY = y + height / 2;
-
-      _focalY = isBound() ? bind(newFocusY, focalBoundingRect.y, focalBoundingRect.bottom) : val;
-
-      _y = _focalY - width / 2;
+      _y = isBound() ? bind(val, _camBoundingRect.y, _camBoundingRect.bottom) : val;
     }
 
     public override function set width(val:Number):void {
-      _width = isBound() ? bind(val, _camBoundingRect.x, _camBoundingRect.width) : val;
-
-      _focalX = _x + _width / 2;
+      _width = isBound() ? bind(_x + val, _camBoundingRect.x, _camBoundingRect.right) - _x: val;
     }
 
     public override function set height(val:Number):void {
-      _height = isBound() ? bind(val, _camBoundingRect.y, _camBoundingRect.height) : val;
-
-      _focalX = _y + _height / 2;
+      _height = isBound() ? bind(_y + val, _camBoundingRect.y, _camBoundingRect.bottom) - _y: val;
     }
 
     public function beBoundedBy(m:Map):Camera {
