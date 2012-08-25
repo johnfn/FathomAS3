@@ -79,7 +79,7 @@ package {
       return val;
     }
 
-    public function isBound() {
+    public function isBound():Boolean {
       return _camBoundingRect != null;
     }
 
@@ -174,7 +174,7 @@ package {
     public function shake(duration:int = 30, range:int = 5):void {
       var that:Camera = this;
 
-      var fn = function():void {
+      var fn:Function = function():void {
         that.focalX = that._focalX + Util.randRange(-range, range);
         that.focalY = that._focalY + Util.randRange(-range, range);
 

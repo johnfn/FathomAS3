@@ -52,14 +52,12 @@ package {
       });
     }
 
-    public function get tileSize() {
+    public function get tileSize():int {
       return _tileSize;
     }
 
-    [Embed(source = "../data/map.png")] static public var MapClass:Class;
-
     public function fromImage(mapClass:Class, persistentItemMapping:Object):Map {
-      var bAsset:BitmapAsset = new MapClass();
+      var bAsset:BitmapAsset = new mapClass();
       var bData:BitmapData = bAsset.bitmapData;
 
       this.persistentItemMapping = persistentItemMapping;
@@ -155,8 +153,8 @@ package {
         var e:Entity = persistingItems[i];
 
         if (e.isStatic) {
-          var xCoord = Math.floor(e.x / this.tileSize);
-          var yCoord = Math.floor(e.y / this.tileSize);
+          var xCoord:int = Math.floor(e.x / this.tileSize);
+          var yCoord:int = Math.floor(e.y / this.tileSize);
 
           tiles[xCoord][yCoord] = e;
         }

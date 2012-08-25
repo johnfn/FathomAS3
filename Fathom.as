@@ -32,7 +32,7 @@
       return container.mc.scaleY;
     }
 
-    public static function set showingFPS(b:Boolean) {
+    public static function set showingFPS(b:Boolean):void {
       fpsTxt.visible = b;
     }
 
