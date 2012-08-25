@@ -157,23 +157,13 @@ package {
     // Has a key just been released?
 
     public static function keyRecentlyUp(which:int):Boolean {
-      if (keyStates[which].state == KeyState.KEYSTATE_JUST_UP) {
-        keyStates[which].state = KeyState.KEYSTATE_UP;
-
-        return true;
-      }
-      return false;
+      return (keyStates[which].state == KeyState.KEYSTATE_JUST_UP);
     }
 
     // Has a key just been pressed?
 
     public static function keyRecentlyDown(which:int):Boolean {
-      if (keyStates[which].state == KeyState.KEYSTATE_JUST_DOWN) {
-        keyStates[which].state = KeyState.KEYSTATE_DOWN;
-
-        return true;
-      }
-      return false;
+      return (keyStates[which].state == KeyState.KEYSTATE_JUST_DOWN);
     }
 
     // You should never have to call this function.
