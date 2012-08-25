@@ -6,6 +6,10 @@
   import mx.core.BitmapAsset;
   import flash.display.BitmapData;
 
+  import flash.display.Bitmap;
+  import flash.geom.Rectangle;
+
+
   import Hooks;
   import Util;
   import MagicArray;
@@ -94,7 +98,7 @@
       return this;
     }
 
-    public function fromExternalMC(mcClass:*, fixedSize:Boolean = false):Entity {
+    public function fromExternalMC(mcClass:*, fixedSize:Boolean = false, spritesheet:Array = null):Entity {
       this.usesExternalMC = true;
 
       var className:String = Util.className(mcClass);
@@ -105,9 +109,22 @@
       } else if (className == "MovieClip") {
         this._mc = mcClass;
       } else {
+        //TODO: Caching?
         var bAsset:BitmapAsset = new mcClass();
         this._mc = new MovieClip();
-        this._mc.addChild(bAsset);
+
+        if (spritesheet != null) {
+          trace("ya!");
+          var size:int = C.size; //TODO: Big hak.
+          var subimage = new Bitmap();
+          var source:Rectangle = new Rectangle(spritesheet[0], spritesheet[1], spritesheet[0] + C.size, spritesheet[1] + C.size);
+
+          subimage.bitmapData = new BitmapData(C.size, C.size);
+          subimage.bitmapData.copyPixels(bAsset.bitmapData, source, new Point(0, 0));
+          this._mc.addChild(subimage);
+        } else {
+          this._mc.addChild(bAsset);
+        }
       }
 
       if (fixedSize) {

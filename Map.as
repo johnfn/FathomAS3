@@ -111,7 +111,11 @@ package {
       var e:Entity = new itemData["type"]();
 
       if ("gfx" in itemData) {
-        e.fromExternalMC(itemData["gfx"], "fixedSize" in itemData);
+        if ("spritesheet" in itemData) {
+          e.fromExternalMC(itemData["gfx"], "fixedSize" in itemData, itemData["spritesheet"]);
+        } else {
+          e.fromExternalMC(itemData["gfx"], "fixedSize" in itemData);
+        }
       }
 
       e.set(new Vec(x * tileSize, y * tileSize));
