@@ -8,7 +8,7 @@ package {
 
     public static var uid:Number = 0;
     public static var Key:Object = keysToKeyCodes();
-    private static var keyStates:Array = new Array(255);
+    private static var keyStates:Array = [];
 
     //TODO: Should move Array.prototype stuff into separate ArrayExtensions class.
 
@@ -122,11 +122,6 @@ package {
       if (keystate.state != KeyState.KEYSTATE_JUST_DOWN && keystate.state != KeyState.KEYSTATE_DOWN) {
         keystate.state = KeyState.KEYSTATE_JUST_DOWN;
       }
-      if (keystate.timeoutID != 0) clearTimeout(keystate.timeoutID);
-      keystate.timeoutID = setTimeout(function():void {
-        keystate.state = KeyState.KEYSTATE_DOWN;
-        keystate.timeoutID = 0;
-      }, 50);
     }
 
     private static function _keyUp(event:KeyboardEvent):void {
@@ -135,11 +130,23 @@ package {
       if (keystate.state != KeyState.KEYSTATE_JUST_UP && keystate.state != KeyState.KEYSTATE_UP) {
         keystate.state = KeyState.KEYSTATE_JUST_UP;
       }
-      if (keystate.timeoutID != 0) clearTimeout(keystate.timeoutID);
-      keystate.timeoutID = setTimeout(function():void {
-        keystate.state = KeyState.KEYSTATE_UP;
-        keystate.timeoutID = 0;
-      }, 50);
+    }
+
+    // This is very frustrating.
+
+    // This method is called from an onEnterFrame function. Everything will
+    // work correctly as long as this is called FPS times per second or so, as
+    // to properly flush the keys through.
+    public static function dealWithVariableKeyRepeatRates():void {
+      for (var i:int = 0; i < keyStates.length; i++) {
+        if (keyStates[i].state == KeyState.KEYSTATE_JUST_UP) {
+          keyStates[i].state = KeyState.KEYSTATE_UP;
+        }
+
+        if (keyStates[i].state == KeyState.KEYSTATE_JUST_DOWN) {
+          keyStates[i].state = KeyState.KEYSTATE_DOWN;
+        }
+      }
     }
 
     // Is a key currently up?

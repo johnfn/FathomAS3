@@ -125,8 +125,13 @@
         e.emit("post-update");
       }
 
-      mapRef.update();
-      camera.update();
+      //TODO.
+      if (currentMode == C.MODE_NORMAL) {
+        mapRef.update();
+        camera.update();
+      }
+
+      Util.dealWithVariableKeyRepeatRates();
     }
   }
 }
