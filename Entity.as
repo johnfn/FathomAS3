@@ -3,6 +3,8 @@
   import flash.geom.Point;
   import flash.utils.getQualifiedClassName;
   import flash.debugger.enterDebugger;
+  import mx.core.BitmapAsset;
+  import flash.display.BitmapData;
 
   import Hooks;
   import Util;
@@ -103,7 +105,9 @@
       } else if (className == "MovieClip") {
         this._mc = mcClass;
       } else {
-        this._mc = new mcClass();
+        var bAsset:BitmapAsset = new mcClass();
+        this._mc = new MovieClip();
+        this._mc.addChild(bAsset);
       }
 
       if (fixedSize) {
