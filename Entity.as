@@ -1,5 +1,6 @@
 ﻿package {
   import flash.display.MovieClip;
+  import flash.filters.DropShadowFilter;
   import flash.geom.Point;
   import flash.utils.getQualifiedClassName;
   import flash.debugger.enterDebugger;
@@ -75,6 +76,14 @@
       if (Fathom.container) {
         Fathom.entities.add(this);
       }
+    }
+
+    public function addDropShadow():void {
+      _mc.filters = [new DropShadowFilter()];
+    }
+
+    public function clearFilters():void {
+      _mc.filters = [];
     }
 
     private function getChildrenOf(mc:MovieClip):Array {
