@@ -114,7 +114,6 @@
         this._mc = new MovieClip();
 
         if (spritesheet != null) {
-          trace("ya!");
           var size:int = C.size; //TODO: Big hak.
           var subimage = new Bitmap();
           var source:Rectangle = new Rectangle(spritesheet[0], spritesheet[1], spritesheet[0] + C.size, spritesheet[1] + C.size);
@@ -145,8 +144,8 @@
         Fathom.container.addChild(this);
       }
 
-      // If this is the container, than the difference between our childrenContainer and our mc
-      // is moot. We could require the user to make 2 MCs, but that seems a bit silly,
+      // If this is the container, than there is no difference between our childrenContainer and our mc.
+      // We could require the user to make 2 MCs, but that seems a bit silly,
       // especially since the container object will never be anything other than a contaienr.
       if (!Fathom.container) {
         this.childrenContainer = this._mc;

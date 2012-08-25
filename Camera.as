@@ -39,6 +39,9 @@ package {
 
     private var followMode:int = FOLLOW_MODE_SLIDE;
 
+    // This just helps us fix a bug we may encounter.
+    private var isFocused:Boolean = false;
+
     // The Rect we extend from is the area from the game the camera displays.
 
     // TODO: This camera does not at all take into consideration non-square
@@ -156,6 +159,8 @@ package {
 
     // Sets the center of the Camera to look at `loc`.
     public function setFocus(loc:Vec):void {
+      this.isFocused = true;
+
       goalFocalX = isBound() ? bind(loc.x, focalBoundingRect.x, focalBoundingRect.right) : loc.x;
       goalFocalY = isBound() ? bind(loc.y, focalBoundingRect.y, focalBoundingRect.bottom) : loc.x;
     }
@@ -275,6 +280,8 @@ package {
 
       goalFocalX = left + _width  / 2;
       goalFocalY = top +  _height / 2;
+
+      this.isFocused = true;
     }
 
     // TODO: mcX properties are sloppy.
@@ -286,6 +293,10 @@ package {
       }
 
       easeXY();
+
+      if (!this.isFocused) {
+        trace("WARNING: Camera has no focus, so you probably won't see anything.");
+      }
 
       var camScaleX:Number = normalWidth / width;
       var camScaleY:Number = normalHeight / height;
