@@ -98,6 +98,36 @@
       return this;
     }
 
+    //TODO: explain the diff between these 2.
+    public function updateExternalMC(mcClass:*, fixedSize:Boolean = false, spritesheet:Array = null):Entity {
+      //TODO: Caching?
+      var bAsset:BitmapAsset = new mcClass();
+
+      // remove all children.
+      while(_mc && _mc.numChildren != 0) {
+        mc.removeChildAt(0);
+      }
+
+      if (!this._mc) {
+        this._mc = new MovieClip();
+      }
+
+      if (spritesheet != null) {
+        var size:int = C.size; //TODO: Big hak.
+        var subimage = new Bitmap();
+        var source:Rectangle = new Rectangle(spritesheet[0] * C.size, spritesheet[1] * C.size, C.size, C.size);
+
+        subimage.bitmapData = new BitmapData(C.size, C.size);
+        subimage.bitmapData.copyPixels(bAsset.bitmapData, source, new Point(0, 0));
+        this._mc.addChild(subimage);
+      } else {
+        this._mc.addChild(bAsset);
+      }
+
+      return this;
+    }
+
+
     public function fromExternalMC(mcClass:*, fixedSize:Boolean = false, spritesheet:Array = null):Entity {
       this.usesExternalMC = true;
 
@@ -109,21 +139,7 @@
       } else if (className == "MovieClip") {
         this._mc = mcClass;
       } else {
-        //TODO: Caching?
-        var bAsset:BitmapAsset = new mcClass();
-        this._mc = new MovieClip();
-
-        if (spritesheet != null) {
-          var size:int = C.size; //TODO: Big hak.
-          var subimage = new Bitmap();
-          var source:Rectangle = new Rectangle(spritesheet[0] * C.size, spritesheet[1] * C.size, C.size, C.size);
-
-          subimage.bitmapData = new BitmapData(C.size, C.size);
-          subimage.bitmapData.copyPixels(bAsset.bitmapData, source, new Point(0, 0));
-          this._mc.addChild(subimage);
-        } else {
-          this._mc.addChild(bAsset);
-        }
+        updateExternalMC(mcClass, fixedSize, spritesheet);
       }
 
       if (fixedSize) {
