@@ -137,6 +137,9 @@ package {
               result[X]++;
             }
 
+            if (locY != 0 && data[locX][locY - 1].toString() != c.toString()  && locY != heightInTiles - 1 && data[locX][locY + 1].toString() != c.toString()) {
+              result[Y]--;
+            }
 
             e.fromExternalMC(itemData["gfx"], "fixedSize" in itemData, result);
 
