@@ -10,7 +10,7 @@
     private static var fpsFn:Function;
     private static var _camera:Camera;
 
-    private static var _currentMode:int = C.MODE_NORMAL;
+    private static var _currentMode:int = 0;
 
     public static function get camera():Camera { return _camera; }
 
@@ -126,7 +126,7 @@
       }
 
       //TODO.
-      if (currentMode == C.MODE_NORMAL) {
+      if (currentMode == 0) {
         mapRef.update();
         camera.update();
       }

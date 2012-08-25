@@ -71,10 +71,6 @@
 
       this._mc = new MovieClip();
 
-      if (visible) {
-        draw();
-      }
-
       //TODO: I had this idea about how parents should bubble down events to children.
       if (Fathom.container) {
         Fathom.entities.add(this);
@@ -114,19 +110,20 @@
 
       if (spritesheet != null) {
         var size:int = C.size; //TODO: Big hak.
-        var subimage = new Bitmap();
+        var bd = new BitmapData(C.size, C.size, true, 0);
+        var subimage = new Bitmap(bd);
         var source:Rectangle = new Rectangle(spritesheet[0] * C.size, spritesheet[1] * C.size, C.size, C.size);
 
-        subimage.bitmapData = new BitmapData(C.size, C.size);
-        subimage.bitmapData.copyPixels(bAsset.bitmapData, source, new Point(0, 0));
+        subimage.bitmapData.copyPixels(bAsset.bitmapData, source, new Point(0, 0), null, null, true);
+
         this._mc.addChild(subimage);
       } else {
         this._mc.addChild(bAsset);
       }
 
       return this;
-    }
 
+    }
 
     public function fromExternalMC(mcClass:*, fixedSize:Boolean = false, spritesheet:Array = null):Entity {
       this.usesExternalMC = true;
@@ -230,12 +227,6 @@
 
     protected function setMCOffset(x:int, y:int):void {
       this.mcOffset = (new Vec(wiggle, wiggle)).add(new Vec(x, y));
-    }
-
-    protected function draw():void {
-      _mc.graphics.beginFill(color);
-      _mc.graphics.drawRect(0, 0, this.width + wiggle * 2, this.height + wiggle * 2);
-      _mc.graphics.endFill();
     }
 
     // Pass in the x-coordinate of your velocity, and this'll orient
