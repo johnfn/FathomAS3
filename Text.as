@@ -1,5 +1,7 @@
 package {
+  import flash.filters.DropShadowFilter;
   import flash.text.TextField;
+  import flash.text.TextFormat;
   import flash.utils.setInterval;
   import flash.utils.clearInterval;
 
@@ -22,19 +24,28 @@ package {
       mc.graphics.clear();
 
       textField = new TextField();
+      text = content;
+
       textField.selectable = false;
       textField.x = x;
       textField.y = y;
+      textField.wordWrap = true;
+
+      textField.filters = [new DropShadowFilter(1.0, 45, 0, 1, 0, 0, 1)];
 
       mc.addChild(textField);
-
-      text = content;
 
       if (width == -1) {
         fixedWidth = false;
       } else {
         textField.width = width;
+        textField.height = 200;
       }
+    }
+
+    //TODO entities have color?
+    public function set textColor(val:uint):void {
+      textField.textColor = val;
     }
 
     public function advanceOnKeypress(key:int):Text {
@@ -52,6 +63,11 @@ package {
       if (!fixedWidth) {
         textField.width = textField.textWidth;
       }
+
+      var newFormat:TextFormat = new TextFormat();
+      newFormat.size = 14;
+      newFormat.font = "Arial";
+      textField.setTextFormat(newFormat);
     }
 
     public function advanceText():void {

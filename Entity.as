@@ -125,6 +125,7 @@
 
     }
 
+    // TODO seems like you need to call this function before anything is visible, even children.
     public function fromExternalMC(mcClass:*, fixedSize:Boolean = false, spritesheet:Array = null):Entity {
       this.usesExternalMC = true;
 
