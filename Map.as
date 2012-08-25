@@ -112,7 +112,30 @@ package {
 
       if ("gfx" in itemData) {
         if ("spritesheet" in itemData) {
-          e.fromExternalMC(itemData["gfx"], "fixedSize" in itemData, itemData["spritesheet"]);
+          // This is an awesome feature that I need to explain more when I'm not doing Ludum Dare. TODO
+          if ("roundOutEdges" in itemData) {
+            var result:Array = itemData["spritesheet"].slice();
+            var X:int = 0;
+            var Y:int = 1;
+
+            var locX:int = topLeftCorner.x + x;
+            var locY:int = topLeftCorner.y + y;
+
+            if (locY == 0 || data[locX][locY - 1].toString() != c.toString()) {
+              result[Y]--;
+            }
+
+            if (locX == 0 || data[locX][locX - 1].toString() != c.toString()) {
+              result[X]--;
+            }
+
+            trace(result);
+
+            e.fromExternalMC(itemData["gfx"], "fixedSize" in itemData, result);
+
+          } else {
+            e.fromExternalMC(itemData["gfx"], "fixedSize" in itemData, itemData["spritesheet"]);
+          }
         } else {
           e.fromExternalMC(itemData["gfx"], "fixedSize" in itemData);
         }
