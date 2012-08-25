@@ -125,11 +125,18 @@ package {
               result[Y]--;
             }
 
-            if (locX == 0 || data[locX][locX - 1].toString() != c.toString()) {
+            if (locX == 0 || data[locX - 1][locY].toString() != c.toString()) {
               result[X]--;
             }
 
-            trace(result);
+            if (locY == heightInTiles - 1 || data[locX][locY + 1].toString() != c.toString()) {
+              result[Y]++;
+            }
+
+            if (locX == widthInTiles || data[locX + 1][locY].toString() != c.toString()) {
+              result[X]++;
+            }
+
 
             e.fromExternalMC(itemData["gfx"], "fixedSize" in itemData, result);
 
