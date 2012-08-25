@@ -198,14 +198,14 @@ package {
 
     private function easeXY():void {
       if (followMode == FOLLOW_MODE_SLIDE) {
-        if (Math.abs(goalFocalX - _focalX) > .0000001 * this.easeRate) {
-          focalX = _focalX + (goalFocalX - _focalX) / CAM_LAG;
+        if (Math.abs(goalFocalX - _focalX) > .0000001) {
+          focalX = _focalX + (goalFocalX - _focalX) / (CAM_LAG / this.easeRate);
         } else {
           focalX = goalFocalX;
         }
 
-        if (Math.abs(goalFocalY - _focalY) > .0000001 * this.easeRate) {
-          focalY = _focalY + (goalFocalY - _focalY) / CAM_LAG;
+        if (Math.abs(goalFocalY - _focalY) > .0000001) {
+          focalY = _focalY + (goalFocalY - _focalY) / (CAM_LAG / this.easeRate);
         } else {
           focalY = goalFocalY;
         }
