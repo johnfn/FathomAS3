@@ -10,6 +10,8 @@
     private static var fpsFn:Function;
     private static var _camera:Camera;
 
+    private static var _currentMode:int = C.MODE_NORMAL;
+
     public static function get camera():Camera { return _camera; }
 
     public static var mapRef:Map;
@@ -30,6 +32,14 @@
 
     public static function get scaleY():Number {
       return container.mc.scaleY;
+    }
+
+    public static function get currentMode():int {
+      return _currentMode;
+    }
+
+    public static function set currentMode(val:int):void {
+      _currentMode = val;
     }
 
     public static function set showingFPS(b:Boolean):void {
@@ -95,10 +105,12 @@
       for (var i:int = 0; i < updaters.length; i++) {
         var e:Entity = updaters[i];
 
-        // This acts as a pseudo garbage-collector. We
-        // separate out the destroyed() call from the clearMemory() call because
-        // we sometimes want to destroy() an item halfway through its update() call,
-        // so the actual destruction would have to wait until the end of the update.
+        if (!e.modes().contains(currentMode)) continue;
+
+        // This acts as a pseudo garbage-collector. We separate out the
+        // destroyed() call from the clearMemory() call because we sometimes
+        // want to destroy() an item halfway through its update() call, so the
+        // actual destruction would have to wait until the end of the update.
         if (e.destroyed) {
           e.clearMemory();
           continue;

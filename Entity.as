@@ -452,5 +452,8 @@
     }
 
     public function depth():int { return 0; }
+
+    // Modes for which this entity receives events.
+    public function modes():Array { return [0]; }
   }
 }
