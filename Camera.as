@@ -28,6 +28,9 @@ package {
     private var normalWidth:Number;
     private var normalHeight:Number;
 
+    // Rate at which the camera eases. Larger values -> faster easing.
+    private var easeRate:int = 1;
+
     // These dimensions are the default scaled width of the camera. The camera may temporarily adjust
     // itself out of these dimensions, if, say, it's told to keepInScene() an Entity
     // that wandered out of the Camera bounds.
@@ -195,13 +198,13 @@ package {
 
     private function easeXY():void {
       if (followMode == FOLLOW_MODE_SLIDE) {
-        if (Math.abs(goalFocalX - _focalX) > .0000001) {
+        if (Math.abs(goalFocalX - _focalX) > .0000001 * this.easeRate) {
           focalX = _focalX + (goalFocalX - _focalX) / CAM_LAG;
         } else {
           focalX = goalFocalX;
         }
 
-        if (Math.abs(goalFocalY - _focalY) > .0000001) {
+        if (Math.abs(goalFocalY - _focalY) > .0000001 * this.easeRate) {
           focalY = _focalY + (goalFocalY - _focalY) / CAM_LAG;
         } else {
           focalY = goalFocalY;
@@ -218,6 +221,11 @@ package {
       }
 
       throw new Error("Invalid Camera mode: " + followMode);
+    }
+
+    public function setEaseSpeed(ease:int):Camera {
+      this.easeRate = ease;
+      return this;
     }
 
     /* Adjust camera to follow the focus, and have the other points
