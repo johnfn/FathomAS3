@@ -128,9 +128,9 @@
       //TODO.
       if (currentMode == 0) {
         mapRef.update();
-        camera.update();
       }
 
+      camera.update();
       Util.dealWithVariableKeyRepeatRates();
     }
   }

@@ -119,8 +119,8 @@
 
       if (spritesheet != null) {
         var size:int = C.size; //TODO: Big hak.
-        var bd = new BitmapData(C.size, C.size, true, 0);
-        var subimage = new Bitmap(bd);
+        var bd:BitmapData = new BitmapData(C.size, C.size, true, 0);
+        var subimage:Bitmap = new Bitmap(bd);
         var source:Rectangle = new Rectangle(spritesheet[0] * C.size, spritesheet[1] * C.size, C.size, C.size);
 
         subimage.bitmapData.copyPixels(bAsset.bitmapData, source, new Point(0, 0), null, null, true);

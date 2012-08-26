@@ -40,6 +40,7 @@ package {
       } else {
         textField.width = width;
         textField.height = 200;
+        fixedWidth = true;
       }
     }
 
