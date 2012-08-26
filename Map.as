@@ -133,7 +133,7 @@ package {
               result[Y]++;
             }
 
-            if (locX == widthInTiles || data[locX + 1][locY].toString() != c.toString()) {
+            if (locX == widthInTiles - 1 || data[locX + 1][locY].toString() != c.toString()) {
               result[X]++;
             }
 
@@ -155,6 +155,10 @@ package {
 
       if (e.groups().contains("persistent")) {
         persistent[topLeftCorner.asKey()].push(e);
+      }
+
+      if (e.groups().contains("remember-loc")) {
+        (e as PushBlock).rememberLoc();
       }
 
       e.removeFromFathom();
@@ -181,6 +185,10 @@ package {
       // Add all persistent items.
       persistent[topLeftCorner.asKey()].map(function(e:*, i:int, a:Array):void {
         e.addToFathom();
+
+        if (e.groups().contains("remember-loc")) {
+          e.resetLoc();
+        }
       });
 
       // Cache every persistent item in the 2D array of tiles.

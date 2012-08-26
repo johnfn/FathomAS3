@@ -92,6 +92,9 @@
     private static function update(event:Event):void {
       var updaters:EntityList;
 
+      // TODO HACK
+      if (currentMode == 4) return;
+
       // TODO: entities == Fathom.container.children
 
       if (_paused) {

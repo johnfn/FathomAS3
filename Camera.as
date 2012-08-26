@@ -186,14 +186,20 @@ package {
         that.focalX = that._focalX + Util.randRange(-range, range);
         that.focalY = that._focalY + Util.randRange(-range, range);
 
-        if (duration < 0) {
+        if (duration == 0) {
           that.events.remove(fn);
         }
 
         duration--;
       };
 
+      // TODO: This is a hack to ensure only one shaking cam effect. Fix later.
+      events = [];
       events.push(fn);
+    }
+
+    public function stopAllEvents():void {
+      events = [];
     }
 
     private function easeXY():void {

@@ -5,6 +5,7 @@
   import flash.utils.getQualifiedClassName;
   import flash.debugger.enterDebugger;
   import mx.core.BitmapAsset;
+  import flash.utils.Dictionary;
   import flash.display.BitmapData;
 
   import flash.display.Bitmap;
@@ -113,10 +114,15 @@
       return this;
     }
 
+    private static var cachedAssets:Dictionary = new Dictionary();
+
     //TODO: explain the diff between these 2.
     public function updateExternalMC(mcClass:*, fixedSize:Boolean = false, spritesheet:Array = null, middleX:Boolean = false):Entity {
-      //TODO: Caching?
-      var bAsset:BitmapAsset = new mcClass();
+      var bAsset:BitmapAsset;
+
+      var count:int = 0;
+
+      bAsset = new mcClass(); //cachedAssets[mcClass]
 
       // remove all children.
       while(_mc && _mc.numChildren != 0) {
@@ -128,14 +134,22 @@
       }
 
       if (spritesheet != null) {
-        var size:int = C.size; //TODO: Big hak.
-        var bd:BitmapData = new BitmapData(C.size, C.size, true, 0);
-        var subimage:Bitmap = new Bitmap(bd);
-        var source:Rectangle = new Rectangle(spritesheet[0] * C.size, spritesheet[1] * C.size, C.size, C.size);
+        var uid:String = Util.className(mcClass) + spritesheet;
+        var subimage:Bitmap = new Bitmap();
 
-        subimage.bitmapData.copyPixels(bAsset.bitmapData, source, new Point(0, 0), null, null, true);
+        if (!(cachedAssets[uid])) {
+          var bd:BitmapData = new BitmapData(C.size, C.size, true, 0);
+          //subimage = new Bitmap(bd);
+          var source:Rectangle = new Rectangle(spritesheet[0] * C.size, spritesheet[1] * C.size, C.size, C.size);
 
-        this.mySpritesheet = spritesheet;
+          bd.copyPixels(bAsset.bitmapData, source, new Point(0, 0), null, null, true);
+
+          this.mySpritesheet = spritesheet;
+
+          cachedAssets[uid] = bd;
+        }
+
+        subimage.bitmapData = cachedAssets[uid];
 
         this._mc.addChild(subimage);
 
