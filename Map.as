@@ -129,7 +129,7 @@ package {
               result[X]--;
             }
 
-            if (locY == heightInTiles - 1 || data[locX][locY + 1].toString() != c.toString()) {
+            if (locY != heightInTiles - 1 && data[locX][locY + 1].toString() != c.toString()) {
               result[Y]++;
             }
 

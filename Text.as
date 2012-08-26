@@ -59,6 +59,10 @@ package {
       return super.groups().concat("updates-while-paused");
     }
 
+    public function get text():String {
+      return textField.text;
+    }
+
     public function set text(s:String):void {
       textField.text = s;
       if (!fixedWidth) {

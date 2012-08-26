@@ -22,6 +22,8 @@
     public var destroyed:Boolean = false;
     public var hidden:Boolean = false;
 
+    protected var mySpritesheet:Array = []
+
     protected var initialScaleX:Number = 1.0;
     protected var initialScaleY:Number = 1.0;
 
@@ -34,6 +36,8 @@
     protected var wiggle:int = 0;
     protected var usesExternalMC:Boolean = false;
     protected var _ignoresCollisions:Boolean = false;
+
+    protected var _depth:int = 0;
 
     protected var mcOffset:Vec;
     protected var _mc:MovieClip;
@@ -78,6 +82,12 @@
       }
     }
 
+    public function withDepth(d:int):Entity {
+      _depth = d;
+
+      return this;
+    }
+
     public function addDropShadow():void {
       _mc.filters = [new DropShadowFilter()];
     }
@@ -104,7 +114,7 @@
     }
 
     //TODO: explain the diff between these 2.
-    public function updateExternalMC(mcClass:*, fixedSize:Boolean = false, spritesheet:Array = null):Entity {
+    public function updateExternalMC(mcClass:*, fixedSize:Boolean = false, spritesheet:Array = null, middleX:Boolean = false):Entity {
       //TODO: Caching?
       var bAsset:BitmapAsset = new mcClass();
 
@@ -125,7 +135,14 @@
 
         subimage.bitmapData.copyPixels(bAsset.bitmapData, source, new Point(0, 0), null, null, true);
 
+        this.mySpritesheet = spritesheet;
+
         this._mc.addChild(subimage);
+
+        //TODO another huge hax
+        if (middleX) {
+          subimage.x -= 12;
+        }
       } else {
         this._mc.addChild(bAsset);
       }
@@ -135,7 +152,7 @@
     }
 
     // TODO seems like you need to call this function before anything is visible, even children.
-    public function fromExternalMC(mcClass:*, fixedSize:Boolean = false, spritesheet:Array = null):Entity {
+    public function fromExternalMC(mcClass:*, fixedSize:Boolean = false, spritesheet:Array = null, middleX:Boolean = false):Entity {
       this.usesExternalMC = true;
 
       var className:String = Util.className(mcClass);
@@ -146,7 +163,7 @@
       } else if (className == "MovieClip") {
         this._mc = mcClass;
       } else {
-        updateExternalMC(mcClass, fixedSize, spritesheet);
+        updateExternalMC(mcClass, fixedSize, spritesheet, middleX);
       }
 
       if (fixedSize) {
@@ -468,7 +485,9 @@
       return "[" + Util.className(this) + super.toString() + " (" + groups() + ") ]";
     }
 
-    public function depth():int { return 0; }
+    public function depth():int {
+      return _depth;
+    }
 
     // Modes for which this entity receives events.
     public function modes():Array { return [0]; }
