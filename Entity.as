@@ -304,6 +304,8 @@
       }
     }
 
+    //TODO: addChild is basically TOTALLY screwed up w/r/t depth. RGHRKGJHSDKLJF
+
     public function addChild(child:Entity):void {
       Util.assert(!children.contains(child));
 
