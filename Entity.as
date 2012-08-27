@@ -139,16 +139,14 @@
 
         if (!(cachedAssets[uid])) {
           var bd:BitmapData = new BitmapData(C.size, C.size, true, 0);
-          //subimage = new Bitmap(bd);
           var source:Rectangle = new Rectangle(spritesheet[0] * C.size, spritesheet[1] * C.size, C.size, C.size);
 
           bd.copyPixels(bAsset.bitmapData, source, new Point(0, 0), null, null, true);
 
-          this.mySpritesheet = spritesheet;
-
           cachedAssets[uid] = bd;
         }
 
+        this.mySpritesheet = spritesheet;
         subimage.bitmapData = cachedAssets[uid];
 
         this._mc.addChild(subimage);
