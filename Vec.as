@@ -6,12 +6,12 @@ package {
       to represent both position and direction. */
 
   public class Vec implements IPositionable {
-    internal var _x:Number;
-    internal var _y:Number;
+    protected var _x:Number;
+    protected var _y:Number;
 
     function Vec(x:Number = 0, y:Number = 0) {
-      this._x = x;
-      this._y = y;
+      this.x = x;
+      this.y = y;
     }
 
     public function get x():Number { return _x; }
@@ -31,7 +31,7 @@ package {
     public function get $():Number {
       Util.assert($_current_value != $_IS_NEITHER);
 
-      return $_current_value == $_IS_X ? _x : _y;
+      return $_current_value == $_IS_X ? x : y;
     }
 
     public function set $(val:Number):void {
@@ -64,7 +64,7 @@ package {
     }
 
     public function clone():Vec {
-      return new Vec(_x, _y);
+      return new Vec(x, y);
     }
 
     public function map(f:Function):Vec {

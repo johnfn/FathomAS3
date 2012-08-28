@@ -3,41 +3,32 @@ package {
     import flash.geom.Point;
     import flash.utils.getQualifiedClassName;
 
-    public var _width:Number = 0;
-    public var _height:Number = 0;
-    public var _right:Number = 0;
-    public var _bottom:Number = 0;
+    protected var _width:Number = 0;
+    protected var _height:Number = 0;
+    protected var _right:Number = 0;
+    protected var _bottom:Number = 0;
 
     function Rect(x:Number, y:Number, width:Number, height:Number = -1) {
       if (height == -1) height = width;
 
-      this._x = x;
-      this._y = y;
+      this.x = x;
+      this.y = y;
       this.width = width;
       this.height = height;
       this.right = this.x + this.width;
       this.bottom = this.y + this.height;
     }
 
-    /* Try to be smart about updating coordinates.
-     *
-     * If you set the width, that changes right also. If you set
-     * right, that conversely changes the width. And so forth.
-     */
-
     public override function set x(val:Number):void {
-      this._x = val;
-      this._right = this._x + this._width;
+      _x = val;
     }
 
     public override function set y(val:Number):void {
-      this._y = val;
-      this._right = this._y + this._height;
+      this.y = val;
     }
 
     public function set width(val:Number):void {
       this._width = val;
-      this._right = this._x + this._width;
     }
 
     public function get width():Number {
@@ -46,7 +37,6 @@ package {
 
     public function set height(val:Number):void {
       this._height = val;
-      this._bottom = this._y + this._height;
     }
 
     public function get height():Number {
@@ -55,20 +45,20 @@ package {
 
     public function set right(val:Number):void {
       this._right = val;
-      this._width = this._right - this._x;
+      this.width = this._right - x;
     }
 
     public function get right():Number {
-      return this._right;
+      return this.width + x;
     }
 
     public function set bottom(val:Number):void {
       this._bottom = val;
-      this._height = this._bottom - this._y;
+      this.height = this._bottom - y;
     }
 
     public function get bottom():Number {
-      return this._bottom;
+      return this.height + y;
     }
 
     /* Is i contained entirely within this Rect? i can be either a Rect
@@ -95,11 +85,11 @@ package {
     }
 
     public function makeBigger(size:int):Rect {
-      return new Rect(_x - size, _y - size, width + size * 2, height + size * 2);
+      return new Rect(x - size, y - size, width + size * 2, height + size * 2);
     }
 
     public override function clone():Vec {
-      return new Rect(_x, _y, width, height);
+      return new Rect(x, y, width, height);
     }
 
     public function touchingRect(rect:Rect):Boolean {
@@ -114,6 +104,7 @@ package {
     }
 
     public override function equals(v:Vec):Boolean {
+      // This makes inheritance work.
       if (Util.className(v) != "Rect") return false;
 
       var r:Rect = v as Rect;
