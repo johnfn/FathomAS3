@@ -20,30 +20,6 @@ package {
     public function get y():Number { return _y; }
     public function set y(val:Number):void { this._y = val; }
 
-    // The magic $ variable.
-
-    private static var $_IS_NEITHER:int = 0;
-    private static var $_IS_X:int  = 1;
-    private static var $_IS_Y:int  = 2;
-
-    private static var $_current_value:int = $_IS_NEITHER;
-
-    public function get $():Number {
-      Util.assert($_current_value != $_IS_NEITHER);
-
-      return $_current_value == $_IS_X ? x : y;
-    }
-
-    public function set $(val:Number):void {
-      Util.assert($_current_value != $_IS_NEITHER);
-
-      if ($_current_value == $_IS_X) {
-        x = val;
-      } else {
-        y = val;
-      }
-    }
-
     public function equals(v:Vec):Boolean {
       return x == v.x && y == v.y;
     }
@@ -70,66 +46,6 @@ package {
     public function map(f:Function):Vec {
       x = f(x);
       y = f(y);
-
-      return this;
-    }
-
-    /* The idea behind this rather strange function is that we often
-    copy code and only change x to y.
-
-    With iterate_xy_as_$, vectors inside of the function you pass in will have
-    a magical property "$", which will be the x of the vector the first time
-    the function is called, and y the second time.
-
-    Here's a nice example. Before:
-
-    vec.x += 5;
-    vec.x /= 2;
-    vec.y += 5;
-    vec.y /= 2;
-
-    After:
-
-    vec.iterate_xy_as_$(function() {
-      this.$ += 5;
-      this.$ /= 2;
-    });
-
-    It works on many vectors with no change.
-
-    vec1.x += 5
-    vec2.x += 5;
-    vec1.y += 5
-    vec2.y += 5;
-
-    After:
-
-    vec1.iterate_xy_as_$(function() {
-      vec1.$ += 5;
-      vec2.$ += 5
-    });
-    */
-
-    //TODO: Maybe this?
-    /*
-      vec.iter_as_$(['x', 'y'], function() {
-        vec1.$ += 5;
-        vec2.$ += 5;
-      });
-    */
-    public function iterate_xy_as_$(f:Function):Vec {
-      //This can't be nested.
-      Util.assert($_current_value == $_IS_NEITHER);
-
-      $_current_value = $_IS_X;
-
-      f();
-
-      $_current_value = $_IS_Y;
-
-      f();
-
-      $_current_value = $_IS_NEITHER;
 
       return this;
     }
