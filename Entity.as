@@ -82,6 +82,7 @@
       //TODO: I had this idea about how parents should bubble down events to children.
       if (Fathom.container) {
         Fathom.entities.add(this);
+        Fathom.container.addChild(this);
       }
 
       // All Entities are added to the container, except the container itself, which
@@ -97,6 +98,7 @@
 
     public override function set x(val:Number):void {
       entitySpacePos.x = val;
+      super.x = val;
     }
 
     public override function get x():Number {
@@ -105,6 +107,7 @@
 
     public override function set y(val:Number):void {
       entitySpacePos.y = val;
+      super.y = val;
     }
 
     public override function get y():Number {
@@ -337,6 +340,8 @@
     // Remove child: The child entity does not belong to this entity as a child.
     // It continues to exist in the game.
     public override function removeChild(child:DisplayObject):DisplayObject {
+      Util.assert(children.contains(child));
+
       if (children.contains(child)) {
         children.remove(child);
       }

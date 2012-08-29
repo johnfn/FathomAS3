@@ -62,6 +62,7 @@
 
       Fathom.FPS = FPS;
       Fathom.container = new Entity();
+      Fathom.stage.addChild(Fathom.container);
       Fathom.mapRef = m;
 
       Fathom.mapRef.loadNewMap(new Vec(0, 0));
