@@ -42,9 +42,9 @@ package {
       return xColl.any.apply(this, args) || yColl.any.apply(this, args);
     }
 
-    public override function set(v:IPositionable):Entity {
+    public override function setPos(v:IPositionable):Entity {
       Hooks.clearCollisions(this);
-      super.set(v);
+      super.setPos(v);
 
       return this;
     }

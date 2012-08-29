@@ -227,7 +227,6 @@
 
     }
 
-    // TODO seems like you need to call this function before anything is visible, even children.
     public function fromExternalMC(mcClass:*, fixedSize:Boolean = false, spritesheet:Array = null, middleX:Boolean = false):Entity {
       this.usesExternalMC = true;
 
@@ -260,7 +259,7 @@
     }
 
     //TODO: Rename to move
-    public function set(v:IPositionable):Entity {
+    public function setPos(v:IPositionable):Entity {
       x = v.x;
       y = v.y;
 

@@ -50,7 +50,7 @@ package {
       return this;
     }
 
-    public function set(v:IPositionable):Vec {
+    public function setPos(v:IPositionable):Vec {
       x = v.x;
       y = v.y;
 

@@ -153,7 +153,7 @@ package {
         }
       }
 
-      e.set(new Vec(x * tileSize, y * tileSize));
+      e.setPos(new Vec(x * tileSize, y * tileSize));
 
       if (e.groups().contains("persistent")) {
         persistent[topLeftCorner.asKey()].push(e);
@@ -221,7 +221,7 @@ package {
       }
       persistent[newMapLoc.asKey()].push(leftScreen);
 
-      leftScreen.set(newItemLoc);
+      leftScreen.setPos(newItemLoc);
 
       leftScreen.removeFromFathom();
     }
