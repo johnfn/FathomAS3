@@ -89,16 +89,14 @@
     }
 
     private static function update(event:Event):void {
-      var updaters:EntityList = entities.get("updateable");
-
       // TODO HACK
       if (currentMode == 4) return;
 
       // TODO: entities == Fathom.container.children
       fpsTxt.text = fpsFn();
 
-      for (var i:int = 0; i < updaters.length; i++) {
-        var e:Entity = updaters[i];
+      for (var i:int = 0; i < entities.length; i++) {
+        var e:Entity = entities[i];
 
         if (!e.modes().contains(currentMode)) continue;
 

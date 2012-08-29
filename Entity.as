@@ -36,7 +36,7 @@
     protected var _scaleX:Number = 1.0;
     protected var _scaleY:Number = 1.0;
 
-    protected var groupArray:Array = ["updateable", "persistent"];
+    protected var groupArray:Array = ["persistent"];
     protected var color:Number;
     protected var entityChildren:Array = [];
     protected var wiggle:int = 0;
@@ -517,7 +517,6 @@
     }
 
     //TODO: Group strings to enums with Inheritable property.
-    //TODO: "updateable" is the norm. "noupdate" should be a group.
     //TODO: There is a possible namespace collision here. Should prob make it impossible to manually add groups.
     //TODO: I've decided I don't like strings. Enumerations are better.
     public function groups():Array {
