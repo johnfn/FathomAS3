@@ -216,9 +216,8 @@
         this.spritesheet = spritesheet;
         pixels.bitmapData = cachedAssets[uid];
 
-        //TODO another huge hax
         if (middleX) {
-          pixels.x -= 12;
+          pixels.x -= this.width / 2;
         }
       } else {
         this.addChild(bAsset);
