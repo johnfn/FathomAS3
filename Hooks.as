@@ -61,7 +61,11 @@ package {
 
     //TODO: Not a Hook.
     public static function hasLeftMap(who:Entity, map:Map):Boolean {
-      return who.x < 0 || who.y < 0 || who.x > map.width - who.width || who.y > map.height - who.width;
+      if (who.x < 0 || who.y < 0 || who.x > map.width - who.width || who.y > map.height - who.width) {
+        return true;
+      }
+
+      return false;
     }
 
     //TODO: onxxxx methods could be moved into an Events.as file.

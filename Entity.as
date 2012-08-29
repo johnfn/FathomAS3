@@ -59,6 +59,7 @@
     private var entitySpacePos:Rect;
 
     // The location of the entity, after camera transformations.
+    // TODO rename to cameraSpacePos
     public var pos:Rect;
 
     // Allows for a fast check to see if this entity moves.
@@ -76,7 +77,7 @@
         throw new Error("Util.initialize() has not been called. Failing.");
       }
 
-      this.pos = new Rect(x, y, width, height);
+      this.pos = new Rect(0, 0, width, height);
       this.entitySpacePos = new Rect(x, y, width, height);
 
       this.x = x;
@@ -106,7 +107,6 @@
 
     public override function set x(val:Number):void {
       entitySpacePos.x = val;
-      super.x = val;
     }
 
     public override function get x():Number {
@@ -115,7 +115,6 @@
 
     public override function set y(val:Number):void {
       entitySpacePos.y = val;
-      super.y = val;
     }
 
     public override function get y():Number {
@@ -126,6 +125,7 @@
 
     public function set cameraSpaceX(val:Number):void {
       pos.x = val;
+      super.x = pos.x;
     }
 
     public function get cameraSpaceX():Number {
@@ -134,7 +134,8 @@
     }
 
     public function set cameraSpaceY(val:Number):void {
-      entitySpacePos.y = val;
+      pos.y = val;
+      super.y = pos.y
     }
 
     public function get cameraSpaceY():Number {
@@ -350,6 +351,8 @@
     // It continues to exist in the game.
     public override function removeChild(child:DisplayObject):DisplayObject {
       Util.assert(children.contains(child));
+
+      Util.assert(false);
 
       if (children.contains(child)) {
         children.remove(child);
