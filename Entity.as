@@ -1,6 +1,7 @@
 ﻿package {
   import flash.display.Sprite;
   import flash.display.DisplayObject;
+  import flash.display.DisplayObjectContainer;
   import flash.filters.DropShadowFilter;
   import flash.geom.Point;
   import flash.utils.getQualifiedClassName;
@@ -22,7 +23,9 @@
     // This indicates that the object should be destroyed.
     // The update loop in Fathom will eventually destroy it.
     public var destroyed:Boolean = false;
-    public var hidden:Boolean = false;
+
+    //TODO: Replace with visible I guess.
+    public var hidden:Boolean = true;
 
     private static var cachedAssets:Dictionary = new Dictionary();
 
@@ -46,6 +49,11 @@
     protected var mcOffset:Vec;
     protected var initialSize:Vec;
 
+    // This is purely for debugging purposes.
+    protected static var counter:int = 0;
+    protected var uid:Number = ++counter;
+
+    protected var rememberedParent:DisplayObjectContainer;
 
     // The location of the entity, before camera transformations.
     private var entitySpacePos:Rect;
@@ -81,8 +89,8 @@
 
       //TODO: I had this idea about how parents should bubble down events to children.
       if (Fathom.container) {
-        Fathom.entities.add(this);
-        Fathom.container.addChild(this);
+        this.rememberedParent = Fathom.container;
+        addToFathom();
       }
 
       // All Entities are added to the container, except the container itself, which
@@ -152,7 +160,11 @@
     }
 
     public function rect():Rect {
-      return pos;
+      return entitySpacePos;
+    }
+
+    public function vec():Vec {
+      return new Vec(entitySpacePos.x, entitySpacePos.y);
     }
 
     public function withDepth(d:int):Entity {
@@ -186,10 +198,7 @@
 
       bAsset = new mcClass(); //cachedAssets[mcClass]
 
-      // remove all children.
-      while(numChildren != 0) {
-        removeChildAt(0);
-      }
+      Util.assert(numChildren == 0);
 
       if (spritesheet != null) {
         var uid:String = Util.className(mcClass) + spritesheet;
@@ -429,29 +438,44 @@
     /* This causes the Entity to cease existing in-game. The only way to
        bring it back is to call addToFathom(). */
     public function removeFromFathom(recursing:Boolean = false):void {
+      Util.assert(!hidden);
+
+      this.rememberedParent = this.parent;
+
       for (var i:int = 0; i < children.length; i++){
         children[i].removeFromFathom(true);
       }
 
-      if (!recursing) Fathom.container.removeChild(this);
+      if (!recursing && this.parent) this.parent.removeChild(this);
 
       Fathom.entities.remove(this);
       hidden = true;
+
+      trace("remove", this);
+      if (!this.rememberedParent) {
+        trace("NORL", this);
+        Util.assert(false);
+      }
     }
 
     /* This causes the Entity to exist in the game. There is no need to call
        this except after a call to removeFromFathom(). */
     public function addToFathom(recursing:Boolean = false):void {
       Util.assert(!destroyed);
+      Util.assert(hidden);
+
+      trace("add", this);
 
       for (var i:int = 0; i < children.length; i++){
         children[i].addToFathom(true);
       }
 
-      if (!recursing) Fathom.container.addChild(this);
+      if (!recursing) rememberedParent.addChild(this);
 
       Fathom.entities.add(this);
       hidden = false;
+
+      Util.assert(rememberedParent != null);
     }
 
     /* This permanently removes an Entity. It can't be add()ed back. */
@@ -468,9 +492,6 @@
       removeFromFathom();
 
       events = null;
-      if (parent) {
-        parent.removeChild(this);
-      }
 
       destroyed = true;
       Fathom.entities.remove(this);
@@ -513,7 +534,7 @@
     public function update(e:EntityList):void {}
 
     public override function toString():String {
-      return "[" + Util.className(this) + super.toString() + " (" + groups() + ") ]";
+      return "[" + Util.className(this) + super.toString() + " (" + groups() + ") " + uid + "]";
     }
 
     public function set depth(v:int):void {

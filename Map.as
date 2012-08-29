@@ -160,8 +160,6 @@ package {
       if (e.groups().contains("remember-loc")) {
         (e as PushBlock).rememberLoc();
       }
-
-      e.removeFromFathom();
     }
 
     private function addNewPersistentItems():void {
@@ -180,16 +178,17 @@ package {
             addPersistentItem(dataColor, x, y);
           }
         }
+      } else {
+
+        // Add all persistent items.
+        persistent[topLeftCorner.asKey()].map(function(e:*, i:int, a:Array):void {
+          e.addToFathom();
+
+          if (e.groups().contains("remember-loc")) {
+            e.resetLoc();
+          }
+        });
       }
-
-      // Add all persistent items.
-      persistent[topLeftCorner.asKey()].map(function(e:*, i:int, a:Array):void {
-        e.addToFathom();
-
-        if (e.groups().contains("remember-loc")) {
-          e.resetLoc();
-        }
-      });
 
       // Cache every persistent item in the 2D array of tiles.
       var persistingItems:Array = persistent[topLeftCorner.asKey()];

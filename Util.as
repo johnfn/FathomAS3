@@ -1,5 +1,6 @@
 package {
   public class Util {
+    import flash.system.fscommand;
     import flash.utils.*;
     import flash.events.KeyboardEvent;
     import flash.display.DisplayObject;
@@ -58,7 +59,12 @@ package {
     }
 
     public static function assert(b:Boolean):void {
-      if (!b) throw "Assertion failed.";
+      if (!b) {
+        var e:Error = new Error("Assertion failed.");
+        trace(e.getStackTrace());
+        fscommand("quit");
+        throw e;
+      }
     }
 
     public static function epsilonEq(a:Number, b:Number, threshold:Number):Boolean {

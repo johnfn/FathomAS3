@@ -74,11 +74,14 @@ package {
     public static function loadNewMap(leftScreen:MovingEntity, map:Map):Function {
       //TODO: This code is pretty obscure.
       //TODO: This will only work if leftScreen.width is less than the tileSize.
+      //TODO: This should obviously be in Map, not Hooks.
+
       return function():void {
         Util.assert(leftScreen.width < map.tileSize);
 
         var smallerSize:Vec = map.sizeVector.clone().subtract(leftScreen.width);
-        var dir:Vec = leftScreen.rect().divide(smallerSize).map(Math.floor);
+
+        var dir:Vec = leftScreen.vec().divide(smallerSize).map(Math.floor);
         var toOtherSide:Vec = dir.clone().multiply(smallerSize);
 
         if (toOtherSide.x > 0) leftScreen.x = 1;
@@ -86,6 +89,8 @@ package {
 
         if (toOtherSide.y > 0) leftScreen.y = 1;
         if (toOtherSide.y < 0) leftScreen.y = map.sizeVector.y - map.tileSize + 1;
+
+        trace(dir);
 
         map.loadNewMap(dir);
       }
