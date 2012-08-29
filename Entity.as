@@ -433,7 +433,7 @@
         children[i].removeFromFathom(true);
       }
 
-      if (!recursing && this.parent) this.parent.removeChild(this);
+      if (!recursing) Fathom.container.removeChild(this);
 
       Fathom.entities.remove(this);
       hidden = true;
@@ -448,7 +448,7 @@
         children[i].addToFathom(true);
       }
 
-      if (!recursing && this.parent) this.parent.addChild(this);
+      if (!recursing) Fathom.container.addChild(this);
 
       Fathom.entities.add(this);
       hidden = false;
