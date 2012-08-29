@@ -24,6 +24,8 @@
     public var destroyed:Boolean = false;
     public var hidden:Boolean = false;
 
+    private static var cachedAssets:Dictionary = new Dictionary();
+
     protected var spritesheet:Array = []
 
     protected var initialScaleX:Number = 1.0;
@@ -58,7 +60,6 @@
     private function set isStatic(val:Boolean):void { _isStatic = val; }
 
     public function get childrenList():Array { return children; }
-    private function set childrenList(val:Array):void { children = val; }
 
     function Entity(x:Number = 0, y:Number = 0, width:Number = 20, height:Number = -1, wiggle:int = 0):void {
       if (height == -1) height = width;
@@ -66,6 +67,9 @@
       if (!Fathom.initialized) {
         throw new Error("Util.initialize() has not been called. Failing.");
       }
+
+      this.pos = new Rect(x, y, width, height);
+      this.entitySpacePos = new Rect(x, y, width, height);
 
       this.x = x;
       this.y = y;
@@ -80,7 +84,9 @@
         Fathom.entities.add(this);
       }
 
-      this.pos = new Rect(this.x, this.y, this.width, this.height);
+      // All Entities are added to the container, except the container itself, which
+      // has to be bootstrapped onto the Stage. If Fathom.container does not exist, `this`
+      // must be the container.
     }
 
     /*
@@ -169,8 +175,6 @@
       return this;
     }
 
-    private static var cachedAssets:Dictionary = new Dictionary();
-
     //TODO: explain the diff between these 2.
     public function updateExternalMC(mcClass:*, fixedSize:Boolean = false, spritesheet:Array = null, middleX:Boolean = false):Entity {
       var bAsset:BitmapAsset;
@@ -242,13 +246,6 @@
 
       initialScaleX = scaleX;
       initialScaleY = scaleY;
-
-      // All Entities are added to the container, except the container itself, which
-      // has to be bootstrapped onto the Stage. If Fathom.container does not exist, `this`
-      // must be the container.
-      if (Fathom.container) {
-        Fathom.container.addChild(this);
-      }
 
       return this;
     }
@@ -328,7 +325,10 @@
     public override function addChild(child:DisplayObject):DisplayObject {
       Util.assert(!children.contains(child));
 
-      children.push(child);
+      if (child is Entity) {
+        children.push(child);
+      }
+
       super.addChild(child);
 
       return child;
@@ -337,7 +337,9 @@
     // Remove child: The child entity does not belong to this entity as a child.
     // It continues to exist in the game.
     public override function removeChild(child:DisplayObject):DisplayObject {
-      children.remove(child);
+      if (children.contains(child)) {
+        children.remove(child);
+      }
 
       super.removeChild(child);
 

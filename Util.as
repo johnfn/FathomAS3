@@ -176,8 +176,8 @@ package {
     // You should never have to call this function.
     // TODO: Move into Fathom, I guess.
     public static function _initializeKeyInput(container:Sprite):void {
-      container.stage.addEventListener(KeyboardEvent.KEY_DOWN, _keyDown, false, 0, true);
-      container.stage.addEventListener(KeyboardEvent.KEY_UP, _keyUp, false, 0, true);
+      Fathom.stage.addEventListener(KeyboardEvent.KEY_DOWN, _keyDown, false, 0, true);
+      Fathom.stage.addEventListener(KeyboardEvent.KEY_UP, _keyUp, false, 0, true);
 
       for (var i:int = 0; i < 255; i++) {
         keyStates[i] = new KeyState();

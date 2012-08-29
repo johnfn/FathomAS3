@@ -3,6 +3,7 @@
     import flash.utils.clearInterval;
     import flash.utils.setInterval;
     import flash.display.MovieClip;
+    import flash.display.Stage;
     import flash.events.Event;
 
     private static var gameloopID:int;
@@ -19,10 +20,15 @@
     public static var entities:EntityList = new EntityList([]);
     public static var container:Entity;
     public static var initialized:Boolean = false;
+    public static var stage:Stage;
 
     private static var _paused:Boolean = false;
 
     public static var MCPool:Object = {};
+
+    public function Fathom() {
+      throw new Error("You can't initialize a Fathom object. Call the static methods on Fathom instead.")
+    }
 
     public static function get paused():Boolean { return _paused; }
 
@@ -46,13 +52,16 @@
       fpsTxt.visible = b;
     }
 
-    public static function initialize(toplevel:MovieClip, m:Map, FPS:int = 30):void {
+    //TODO: Eventually main class should extend this or something...
+    public static function initialize(stage:Stage, m:Map, FPS:int = 30):void {
       // Inside of the Entity constructor, we assert Fathom.initialized, because all
       // MCs must be added to the container MC.
 
+      Fathom.stage = stage;
       Fathom.initialized = true;
+
       Fathom.FPS = FPS;
-      Fathom.container = new Entity().fromExternalMC(toplevel);
+      Fathom.container = new Entity();
       Fathom.mapRef = m;
 
       Fathom.mapRef.loadNewMap(new Vec(0, 0));
@@ -65,7 +74,7 @@
       container.addEventListener(Event.ENTER_FRAME, update);
 
       // TODO: Swapping these calls causes insta-death. WUT.
-      Fathom._camera = new Camera(toplevel.stage).scaleBy(1).beBoundedBy(m);
+      Fathom._camera = new Camera(stage).scaleBy(1).beBoundedBy(m);
     }
 
     //TODO: May want a better name than pause. freeze?
