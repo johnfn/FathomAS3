@@ -29,6 +29,8 @@
 
     private static var cachedAssets:Dictionary = new Dictionary();
 
+    protected var pixels:Bitmap = new Bitmap();
+
     protected var spritesheet:Array = []
 
     protected var initialScaleX:Number = 1.0;
@@ -39,7 +41,7 @@
 
     protected var groupArray:Array = ["updateable", "persistent"];
     protected var color:Number;
-    protected var children:Array = [];
+    protected var children:Array = []; // TODO: Rename
     protected var wiggle:int = 0;
     protected var usesExternalMC:Boolean = false;
     protected var _ignoresCollisions:Boolean = false;
@@ -93,6 +95,9 @@
         this.rememberedParent = Fathom.container;
         addToFathom();
       }
+
+      // Bypass our overridden addChild method.
+      super.addChild(pixels);
 
       // All Entities are added to the container, except the container itself, which
       // has to be bootstrapped onto the Stage. If Fathom.container does not exist, `this`
@@ -199,12 +204,10 @@
 
       bAsset = new mcClass(); //cachedAssets[mcClass]
 
-      Util.assert(numChildren == 0);
+      Util.assert(children.length == 0);
 
       if (spritesheet != null) {
         var uid:String = Util.className(mcClass) + spritesheet;
-        var subimage:Bitmap = new Bitmap();
-
         if (!(cachedAssets[uid])) {
           var bd:BitmapData = new BitmapData(C.size, C.size, true, 0);
           var source:Rectangle = new Rectangle(spritesheet[0] * C.size, spritesheet[1] * C.size, C.size, C.size);
@@ -215,13 +218,11 @@
         }
 
         this.spritesheet = spritesheet;
-        subimage.bitmapData = cachedAssets[uid];
-
-        this.addChild(subimage);
+        pixels.bitmapData = cachedAssets[uid];
 
         //TODO another huge hax
         if (middleX) {
-          subimage.x -= 12;
+          pixels.x -= 12;
         }
       } else {
         this.addChild(bAsset);
@@ -351,8 +352,6 @@
     // It continues to exist in the game.
     public override function removeChild(child:DisplayObject):DisplayObject {
       Util.assert(children.contains(child));
-
-      Util.assert(false);
 
       if (children.contains(child)) {
         children.remove(child);
