@@ -30,9 +30,6 @@
 
     protected var spritesheet:Array = []
 
-    protected var initialScaleX:Number = 1.0;
-    protected var initialScaleY:Number = 1.0;
-
     protected var _scaleX:Number = 1.0;
     protected var _scaleY:Number = 1.0;
 
@@ -192,8 +189,8 @@
       return this;
     }
 
-    //TODO: explain the diff between these 2.
-    public function updateExternalMC(mcClass:*, fixedSize:Boolean = false, spritesheet:Array = null, middleX:Boolean = false):Entity {
+    // Keep mcClass constant and give this a less cumbersome name.
+    public function updateExternalMC(mcClass:*, spritesheet:Array = null, middleX:Boolean = false):Entity {
       var bAsset:BitmapAsset;
 
       var count:int = 0;
@@ -216,6 +213,7 @@
         this.spritesheet = spritesheet;
         pixels.bitmapData = cachedAssets[uid];
 
+        // TODO remove this.
         if (middleX) {
           pixels.x -= this.width / 2;
         }
@@ -227,7 +225,14 @@
 
     }
 
-    public function fromExternalMC(mcClass:*, fixedSize:Boolean = false, spritesheet:Array = null, middleX:Boolean = false):Entity {
+    public function setRotationOrigin(x:Number, y:Number):Entity {
+      pixels.x -= x;
+      pixels.y -= y;
+
+      return this;
+    }
+
+    public function fromExternalMC(mcClass:*, spritesheet:Array = null, middleX:Boolean = false):Entity {
       this.usesExternalMC = true;
 
       var className:String = Util.className(mcClass);
@@ -242,18 +247,11 @@
         Util.assert(false);
         //this._mc = mcClass;
       } else {
-        updateExternalMC(mcClass, fixedSize, spritesheet, middleX);
+        updateExternalMC(mcClass, spritesheet, middleX);
       }
 
-      if (fixedSize) {
-        width  = this.width  + wiggle * 2;
-        height = this.height + wiggle * 2;
-      }
-
-      // TODO don't like this at all.
-
-      initialScaleX = scaleX;
-      initialScaleY = scaleY;
+      width  = this.width  + wiggle * 2;
+      height = this.height + wiggle * 2;
 
       return this;
     }
@@ -265,13 +263,6 @@
 
       return this;
     }
-
-    // These functions are in Entity space.
-    //public override function set scaleX(v:Number):void { scaleX = v * initialScaleX; }
-    //public override function get scaleX():Number { return scaleX / initialScaleX; }
-
-    //public override function set scaleY(v:Number):void { scaleY = v * initialScaleY; }
-    //public override function get scaleY():Number { return scaleY / initialScaleY; }
 
     // These two are in Camera space.
     public function get cameraSpaceScaleX():Number { return scaleX; }

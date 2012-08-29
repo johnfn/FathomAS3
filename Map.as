@@ -143,13 +143,13 @@ package {
               result[Y]--;
             }
 
-            e.fromExternalMC(itemData["gfx"], "fixedSize" in itemData, result);
+            e.fromExternalMC(itemData["gfx"], result);
 
           } else {
-            e.fromExternalMC(itemData["gfx"], "fixedSize" in itemData, itemData["spritesheet"]);
+            e.fromExternalMC(itemData["gfx"], itemData["spritesheet"]);
           }
         } else {
-          e.fromExternalMC(itemData["gfx"], "fixedSize" in itemData);
+          e.fromExternalMC(itemData["gfx"]);
         }
       }
 
