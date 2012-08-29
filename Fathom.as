@@ -77,15 +77,18 @@
       Fathom._camera = new Camera(stage).scaleBy(1).beBoundedBy(m);
     }
 
+    /* This stops everything. The only conceivable use would be
+       possibly for some sort of end game situation. */
+    public static function stop():void {
+      container.removeEventListener(Event.ENTER_FRAME, update);
+    }
+
     // TODO: Mode stack.
 
     private static function update(event:Event):void {
       // We copy the entity list so that it doesn't change while we're
       // iterating through it.
       var list:EntityList = entities.clone();
-
-      // TODO HACK
-      if (currentMode == 4) return;
 
       // TODO: entities == Fathom.container.children
       fpsTxt.text = fpsFn();
