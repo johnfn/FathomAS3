@@ -115,7 +115,6 @@ package {
     }
 
     public override function clearMemory():void {
-      textField.parent.removeChild(textField);
       textField = null;
       content = null;
 
