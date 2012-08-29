@@ -87,18 +87,6 @@
       _paused = false;
     }
 
-    public static function sortDepths():void {
-      // sort by depth
-      var entities:EntityList = Fathom.entities;
-      entities.sort(function(a:Entity, b:Entity):int {
-        return a.depth - b.depth;
-      });
-
-      for (var i:int = 0; i < entities.length; i++) {
-        entities[i].raiseToTop();
-      }
-    }
-
     private static function update(event:Event):void {
       var updaters:EntityList;
 

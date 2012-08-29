@@ -264,6 +264,7 @@
       return this;
     }
 
+    //TODO: Rename to move
     public function set(v:IPositionable):Entity {
       x = v.x;
       y = v.y;
@@ -334,16 +335,21 @@
       }
     }
 
+    public function center():void {
+      //TODO
+    }
+
     //TODO: addChild is basically TOTALLY screwed up w/r/t depth. RGHRKGJHSDKLJF
 
     public override function addChild(child:DisplayObject):DisplayObject {
       Util.assert(!children.contains(child));
 
+
+      super.addChild(child);
+
       if (child is Entity) {
         children.push(child);
       }
-
-      super.addChild(child);
 
       return child;
     }
@@ -506,6 +512,16 @@
     public function setAbsolutePosition(loc:Vec):void {
       x = loc.x;
       y = loc.y;
+    }
+
+    public function sortDepths():void {
+      children.sort(function(a:Entity, b:Entity):int {
+        return a.depth - b.depth;
+      });
+
+      for (var i:int = 0; i < children.length; i++) {
+        children[i].raiseToTop();
+      }
     }
 
     //TODO: Group strings to enums with Inheritable property.

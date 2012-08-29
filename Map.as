@@ -291,7 +291,7 @@ package {
       diff.multiply(new Vec(widthInTiles, heightInTiles));
 
       updatePersistentItems(diff);
-      Fathom.sortDepths();
+      Fathom.container.sortDepths();
     }
 
     public function getTopLeftCorner():Vec {
