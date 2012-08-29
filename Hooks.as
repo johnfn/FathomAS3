@@ -90,8 +90,6 @@ package {
         if (toOtherSide.y > 0) leftScreen.y = 1;
         if (toOtherSide.y < 0) leftScreen.y = map.sizeVector.y - map.tileSize + 1;
 
-        trace(dir);
-
         map.loadNewMap(dir);
       }
     }

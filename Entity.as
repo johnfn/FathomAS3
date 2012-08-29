@@ -160,7 +160,7 @@
     }
 
     public function rect():Rect {
-      return entitySpacePos;
+      return new Rect(entitySpacePos.x, entitySpacePos.y, width, height);
     }
 
     public function vec():Vec {
@@ -451,9 +451,7 @@
       Fathom.entities.remove(this);
       hidden = true;
 
-      trace("remove", this);
       if (!this.rememberedParent) {
-        trace("NORL", this);
         Util.assert(false);
       }
     }
@@ -463,8 +461,6 @@
     public function addToFathom(recursing:Boolean = false):void {
       Util.assert(!destroyed);
       Util.assert(hidden);
-
-      trace("add", this);
 
       for (var i:int = 0; i < children.length; i++){
         children[i].addToFathom(true);
@@ -534,7 +530,7 @@
     public function update(e:EntityList):void {}
 
     public override function toString():String {
-      return "[" + Util.className(this) + super.toString() + " (" + groups() + ") " + uid + "]";
+      return "[" + Util.className(this) + super.toString() + " @" + entitySpacePos + " (" + groups() + ") " + uid + "]";
     }
 
     public function set depth(v:int):void {
