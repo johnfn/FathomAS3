@@ -94,8 +94,6 @@
       container.removeEventListener(Event.ENTER_FRAME, update);
     }
 
-    // TODO: Mode stack.
-
     private static function update(event:Event):void {
       // We copy the entity list so that it doesn't change while we're
       // iterating through it.

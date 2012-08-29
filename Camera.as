@@ -19,8 +19,11 @@ package {
     // This is the rect that the camera will always stay inside.
     private var camBoundingRect:Rect = null;
 
-    // This is an array of all events currently happening to this camera.
-    private var events:Array = [];
+    private static var EVENT_TYPE_SHAKE:String = "Shake";
+
+    // This is a list of all events currently happening to this camera.
+    // There can only ever be 1 event of each type.
+    private var events:Object = {};
 
     // These two variables are the focal points of the camera.
     private var _focalX:Number;
@@ -184,7 +187,7 @@ package {
     }
 
     /* Shake the camera for duration ticks, up to range pixels
-     * away from where it started */
+     * away from where it started. Pass -1 as a duration to shake indefinitely. */
     public function shake(duration:int = 30, range:int = 5):void {
       var that:Camera = this;
 
@@ -199,13 +202,11 @@ package {
         duration--;
       };
 
-      // TODO: This is a hack to ensure only one shaking cam effect. Fix later.
-      events = [];
-      events.push(fn);
+      events[EVENT_TYPE_SHAKE] = fn;
     }
 
     public function stopAllEvents():void {
-      events = [];
+      events = {};
     }
 
     private function easeXY():void {
@@ -307,8 +308,8 @@ package {
     public function update():void {
       var that:Camera = this;
 
-      for (var i:int = 0; i < events.length; i++) {
-        events[i]();
+      for (var key:String in events) {
+        events[key]();
       }
 
       easeXY();
