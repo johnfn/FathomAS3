@@ -79,15 +79,6 @@
 
     // TODO: Mode stack.
 
-    //TODO: May want a better name than pause. freeze?
-    public static function pause():void {
-      _paused = true;
-    }
-
-    public static function resume():void {
-      _paused = false;
-    }
-
     private static function update(event:Event):void {
       // We copy the entity list so that it doesn't change while we're
       // iterating through it.
