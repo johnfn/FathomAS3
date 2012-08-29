@@ -22,6 +22,8 @@
     public static var initialized:Boolean = false;
     public static var stage:Stage;
 
+    public static var modes:Array = [Fathom._currentMode];
+
     private static var _paused:Boolean = false;
 
     public static var MCPool:Object = {};
@@ -41,11 +43,20 @@
     }
 
     public static function get currentMode():int {
-      return _currentMode;
+      return modes[modes.length - 1]
     }
 
-    public static function set currentMode(val:int):void {
-      _currentMode = val;
+    // TODO this stuff should go in Mode.as
+    public static function pushMode(mode:int):void {
+      modes.push(mode);
+    }
+
+    public static function popMode():void {
+      modes.pop();
+    }
+
+    public static function replaceMode(mode:int):void {
+      modes[modes.length - 1] = mode;
     }
 
     public static function set showingFPS(b:Boolean):void {
