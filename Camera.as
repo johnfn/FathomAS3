@@ -328,6 +328,11 @@ package {
         e.scaleX = e.cameraSpaceScaleX * camScaleX;
         e.scaleY = e.cameraSpaceScaleY * camScaleY;
       });
+
+      Fathom.entities.get("no-camera").each(function(e:Entity):void {
+        e.cameraSpaceX = e.x;
+        e.cameraSpaceY = e.y;
+      });
     }
   }
 }
