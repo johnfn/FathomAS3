@@ -27,6 +27,10 @@
       this.push(entity);
     }
 
+    public function clone():EntityList {
+      return get();
+    }
+
     public function get(...criteria):EntityList {
       var eList:EntityList = clone();
 

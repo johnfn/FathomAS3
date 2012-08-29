@@ -89,14 +89,18 @@
     }
 
     private static function update(event:Event):void {
+      // We copy the entity list so that it doesn't change while we're
+      // iterating through it.
+      var list:EntityList = entities.clone();
+
       // TODO HACK
       if (currentMode == 4) return;
 
       // TODO: entities == Fathom.container.children
       fpsTxt.text = fpsFn();
 
-      for (var i:int = 0; i < entities.length; i++) {
-        var e:Entity = entities[i];
+      for (var i:int = 0; i < list.length; i++) {
+        var e:Entity = list[i];
 
         if (!e.modes().contains(currentMode)) continue;
 
