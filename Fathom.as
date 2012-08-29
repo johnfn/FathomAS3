@@ -74,9 +74,10 @@
 
       container.addEventListener(Event.ENTER_FRAME, update);
 
-      // TODO: Swapping these calls causes insta-death. WUT.
       Fathom._camera = new Camera(stage).scaleBy(1).beBoundedBy(m);
     }
+
+    // TODO: Mode stack.
 
     //TODO: May want a better name than pause. freeze?
     public static function pause():void {
@@ -88,19 +89,12 @@
     }
 
     private static function update(event:Event):void {
-      var updaters:EntityList;
+      var updaters:EntityList = entities.get("updateable");
 
       // TODO HACK
       if (currentMode == 4) return;
 
       // TODO: entities == Fathom.container.children
-
-      if (_paused) {
-        updaters = entities.get("updates-while-paused");
-      } else {
-        updaters = entities.get("updateable");
-      }
-
       fpsTxt.text = fpsFn();
 
       for (var i:int = 0; i < updaters.length; i++) {
@@ -110,24 +104,21 @@
 
         // This acts as a pseudo garbage-collector. We separate out the
         // destroyed() call from the clearMemory() call because we sometimes
-        // want to destroy() an item halfway through its update() call, so the
+        // want to destroy() an item halfway through this update() call, so the
         // actual destruction would have to wait until the end of the update.
         if (e.destroyed) {
           e.clearMemory();
           continue;
         }
 
-        if (e.hidden) {
-          continue;
-        }
+        // Util.assert(e.parent != null);
 
         e.emit("pre-update");
         e.update(entities);
         e.emit("post-update");
       }
 
-      //TODO.
-      if (currentMode == 0) {
+      if (mapRef.modes().contains(currentMode)) {
         mapRef.update();
       }
 

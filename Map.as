@@ -9,6 +9,8 @@ package {
   import Util;
   import Entity;
 
+  //TODO: Map should extend Entity. Will need to change update loop.
+
   public class Map extends Rect {
     private var widthInTiles:int;
     private var heightInTiles:int;
@@ -66,7 +68,7 @@ package {
 
       for (var x:int=0; x < bData.width; x++) {
         for (var y:int=0; y < bData.height; y++) {
-          data[x][y] = (new Color()).fromInt(bData.getPixel(x, y));
+          data[x][y] = Color.fromInt(bData.getPixel(x, y));
         }
       }
 
@@ -285,6 +287,10 @@ package {
       topLeftCorner = corner.multiply(widthInTiles);
 
       return this;
+    }
+
+    public function modes():Array {
+      return [0];
     }
 
     public function loadNewMap(diff:Vec):void {

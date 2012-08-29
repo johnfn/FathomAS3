@@ -304,7 +304,6 @@ package {
       this.isFocused = true;
     }
 
-    // TODO: mcX properties are sloppy.
     public function update():void {
       var that:Camera = this;
 

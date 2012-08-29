@@ -24,9 +24,6 @@
     // The update loop in Fathom will eventually destroy it.
     public var destroyed:Boolean = false;
 
-    //TODO: Replace with visible I guess.
-    public var hidden:Boolean = true;
-
     private static var cachedAssets:Dictionary = new Dictionary();
 
     protected var pixels:Bitmap = new Bitmap();
@@ -41,7 +38,7 @@
 
     protected var groupArray:Array = ["updateable", "persistent"];
     protected var color:Number;
-    protected var children:Array = []; // TODO: Rename
+    protected var entityChildren:Array = [];
     protected var wiggle:int = 0;
     protected var usesExternalMC:Boolean = false;
     protected var _ignoresCollisions:Boolean = false;
@@ -70,7 +67,7 @@
     public function get isStatic():Boolean { return _isStatic; }
     private function set isStatic(val:Boolean):void { _isStatic = val; }
 
-    public function get childrenList():Array { return children; }
+    public function get childrenList():Array { return entityChildren; }
 
     function Entity(x:Number = 0, y:Number = 0, width:Number = 20, height:Number = -1, wiggle:int = 0):void {
       if (height == -1) height = width;
@@ -204,7 +201,7 @@
 
       bAsset = new mcClass(); //cachedAssets[mcClass]
 
-      Util.assert(children.length == 0);
+      Util.assert(entityChildren.length == 0);
 
       if (spritesheet != null) {
         var uid:String = Util.className(mcClass) + spritesheet;
@@ -342,13 +339,13 @@
     //TODO: addChild is basically TOTALLY screwed up w/r/t depth. RGHRKGJHSDKLJF
 
     public override function addChild(child:DisplayObject):DisplayObject {
-      Util.assert(!children.contains(child));
+      Util.assert(!entityChildren.contains(child));
 
 
       super.addChild(child);
 
       if (child is Entity) {
-        children.push(child);
+        entityChildren.push(child);
       }
 
       return child;
@@ -357,11 +354,8 @@
     // Remove child: The child entity does not belong to this entity as a child.
     // It continues to exist in the game.
     public override function removeChild(child:DisplayObject):DisplayObject {
-      Util.assert(children.contains(child));
-
-      if (children.contains(child)) {
-        children.remove(child);
-      }
+      Util.assert(entityChildren.contains(child));
+      entityChildren.remove(child);
 
       super.removeChild(child);
 
@@ -446,18 +440,17 @@
     /* This causes the Entity to cease existing in-game. The only way to
        bring it back is to call addToFathom(). */
     public function removeFromFathom(recursing:Boolean = false):void {
-      Util.assert(!hidden);
+      Util.assert(this.parent != null);
 
       this.rememberedParent = this.parent;
 
-      for (var i:int = 0; i < children.length; i++){
-        children[i].removeFromFathom(true);
+      for (var i:int = 0; i < entityChildren.length; i++){
+        entityChildren[i].removeFromFathom(true);
       }
 
       if (!recursing && this.parent) this.parent.removeChild(this);
 
       Fathom.entities.remove(this);
-      hidden = true;
 
       if (!this.rememberedParent) {
         Util.assert(false);
@@ -468,24 +461,23 @@
        this except after a call to removeFromFathom(). */
     public function addToFathom(recursing:Boolean = false):void {
       Util.assert(!destroyed);
-      Util.assert(hidden);
+      Util.assert(!this.parent);
 
-      for (var i:int = 0; i < children.length; i++){
-        children[i].addToFathom(true);
+      for (var i:int = 0; i < entityChildren.length; i++){
+        entityChildren[i].addToFathom(true);
       }
 
       if (!recursing) rememberedParent.addChild(this);
 
       Fathom.entities.add(this);
-      hidden = false;
 
       Util.assert(rememberedParent != null);
     }
 
     /* This permanently removes an Entity. It can't be add()ed back. */
     public function destroy():void {
-      for (var i:int = 0; i < children.length; i++){
-        children[i].destroy();
+      for (var i:int = 0; i < entityChildren.length; i++){
+        entityChildren[i].destroy();
       }
 
       destroyed = true;
@@ -515,12 +507,12 @@
     }
 
     public function sortDepths():void {
-      children.sort(function(a:Entity, b:Entity):int {
+      entityChildren.sort(function(a:Entity, b:Entity):int {
         return a.depth - b.depth;
       });
 
-      for (var i:int = 0; i < children.length; i++) {
-        children[i].raiseToTop();
+      for (var i:int = 0; i < entityChildren.length; i++) {
+        entityChildren[i].raiseToTop();
       }
     }
 

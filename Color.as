@@ -28,13 +28,12 @@ package {
                  + zeroPad(b.toString(16));
     }
 
-    //TODO: This should be a static function.
-    public function fromInt(hex:int):Color {
-      r = ((hex & 0xFF0000) >> 16);
-      g = ((hex & 0x00FF00) >> 8);
-      b = ((hex & 0x0000FF));
+    public static function fromInt(hex:int):Color {
+      var r:int = ((hex & 0xFF0000) >> 16);
+      var g:int = ((hex & 0x00FF00) >> 8);
+      var b:int = ((hex & 0x0000FF));
 
-      return this;
+      return new Color(r, g, b);
     }
 
     public function read(s:String):Color {
