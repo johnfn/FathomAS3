@@ -27,11 +27,11 @@
     public static function get paused():Boolean { return _paused; }
 
     public static function get scaleX():Number {
-      return container.mc.scaleX;
+      return container.scaleX;
     }
 
     public static function get scaleY():Number {
-      return container.mc.scaleY;
+      return container.scaleY;
     }
 
     public static function get currentMode():int {
@@ -60,9 +60,9 @@
       fpsFn = Hooks.fpsCounter();
       fpsTxt = new Text(200, 20);
 
-      Util._initializeKeyInput(container.mc);
+      Util._initializeKeyInput(container);
 
-      container.mc.addEventListener(Event.ENTER_FRAME, update);
+      container.addEventListener(Event.ENTER_FRAME, update);
 
       // TODO: Swapping these calls causes insta-death. WUT.
       Fathom._camera = new Camera(toplevel.stage).scaleBy(1).beBoundedBy(m);
@@ -81,7 +81,7 @@
       // sort by depth
       var entities:EntityList = Fathom.entities;
       entities.sort(function(a:Entity, b:Entity):int {
-        return a.depth() - b.depth();
+        return a.depth - b.depth;
       });
 
       for (var i:int = 0; i < entities.length; i++) {

@@ -6,12 +6,18 @@ package {
   import flash.display.BitmapData;
   import flash.display.Stage;
 
+  /*
+
+   * Entity Space: the coordinates you use 99% of the time.
+   * Camera Space: the coordinates of the sprite, post camera transformations.
+  */
+
   public class Camera extends Rect {
     // The larger this number, the longer the camera takes to catch up.
     private var CAM_LAG:int = 90;
 
     // This is the rect that the camera will always stay inside.
-    private var _camBoundingRect:Rect = null;
+    private var camBoundingRect:Rect = null;
 
     // This is an array of all events currently happening to this camera.
     private var events:Array = [];
@@ -67,12 +73,12 @@ package {
       this.scaledWidth = this.width;
       this.scaledHeight = this.height;
 
-      if (_camBoundingRect) {
-        _camBoundingRect.x *= val;
-        _camBoundingRect.y *= val;
+      if (camBoundingRect) {
+        camBoundingRect.x *= val;
+        camBoundingRect.y *= val;
 
-        _camBoundingRect.width *= val;
-        _camBoundingRect.height *= val;
+        camBoundingRect.width *= val;
+        camBoundingRect.height *= val;
       }
 
       return this;
@@ -86,7 +92,7 @@ package {
     }
 
     public function isBound():Boolean {
-      return _camBoundingRect != null;
+      return camBoundingRect != null;
     }
 
     // Updating the focus updates the x, y coordinates also.
@@ -115,27 +121,27 @@ package {
     // exceed its bounding box.
 
     public override function set x(val:Number):void {
-      _x = isBound() ? bind(val, _camBoundingRect.x, _camBoundingRect.right) : val;
+      _x = isBound() ? bind(val, camBoundingRect.x, camBoundingRect.right) : val;
     }
 
     public override function set y(val:Number):void {
-      _y = isBound() ? bind(val, _camBoundingRect.y, _camBoundingRect.bottom) : val;
+      _y = isBound() ? bind(val, camBoundingRect.y, camBoundingRect.bottom) : val;
     }
 
     public override function set width(val:Number):void {
-      _width = isBound() ? bind(_x + val, _camBoundingRect.x, _camBoundingRect.right) - _x: val;
+      _width = isBound() ? bind(_x + val, camBoundingRect.x, camBoundingRect.right) - _x: val;
     }
 
     public override function set height(val:Number):void {
-      _height = isBound() ? bind(_y + val, _camBoundingRect.y, _camBoundingRect.bottom) - _y: val;
+      _height = isBound() ? bind(_y + val, camBoundingRect.y, camBoundingRect.bottom) - _y: val;
     }
 
     public override function get right():Number {
-      return _width + _x;
+      return width + _x;
     }
 
     public override function get bottom():Number {
-      return _bottom + _y;
+      return height + _y;
     }
 
     public function beBoundedBy(m:Map):Camera {
@@ -148,16 +154,16 @@ package {
     // We reduce the size so that we can compare the center coordinate of the
     // camera to see if it's in bounds.
     public function set focalBoundingRect(val:Rect):void {
-      _camBoundingRect = val;
+      camBoundingRect = val;
     }
 
     // Since the focalBoundingRect depends on the width and height, we need to
     // recalculate it every time someone calls this getter method.
     public function get focalBoundingRect():Rect {
-      return new Rect( _camBoundingRect.x + this.width / 2
-                     , _camBoundingRect.y + this.height / 2
-                     , _camBoundingRect.width - this.width
-                     , _camBoundingRect.height - this.height);
+      return new Rect( camBoundingRect.x + this.width / 2
+                     , camBoundingRect.y + this.height / 2
+                     , camBoundingRect.width - this.width
+                     , camBoundingRect.height - this.height);
     }
 
     // Sets the center of the Camera to look at `loc`.
@@ -259,11 +265,11 @@ package {
       }
 
       // This implies we were passed in bad data, but it can't hurt to check.
-      if (left < _camBoundingRect.x) left = _camBoundingRect.x;
-      if (right > _camBoundingRect.right) right = _camBoundingRect.right;
+      if (left < camBoundingRect.x) left = camBoundingRect.x;
+      if (right > camBoundingRect.right) right = camBoundingRect.right;
 
-      if (top < _camBoundingRect.y) top = _camBoundingRect.y;
-      if (bottom > _camBoundingRect.bottom) bottom = _camBoundingRect.bottom;
+      if (top < camBoundingRect.y) top = camBoundingRect.y;
+      if (bottom > camBoundingRect.bottom) bottom = camBoundingRect.bottom;
 
       // Calculate the new w/h of the square camera.
       var newDimension:Number = Math.max(right - left, bottom - top);
@@ -275,12 +281,12 @@ package {
       // It's posisble that we went off the edge, so we force the camera's rect to
       // be valid.
 
-      if (left + _width > _camBoundingRect._right) {
-        left = _camBoundingRect._right - _width;
+      if (left + width > camBoundingRect.right) {
+        left = camBoundingRect.right - width;
       }
 
-      if (top + _height > _camBoundingRect._bottom) {
-        top = _camBoundingRect._bottom - _height;
+      if (top + height > camBoundingRect.bottom) {
+        top = camBoundingRect.bottom - height;
       }
 
       // At this point, a Rect with top left coords (top, left) and width
@@ -289,11 +295,11 @@ package {
       // But it's possible that this camera eases, so we just set the goalFocal
       // position and let easeXY do the rest of the work.
 
-      _width  = newDimension;
-      _height = newDimension;
+      width  = newDimension;
+      height = newDimension;
 
-      goalFocalX = left + _width  / 2;
-      goalFocalY = top +  _height / 2;
+      goalFocalX = left + width  / 2;
+      goalFocalY = top +  height / 2;
 
       this.isFocused = true;
     }
@@ -316,11 +322,11 @@ package {
       var camScaleY:Number = normalHeight / height;
 
       Fathom.entities.get("!no-camera").each(function(e:Entity):void {
-        e.mc.x = (e.cameraSpaceX - that.x) * camScaleX;
-        e.mc.y = (e.cameraSpaceY - that.y) * camScaleY;
+        e.cameraSpaceX = (e.x - that.x) * camScaleX;
+        e.cameraSpaceY = (e.y - that.y) * camScaleY;
 
-        e.mc.scaleX = e.cameraSpaceScaleX * camScaleX;
-        e.mc.scaleY = e.cameraSpaceScaleY * camScaleY;
+        e.scaleX = e.cameraSpaceScaleX * camScaleX;
+        e.scaleY = e.cameraSpaceScaleY * camScaleY;
       });
     }
   }

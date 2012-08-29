@@ -3,7 +3,7 @@ package {
     import flash.utils.*;
     import flash.events.KeyboardEvent;
     import flash.display.DisplayObject;
-    import flash.display.MovieClip;
+    import flash.display.Sprite;
     import flash.utils.getQualifiedClassName;
 
     public static var uid:Number = 0;
@@ -35,7 +35,7 @@ package {
       }
     }
 
-    MovieClip.prototype.asVec = function():Vec {
+    Sprite.prototype.asVec = function():Vec {
       return new Vec(this.x, this.y);
     }
 
@@ -175,7 +175,7 @@ package {
 
     // You should never have to call this function.
     // TODO: Move into Fathom, I guess.
-    public static function _initializeKeyInput(container:MovieClip):void {
+    public static function _initializeKeyInput(container:Sprite):void {
       container.stage.addEventListener(KeyboardEvent.KEY_DOWN, _keyDown, false, 0, true);
       container.stage.addEventListener(KeyboardEvent.KEY_UP, _keyUp, false, 0, true);
 

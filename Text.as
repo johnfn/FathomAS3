@@ -21,7 +21,7 @@ package {
       this.content = content;
 
       super(0, 0, 0, 0);
-      mc.graphics.clear();
+      graphics.clear();
 
       textField = new TextField();
       text = content;
@@ -33,7 +33,7 @@ package {
 
       textField.filters = [new DropShadowFilter(1.0, 45, 0, 1, 0, 0, 1)];
 
-      mc.addChild(textField);
+      addChild(textField);
 
       if (width == -1) {
         fixedWidth = false;

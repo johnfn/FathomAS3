@@ -24,23 +24,23 @@ package {
     }
 
     public override function set y(val:Number):void {
-      this.y = val;
+      _y = val;
     }
 
     public function set width(val:Number):void {
-      this._width = val;
+      _width = val;
     }
 
     public function get width():Number {
-      return this._width;
+      return _width;
     }
 
     public function set height(val:Number):void {
-      this._height = val;
+      _height = val;
     }
 
     public function get height():Number {
-      return this._height;
+      return _height;
     }
 
     public function set right(val:Number):void {

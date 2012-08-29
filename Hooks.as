@@ -78,13 +78,14 @@ package {
         Util.assert(leftScreen.width < map.tileSize);
 
         var smallerSize:Vec = map.sizeVector.clone().subtract(leftScreen.width);
-        var dir:Vec = leftScreen.clone().divide(smallerSize).map(Math.floor);
+        var dir:Vec = leftScreen.rect().divide(smallerSize).map(Math.floor);
         var toOtherSide:Vec = dir.clone().multiply(smallerSize);
 
-        leftScreen.iterate_xy_as_$(function():void {
-          if (toOtherSide.$ > 0) leftScreen.$ = 1;
-          if (toOtherSide.$ < 0) leftScreen.$ = map.sizeVector.$ - map.tileSize + 1;
-        });
+        if (toOtherSide.x > 0) leftScreen.x = 1;
+        if (toOtherSide.x < 0) leftScreen.x = map.sizeVector.x - map.tileSize + 1;
+
+        if (toOtherSide.y > 0) leftScreen.y = 1;
+        if (toOtherSide.y < 0) leftScreen.y = map.sizeVector.y - map.tileSize + 1;
 
         map.loadNewMap(dir);
       }
@@ -192,7 +193,8 @@ package {
         }
         entity.y -= entity.vel.y;
 
-        entity.add(entity.vel);
+        entity.x += entity.vel.x;
+        entity.y += entity.vel.y;
 
         if (entity.currentlyBlocking().length > 0 && (entity.yColl.length == 0 && entity.xColl.length == 0)) {
           // We are currently on a corner. Our original plan of attack won't work unless we favor one direction over the other. We choose to favor the x direction.

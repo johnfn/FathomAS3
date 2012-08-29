@@ -1,5 +1,6 @@
 ﻿package {
-  import flash.display.MovieClip;
+  import flash.display.Sprite;
+  import flash.display.DisplayObject;
   import flash.filters.DropShadowFilter;
   import flash.geom.Point;
   import flash.utils.getQualifiedClassName;
@@ -11,19 +12,19 @@
   import flash.display.Bitmap;
   import flash.geom.Rectangle;
 
-
   import Hooks;
   import Util;
   import MagicArray;
 
-  public class Entity extends Rect {
+  public class Entity extends Sprite implements IPositionable {
     private var events:Object = {};
+
     // This indicates that the object should be destroyed.
     // The update loop in Fathom will eventually destroy it.
     public var destroyed:Boolean = false;
     public var hidden:Boolean = false;
 
-    protected var mySpritesheet:Array = []
+    protected var spritesheet:Array = []
 
     protected var initialScaleX:Number = 1.0;
     protected var initialScaleY:Number = 1.0;
@@ -41,15 +42,17 @@
     protected var _depth:int = 0;
 
     protected var mcOffset:Vec;
-    protected var _mc:MovieClip;
-    protected var childrenContainer:MovieClip = new MovieClip();
     protected var initialSize:Vec;
+
+
+    // The location of the entity, before camera transformations.
+    private var entitySpacePos:Rect;
+
+    // The location of the entity, after camera transformations.
+    public var pos:Rect;
 
     // Allows for a fast check to see if this entity moves.
     protected var _isStatic:Boolean = true;
-
-    // The Entity that contains this Entity, if there is one.
-    protected var parent:Entity;
 
     public function get isStatic():Boolean { return _isStatic; }
     private function set isStatic(val:Boolean):void { _isStatic = val; }
@@ -57,30 +60,90 @@
     public function get childrenList():Array { return children; }
     private function set childrenList(val:Array):void { children = val; }
 
-    public function get mc():MovieClip { return _mc; }
-
     function Entity(x:Number = 0, y:Number = 0, width:Number = 20, height:Number = -1, wiggle:int = 0):void {
       if (height == -1) height = width;
-
-      super(x, y, this.width);
 
       if (!Fathom.initialized) {
         throw new Error("Util.initialize() has not been called. Failing.");
       }
 
+      this.x = x;
+      this.y = y;
       this.height = height - wiggle * 2;
       this.width = width - wiggle * 2;
       this.initialSize = new Vec(this.height, this.width);
       this.color = color;
       this.setMCOffset(0, 0);
-      this.parent = null;
-
-      this._mc = new MovieClip();
 
       //TODO: I had this idea about how parents should bubble down events to children.
       if (Fathom.container) {
         Fathom.entities.add(this);
       }
+
+      this.pos = new Rect(this.x, this.y, this.width, this.height);
+    }
+
+    /*
+    public function set absX(val:Number):void {
+      //bla bla bla local2Global TODO
+    }
+    */
+
+    public override function set x(val:Number):void {
+      entitySpacePos.x = val;
+    }
+
+    public override function get x():Number {
+      return entitySpacePos.x;
+    }
+
+    public override function set y(val:Number):void {
+      entitySpacePos.y = val;
+    }
+
+    public override function get y():Number {
+      return entitySpacePos.y;
+    }
+
+
+
+    public function set cameraSpaceX(val:Number):void {
+      pos.x = val;
+    }
+
+    public function get cameraSpaceX():Number {
+      //return Math.floor(x + mcOffset.x);
+      return pos.x;
+    }
+
+    public function set cameraSpaceY(val:Number):void {
+      entitySpacePos.y = val;
+    }
+
+    public function get cameraSpaceY():Number {
+      //return Math.floor(y + mcOffset.y);
+      return pos.y;
+    }
+
+
+    public override function set width(val:Number):void {
+      entitySpacePos.width = val;
+    }
+
+    public override function get width():Number {
+      return entitySpacePos.width;
+    }
+
+    public override function set height(val:Number):void {
+      entitySpacePos.height = val;
+    }
+
+    public override function get height():Number {
+      return entitySpacePos.height;
+    }
+
+    public function rect():Rect {
+      return pos;
     }
 
     public function withDepth(d:int):Entity {
@@ -89,15 +152,7 @@
       return this;
     }
 
-    public function addDropShadow():void {
-      _mc.filters = [new DropShadowFilter()];
-    }
-
-    public function clearFilters():void {
-      _mc.filters = [];
-    }
-
-    private function getChildrenOf(mc:MovieClip):Array {
+    private function getChildrenOf(mc:Sprite):Array {
       var children:Array = [];
 
       for (var i:int = 0; i < mc.numChildren; i++) {
@@ -109,7 +164,7 @@
 
     public function removeMC():Entity {
       Fathom.container.addChild(this);
-      this._mc.visible = false;
+      this.visible = false;
 
       return this;
     }
@@ -125,12 +180,8 @@
       bAsset = new mcClass(); //cachedAssets[mcClass]
 
       // remove all children.
-      while(_mc && _mc.numChildren != 0) {
-        mc.removeChildAt(0);
-      }
-
-      if (!this._mc) {
-        this._mc = new MovieClip();
+      while(numChildren != 0) {
+        removeChildAt(0);
       }
 
       if (spritesheet != null) {
@@ -146,17 +197,17 @@
           cachedAssets[uid] = bd;
         }
 
-        this.mySpritesheet = spritesheet;
+        this.spritesheet = spritesheet;
         subimage.bitmapData = cachedAssets[uid];
 
-        this._mc.addChild(subimage);
+        this.addChild(subimage);
 
         //TODO another huge hax
         if (middleX) {
           subimage.x -= 12;
         }
       } else {
-        this._mc.addChild(bAsset);
+        this.addChild(bAsset);
       }
 
       return this;
@@ -169,25 +220,28 @@
 
       var className:String = Util.className(mcClass);
 
+      // TODO: All of this crap is going to break. Can't reassign to this.
       if (className == "String") {
-        this._mc = new Fathom.MCPool[mcClass]();
-        groupArray.push(mcClass);
-      } else if (className == "MovieClip") {
-        this._mc = mcClass;
+        // Use a movieclip from the provided MovieClip pool. Handy for including vector graphics.
+        //this._mc = new Fathom.MCPool[mcClass]();
+        //groupArray.push(mcClass);
+        Util.assert(false);
+      } else if (className == "Sprite" || className == "MovieClip") {
+        Util.assert(false);
+        //this._mc = mcClass;
       } else {
         updateExternalMC(mcClass, fixedSize, spritesheet, middleX);
       }
 
       if (fixedSize) {
-        _mc.width = this.width + wiggle * 2;
-        _mc.height = this.height + wiggle * 2;
+        width  = this.width  + wiggle * 2;
+        height = this.height + wiggle * 2;
       }
 
-      this.initialScaleX = _mc.scaleX;
-      this.initialScaleY = _mc.scaleY;
+      // TODO don't like this at all.
 
-      this._scaleX = this.initialScaleX;
-      this._scaleY = this.initialScaleY;
+      initialScaleX = scaleX;
+      initialScaleY = scaleY;
 
       // All Entities are added to the container, except the container itself, which
       // has to be bootstrapped onto the Stage. If Fathom.container does not exist, `this`
@@ -196,73 +250,26 @@
         Fathom.container.addChild(this);
       }
 
-      // If this is the container, than there is no difference between our childrenContainer and our mc.
-      // We could require the user to make 2 MCs, but that seems a bit silly,
-      // especially since the container object will never be anything other than a contaienr.
-      if (!Fathom.container) {
-        this.childrenContainer = this._mc;
-      }
-
       return this;
     }
 
-    public override function set(v:IPositionable):Vec {
+    public function set(v:IPositionable):Entity {
       x = v.x;
       y = v.y;
 
       return this;
     }
 
-    public function set visible(v:Boolean):void { mc.visible = v; }
-    public function get visible():Boolean { return mc.visible; }
-
-    public function set alpha(v:Number):void { mc.alpha = v; }
-    public function get alpha():Number { return mc.alpha; }
-
-    public override function set x(v:Number):void {
-      mc.x = Math.floor(v + mcOffset.x);
-      _x = v;
-    }
-    public override function get x():Number { return _x; }
-
-    public override function get y():Number { return _y; }
-
-    public override function set y(v:Number):void {
-      mc.y = Math.floor(v + mcOffset.y);
-      _y = v;
-    }
-
-    public function get cameraSpaceX():Number {
-      return Math.floor(_x + mcOffset.x);
-    }
-
-    public function get cameraSpaceY():Number {
-      return Math.floor(_y + mcOffset.y);
-    }
-
     // These functions are in Entity space.
-    public function set scaleX(v:Number):void { _scaleX = v * initialScaleX; }
-    public function get scaleX():Number { return _scaleX / initialScaleX; }
+    //public override function set scaleX(v:Number):void { scaleX = v * initialScaleX; }
+    //public override function get scaleX():Number { return scaleX / initialScaleX; }
 
-    public function set scaleY(v:Number):void { _scaleY = v * initialScaleY; }
-    public function get scaleY():Number { return _scaleY / initialScaleY; }
+    //public override function set scaleY(v:Number):void { scaleY = v * initialScaleY; }
+    //public override function get scaleY():Number { return scaleY / initialScaleY; }
 
     // These two are in Camera space.
-    public function get cameraSpaceScaleX():Number { return _scaleX; }
-    public function get cameraSpaceScaleY():Number { return _scaleY; }
-
-    public function set rotation(v:Number):void { _mc.rotation = v; }
-    public function get rotation():Number { return _mc.rotation; }
-
-    public function gotoAndStop(f:int):void { _mc.gotoAndStop(f); }
-    public function gotoAndPlay(f:int):void { _mc.gotoAndPlay(f); }
-
-    public function get totalFrames():int { return _mc.totalFrames; }
-
-    //public function set currentFrame(v:int):void { mc.gotoAndStop(v); }
-    public function get currentFrame():int { return _mc.currentFrame; }
-
-    public function play():void { _mc.play(); }
+    public function get cameraSpaceScaleX():Number { return scaleX; }
+    public function get cameraSpaceScaleY():Number { return scaleY; }
 
     protected function setMCOffset(x:int, y:int):void {
       this.mcOffset = (new Vec(wiggle, wiggle)).add(new Vec(x, y));
@@ -271,12 +278,12 @@
     // Pass in the x-coordinate of your velocity, and this'll orient
     // the Entity in that direction.
     protected function face(dir:int):void {
-      if (dir > 0 && this._mc.scaleX < 0) {
-        this._mc.scaleX *= -1;
+      if (dir > 0 && this.scaleX < 0) {
+        this.scaleX *= -1;
         return;
       }
-      if (dir < 0 && this._mc.scaleX > 0) {
-        this._mc.scaleX *= -1;
+      if (dir < 0 && this.scaleX > 0) {
+        this.scaleX *= -1;
         return;
       }
     }
@@ -311,30 +318,30 @@
 
     public function raiseToTop():void {
       //TODO: This depends on the visibility parameter.
-      if (this._mc.parent) {
-        this._mc.parent.setChildIndex(this._mc, this._mc.parent.numChildren - 1);
+      if (this.parent) {
+        this.parent.setChildIndex(this, this.parent.numChildren - 1);
       }
     }
 
     //TODO: addChild is basically TOTALLY screwed up w/r/t depth. RGHRKGJHSDKLJF
 
-    public function addChild(child:Entity):void {
+    public override function addChild(child:DisplayObject):DisplayObject {
       Util.assert(!children.contains(child));
 
       children.push(child);
-      child.parent = this;
+      super.addChild(child);
 
-      this.childrenContainer.addChild(child._mc);
-      this.childrenContainer.addChild(child.childrenContainer);
+      return child;
     }
 
     // Remove child: The child entity does not belong to this entity as a child.
     // It continues to exist in the game.
-    public function removeChild(child:Entity):void {
+    public override function removeChild(child:DisplayObject):DisplayObject {
       children.remove(child);
 
-      this.childrenContainer.removeChild(child._mc);
-      this.childrenContainer.removeChild(child.childrenContainer);
+      super.removeChild(child);
+
+      return child;
     }
 
     /*
@@ -454,11 +461,10 @@
       removeFromFathom();
 
       events = null;
-      if (_mc && _mc.parent) {
-        _mc.parent.removeChild(_mc);
+      if (parent) {
+        parent.removeChild(this);
       }
 
-      _mc = null;
       destroyed = true;
       Fathom.entities.remove(this);
     }
@@ -472,14 +478,11 @@
     }
 
     public function setAbsolutePosition(loc:Vec):void {
-      mc.x = loc.x;
-      mc.y = loc.y;
-
-      childrenContainer.x = loc.x;
-      childrenContainer.y = loc.y;
+      x = loc.x;
+      y = loc.y;
     }
 
-    //TODO: Could add all superclasses.
+    //TODO: Group strings to enums with Inheritable property.
     //TODO: "updateable" is the norm. "noupdate" should be a group.
     //TODO: There is a possible namespace collision here. Should prob make it impossible to manually add groups.
     //TODO: I've decided I don't like strings. Enumerations are better.
@@ -487,11 +490,18 @@
       return groupArray.concat(Util.className(this));
     }
 
+    public function touchingRect(rect:Entity):Boolean {
+      return !   (rect.x      > this.x + this.width  ||
+         rect.x + rect.width  < this.x               ||
+         rect.y               > this.y + this.height ||
+         rect.y + rect.height < this.y               );
+    }
+
     public function collides(other:Entity):Boolean {
       return !_ignoresCollisions && (!(this == other)) && touchingRect(other);
     }
 
-    public function collidesPt(point:Point):Boolean { return _mc.hitTestPoint(point.x, point.y); }
+    public function collidesPt(point:Point):Boolean { return hitTestPoint(point.x, point.y); }
 
     public function update(e:EntityList):void {}
 
@@ -499,8 +509,19 @@
       return "[" + Util.className(this) + super.toString() + " (" + groups() + ") ]";
     }
 
-    public function depth():int {
+    public function set depth(v:int):void {
+      _depth = v;
+    }
+
+    public function get depth():int {
       return _depth;
+    }
+
+    public function add(p:IPositionable):Entity {
+      this.x += p.x;
+      this.y += p.y;
+
+      return this;
     }
 
     // Modes for which this entity receives events.

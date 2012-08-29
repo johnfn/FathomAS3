@@ -42,7 +42,7 @@ package {
       return xColl.any.apply(this, args) || yColl.any.apply(this, args);
     }
 
-    public override function set(v:IPositionable):Vec {
+    public override function set(v:IPositionable):Entity {
       Hooks.clearCollisions(this);
       super.set(v);
 
