@@ -58,8 +58,7 @@
     private var entitySpacePos:Rect;
 
     // The location of the entity, after camera transformations.
-    // TODO rename to cameraSpacePos
-    public var pos:Rect;
+    public var cameraSpacePos:Rect;
 
     // Allows for a fast check to see if this entity moves.
     protected var _isStatic:Boolean = true;
@@ -76,7 +75,7 @@
         throw new Error("Util.initialize() has not been called. Failing.");
       }
 
-      this.pos = new Rect(0, 0, width, height);
+      this.cameraSpacePos = new Rect(0, 0, width, height);
       this.entitySpacePos = new Rect(x, y, width, height);
 
       this.x = x;
@@ -126,23 +125,23 @@
 
 
     public function set cameraSpaceX(val:Number):void {
-      pos.x = val;
-      super.x = pos.x;
+      cameraSpacePos.x = val;
+      super.x = cameraSpacePos.x;
     }
 
     public function get cameraSpaceX():Number {
       //return Math.floor(x + mcOffset.x);
-      return pos.x;
+      return cameraSpacePos.x;
     }
 
     public function set cameraSpaceY(val:Number):void {
-      pos.y = val;
-      super.y = pos.y
+      cameraSpacePos.y = val;
+      super.y = cameraSpacePos.y
     }
 
     public function get cameraSpaceY():Number {
       //return Math.floor(y + mcOffset.y);
-      return pos.y;
+      return cameraSpacePos.y;
     }
 
 
