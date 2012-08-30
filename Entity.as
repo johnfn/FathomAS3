@@ -26,7 +26,10 @@
 
     private static var cachedAssets:Dictionary = new Dictionary();
 
-    private var mcClass:*;
+    // Rename spritesheetObj and spritesheet
+    // spritesheetObj isnt even necessarily a spritesheet
+    private var spritesheetObj:* = null;
+    private var tileDimension:Vec;
 
     protected var pixels:Bitmap = new Bitmap();
 
@@ -191,18 +194,19 @@
       return this;
     }
 
-    // Keep mcClass constant and give this a less cumbersome name.
-    public function updateExternalMC(spritesheet:Array, middleX:Boolean = false):Entity {
-      var bAsset:BitmapAsset;
+    // Set this entities graphics to be the sprite at (x, y) on the provided spritesheet.
+    public function setTile(x:int, y:int):Entity {
+      Util.assert(this.spritesheetObj != null);
+
+      //TODO: Cache this
+      var bAsset:BitmapAsset = spritesheetObj;
 
       var count:int = 0;
-
-      bAsset = new mcClass();
 
       Util.assert(entityChildren.length == 0);
 
       if (spritesheet != null) {
-        var uid:String = Util.className(mcClass) + spritesheet;
+        var uid:String = Util.className(spritesheetObj) + spritesheet;
         if (!(cachedAssets[uid])) {
           var bd:BitmapData = new BitmapData(C.size, C.size, true, 0);
           var source:Rectangle = new Rectangle(spritesheet[0] * C.size, spritesheet[1] * C.size, C.size, C.size);
@@ -214,11 +218,6 @@
 
         this.spritesheet = spritesheet;
         pixels.bitmapData = cachedAssets[uid];
-
-        // TODO remove this.
-        if (middleX) {
-          pixels.x -= this.width / 2;
-        }
       } else {
         this.addChild(bAsset);
       }
@@ -227,6 +226,7 @@
 
     }
 
+    // TODO: This could eventually be called setOrigin.
     public function setRotationOrigin(x:Number, y:Number):Entity {
       pixels.x -= x;
       pixels.y -= y;
@@ -234,23 +234,59 @@
       return this;
     }
 
-    public function fromExternalMC(mcClass:*, spritesheet:Array = null, middleX:Boolean = false):Entity {
-      this.usesExternalMC = true;
-      this.mcClass = mcClass;
+    //TODO: Maybe shouldn't even have to pass in tileDimension.
 
-      var className:String = Util.className(mcClass);
+    /* Load a spritesheet. tileDimension should be the size of the tiles; pass in null if
+       there's only one tile. whichTile is the tile that this Entity will be; pass in
+       null if you want to defer the decision by calling setTile() later. */
+    public function loadSpritesheet(spritesheetClass:*, tileDimension:Vec = null, whichTile:Vec = null):Entity {
+      Util.assert(this.spritesheetObj == null);
+
+      this.spritesheetObj = new spritesheetClass();
+
+      var spritesheetSize:Vec = new Vec(spritesheetObj.width, spritesheetObj.height)
+
+      this.tileDimension = (tileDimension == null ? spritesheetSize : tileDimension);
+
+      if (whichTile != null) {
+        setTile(whichTile.x, whichTile.y)
+      } else {
+        setTile(0, 0);
+      }
+
+      return this;
+    }
+
+    public function loadImage(imgClass:*):Entity {
+      Util.assert(this.spritesheetObj == null);
+
+      this.spritesheetObj = new imgClass();
+
+      this.tileDimension = new Vec(spritesheetObj.width, spritesheetObj.height)
+
+      setTile(0, 0);
+
+      return this;
+    }
+
+    /*
+    public function fromExternalMC(spritesheetClass:*, spritesheet:Array = null):Entity {
+      this.usesExternalMC = true;
+      this.spritesheetClass = spritesheetClass;
+
+      var className:String = Util.className(spritesheetClass);
 
       // TODO: All of this crap is going to break. Can't reassign to this.
       if (className == "String") {
         // Use a movieclip from the provided MovieClip pool. Handy for including vector graphics.
-        //this._mc = new Fathom.MCPool[mcClass]();
-        //groupArray.push(mcClass);
+        //this._mc = new Fathom.MCPool[spritesheetClass]();
+        //groupArray.push(spritesheetClass);
         Util.assert(false);
       } else if (className == "Sprite" || className == "MovieClip") {
         Util.assert(false);
-        //this._mc = mcClass;
+        //this._mc = spritesheetClass;
       } else {
-        updateExternalMC(spritesheet, middleX);
+        updateExternalMC(spritesheet);
       }
 
       width  = this.width  + wiggle * 2;
@@ -258,8 +294,8 @@
 
       return this;
     }
+    */
 
-    //TODO: Rename to move
     public function setPos(v:IPositionable):Entity {
       x = v.x;
       y = v.y;
@@ -317,17 +353,17 @@
     }
 
     public function raiseToTop():void {
-      //TODO: This depends on the visibility parameter.
       if (this.parent) {
         this.parent.setChildIndex(this, this.parent.numChildren - 1);
       }
     }
 
-    public function center():void {
-      //TODO
+    /* Put this entity in the middle of the screen. Useful for dialogs,
+       inventory screens, etc. */
+    public function centerOnScreen():void {
+      x = Fathom.stage.width / 2 - this.width / 2;
+      y = Fathom.stage.height / 2 - this.height / 2;
     }
-
-    //TODO: addChild is basically TOTALLY screwed up w/r/t depth. RGHRKGJHSDKLJF
 
     public override function addChild(child:DisplayObject):DisplayObject {
       Util.assert(!entityChildren.contains(child));
@@ -508,8 +544,8 @@
     }
 
     //TODO: Group strings to enums with Inheritable property.
-    //TODO: There is a possible namespace collision here. Should prob make it impossible to manually add groups.
-    //TODO: I've decided I don't like strings. Enumerations are better.
+    //TODO: There is a possible namespace collision here. assert no 2 groups have same name.
+    //TODO: Enumerations are better.
     public function groups():Array {
       return groupArray.concat(Util.className(this));
     }

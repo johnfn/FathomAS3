@@ -116,7 +116,7 @@ package {
         if ("spritesheet" in itemData) {
           // This is an awesome feature that I need to explain more when I'm not doing Ludum Dare. TODO
           if ("roundOutEdges" in itemData) {
-            var result:Array = itemData["spritesheet"].slice();
+            var result:Vec = itemData["spritesheet"].clone();
             var X:int = 0;
             var Y:int = 1;
 
@@ -124,32 +124,32 @@ package {
             var locY:int = topLeftCorner.y + y;
 
             if (locY == 0 || data[locX][locY - 1].toString() != c.toString()) {
-              result[Y]--;
+              result.y--;
             }
 
             if (locX == 0 || data[locX - 1][locY].toString() != c.toString()) {
-              result[X]--;
+              result.x--;
             }
 
             if (locY != heightInTiles - 1 && data[locX][locY + 1].toString() != c.toString()) {
-              result[Y]++;
+              result.y++;
             }
 
             if (locX == widthInTiles - 1 || data[locX + 1][locY].toString() != c.toString()) {
-              result[X]++;
+              result.x++;
             }
 
             if (locY != 0 && data[locX][locY - 1].toString() != c.toString()  && locY != heightInTiles - 1 && data[locX][locY + 1].toString() != c.toString()) {
-              result[Y]--;
+              result.y--;
             }
 
-            e.fromExternalMC(itemData["gfx"], result);
-
+            //TODO: Hack!
+            e.loadSpritesheet(itemData["gfx"], C.dim, result);
           } else {
-            e.fromExternalMC(itemData["gfx"], itemData["spritesheet"]);
+            e.loadSpritesheet(itemData["gfx"], C.dim, itemData["spritesheet"]);
           }
         } else {
-          e.fromExternalMC(itemData["gfx"]);
+          e.loadSpritesheet(itemData["gfx"], C.dim);
         }
       }
 
