@@ -64,7 +64,7 @@
     }
 
     //TODO: Eventually main class should extend this or something...
-    public static function initialize(stage:Stage, m:Map, FPS:int = 30):void {
+    public static function initialize(stage:Stage, FPS:int = 30):void {
       // Inside of the Entity constructor, we assert Fathom.initialized, because all
       // MCs must be added to the container MC.
 
@@ -74,7 +74,6 @@
       Fathom.FPS = FPS;
       Fathom.container = new Entity();
       Fathom.stage.addChild(Fathom.container);
-      Fathom.mapRef = m;
 
       fpsFn = Hooks.fpsCounter();
       fpsTxt = new Text(200, 20);
