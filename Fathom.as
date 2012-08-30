@@ -137,7 +137,7 @@
         list[i].y += list[i].vel.y;
 
         // TODO these should be private.
-        list[i].oldVel = list[i].vel;
+        list[i].oldVel = list[i].vel.clone();
         list[i].reset = false;
       }
 
@@ -179,7 +179,7 @@
 
           for (var k:int = 0; k < contents.length; k++) {
             if (contents[k].isStatic) continue;
-            if (contents[k].reset) continue;
+            if (contents[k].reset)    continue;
 
             if (contents[k] is Character) {
               trace("HUH")
