@@ -37,15 +37,6 @@ package {
       this._tileSize = tileSize;
 
       this.clearTiles();
-
-      // Initialize the persistent object
-
-      for (var i:int = 0; i < 1000; i += widthInTiles) {
-        for (var j:int = 0; j < 1000; j += heightInTiles) {
-          persistent[new Vec(i, j).asKey()] = [];
-        }
-      }
-
     }
 
     private function clearTiles():void {
@@ -77,7 +68,7 @@ package {
 
     private function hideCurrentPersistentItems():void {
       var processedItems:Array = [];
-      var items:Array = persistent[topLeftCorner.asKey()];
+      var items:Array = persistent[topLeftCorner.asKey()] || [];
 
       for (var i:int = 0; i < items.length; i++) {
         if (!items[i].destroyed) {
@@ -170,6 +161,8 @@ package {
       // Scan the map, adding every object to our list of persistent items for this map.
       if (!seenBefore) {
         // If we haven't seen it before, load in all the persistent items.
+
+        persistent[topLeftCorner.asKey()] = [];
 
         for (var x:int = 0; x < widthInTiles; x++) {
           for (var y:int = 0; y < heightInTiles; y++) {
