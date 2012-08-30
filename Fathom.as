@@ -9,7 +9,7 @@
     private static var gameloopID:int;
     private static var FPS:int = 0;
     private static var fpsFn:Function;
-    private static var _camera:Camera;
+    public static var _camera:Camera; //TODO
 
     private static var _currentMode:int = 0;
 
@@ -76,16 +76,14 @@
       Fathom.stage.addChild(Fathom.container);
       Fathom.mapRef = m;
 
-      Fathom.mapRef.loadNewMap(new Vec(0, 0));
-
       fpsFn = Hooks.fpsCounter();
       fpsTxt = new Text(200, 20);
 
       Util._initializeKeyInput(container);
+    }
 
+    public static function start():void {
       container.addEventListener(Event.ENTER_FRAME, update);
-
-      Fathom._camera = new Camera(stage).scaleBy(1).beBoundedBy(m);
     }
 
     /* This stops everything. The only conceivable use would be
@@ -93,6 +91,8 @@
     public static function stop():void {
       container.removeEventListener(Event.ENTER_FRAME, update);
     }
+
+    // TODO: Mode stack.
 
     private static function update(event:Event):void {
       // We copy the entity list so that it doesn't change while we're

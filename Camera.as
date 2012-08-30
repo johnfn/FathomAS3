@@ -238,6 +238,7 @@ package {
 
     public function setEaseSpeed(ease:int):Camera {
       this.easeRate = ease;
+
       return this;
     }
 

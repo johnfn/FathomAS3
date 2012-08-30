@@ -284,11 +284,13 @@ package {
       return [0];
     }
 
-    public function loadNewMap(diff:Vec):void {
+    public function loadNewMap(diff:Vec):Map {
       diff.multiply(new Vec(widthInTiles, heightInTiles));
 
       updatePersistentItems(diff);
       Fathom.container.sortDepths();
+
+      return this;
     }
 
     public function getTopLeftCorner():Vec {
