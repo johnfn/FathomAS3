@@ -47,7 +47,6 @@
 
     protected var _depth:int = 0;
 
-    protected var mcOffset:Vec;
     protected var initialSize:Vec;
 
     // This is purely for debugging purposes.
@@ -132,7 +131,6 @@
     }
 
     public function get cameraSpaceX():Number {
-      //return Math.floor(x + mcOffset.x);
       return cameraSpacePos.x;
     }
 
@@ -142,7 +140,6 @@
     }
 
     public function get cameraSpaceY():Number {
-      //return Math.floor(y + mcOffset.y);
       return cameraSpacePos.y;
     }
 
@@ -204,8 +201,6 @@
       var count:int = 0;
 
       Util.assert(entityChildren.length == 0);
-
-      //TODO: Remove C.size
 
       var uid:String = Util.className(spritesheetObj) + x + " " + y;
       if (!(cachedAssets[uid])) {
@@ -310,10 +305,6 @@
     // These two are in Camera space.
     public function get cameraSpaceScaleX():Number { return scaleX; }
     public function get cameraSpaceScaleY():Number { return scaleY; }
-
-    protected function setMCOffset(x:int, y:int):void {
-      this.mcOffset = (new Vec(wiggle, wiggle)).add(new Vec(x, y));
-    }
 
     // Pass in the x-coordinate of your velocity, and this'll orient
     // the Entity in that direction.
