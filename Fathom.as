@@ -139,6 +139,12 @@
         // TODO these should be private.
         list[i].oldVel = list[i].vel.clone();
         list[i].reset = false;
+
+        list[i].touchingLeft = false;
+        list[i].touchingRight = false;
+
+        list[i].touchingTop = false;
+        list[i].touchingBottom = false;
       }
 
       var grid:Array = makeGrid();
@@ -149,10 +155,14 @@
         for (var j:int = 0; j < mapRef.widthInTiles; j++) {
           var contents:Array = grid[i][j];
 
+          if (contents.length < 2) continue;
+
           for (var k:int = 0; k < contents.length; k++) {
             if (contents[k].isStatic) continue;
 
             var entity:MovingEntity = contents[k] as MovingEntity;
+
+            //TODO: this actually doesn't work at all.
 
             if (entity.vel.x < 0) entity.touchingLeft = true;
             if (entity.vel.x > 0) entity.touchingRight = true;
@@ -183,7 +193,7 @@
 
             if (contents[k] is Character) {
               trace("HUH")
-              trace(contents[k])
+              trace(contents)
             }
 
             contents[k].x -= contents[k].oldVel.x;
