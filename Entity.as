@@ -32,24 +32,13 @@
     private var tileDimension:Vec;
 
     protected var pixels:Bitmap = new Bitmap();
-
     protected var spritesheet:Array = []
-
-    protected var _scaleX:Number = 1.0;
-    protected var _scaleY:Number = 1.0;
-
     protected var groupArray:Array = ["persistent"];
-    protected var color:Number;
     protected var entityChildren:Array = [];
-    protected var wiggle:int = 0;
-    protected var usesExternalMC:Boolean = false;
     protected var _ignoresCollisions:Boolean = false;
-
     protected var _depth:int = 0;
 
-    protected var initialSize:Vec;
-
-    // This is purely for debugging purposes.
+    // These is purely for debugging purposes.
     protected static var counter:int = 0;
     protected var uid:Number = ++counter;
 
@@ -67,9 +56,7 @@
     public function get isStatic():Boolean { return _isStatic; }
     private function set isStatic(val:Boolean):void { _isStatic = val; }
 
-    public function get childrenList():Array { return entityChildren; }
-
-    function Entity(x:Number = 0, y:Number = 0, width:Number = 20, height:Number = -1, wiggle:int = 0):void {
+    function Entity(x:Number = 0, y:Number = 0, width:Number = 20, height:Number = -1):void {
       if (height == -1) height = width;
 
       if (!Fathom.initialized) {
@@ -81,11 +68,8 @@
 
       this.x = x;
       this.y = y;
-      this.height = height - wiggle * 2;
-      this.width = width - wiggle * 2;
-      this.initialSize = new Vec(this.height, this.width);
-      this.color = color;
-      this.setMCOffset(0, 0);
+      this.height = height;
+      this.width = width;
 
       //TODO: I had this idea about how parents should bubble down events to children.
       if (Fathom.container) {
@@ -363,7 +347,6 @@
     public override function addChild(child:DisplayObject):DisplayObject {
       Util.assert(!entityChildren.contains(child));
 
-
       super.addChild(child);
 
       if (child is Entity) {
@@ -473,10 +456,6 @@
       if (!recursing && this.parent) this.parent.removeChild(this);
 
       Fathom.entities.remove(this);
-
-      if (!this.rememberedParent) {
-        Util.assert(false);
-      }
     }
 
     /* This causes the Entity to exist in the game. There is no need to call
@@ -556,7 +535,9 @@
       return !_ignoresCollisions && (!(this == other)) && touchingRect(other);
     }
 
-    public function collidesPt(point:Point):Boolean { return hitTestPoint(point.x, point.y); }
+    public function collidesPt(point:Point):Boolean {
+      return hitTestPoint(point.x, point.y);
+    }
 
     public function update(e:EntityList):void {}
 
