@@ -12,8 +12,8 @@ package {
   //TODO: Map should extend Entity. Will need to change update loop.
 
   public class Map extends Rect {
-    private var widthInTiles:int;
-    private var heightInTiles:int;
+    private var _widthInTiles:int;
+    private var _heightInTiles:int;
 
     private var _tileSize:int;
     private var data:Array = []; // Color data from the map.
@@ -32,8 +32,8 @@ package {
       Util.assert(widthInTiles == heightInTiles);
 
       this.sizeVector = new Vec(width, height);
-      this.widthInTiles = widthInTiles;
-      this.heightInTiles = heightInTiles;
+      this._widthInTiles = widthInTiles;
+      this._heightInTiles = heightInTiles;
       this._tileSize = tileSize;
 
       this.clearTiles();
@@ -47,6 +47,14 @@ package {
 
     public function get tileSize():int {
       return _tileSize;
+    }
+
+    public function get widthInTiles():int {
+      return _widthInTiles;
+    }
+
+    public function get heightInTiles():int {
+      return _heightInTiles;
     }
 
     public function fromImage(mapClass:Class, persistentItemMapping:Object):Map {
