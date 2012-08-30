@@ -252,33 +252,6 @@
       return this;
     }
 
-    /*
-    public function fromExternalMC(spritesheetClass:*, spritesheet:Array = null):Entity {
-      this.usesExternalMC = true;
-      this.spritesheetClass = spritesheetClass;
-
-      var className:String = Util.className(spritesheetClass);
-
-      // TODO: All of this crap is going to break. Can't reassign to this.
-      if (className == "String") {
-        // Use a movieclip from the provided MovieClip pool. Handy for including vector graphics.
-        //this._mc = new Fathom.MCPool[spritesheetClass]();
-        //groupArray.push(spritesheetClass);
-        Util.assert(false);
-      } else if (className == "Sprite" || className == "MovieClip") {
-        Util.assert(false);
-        //this._mc = spritesheetClass;
-      } else {
-        updateExternalMC(spritesheet);
-      }
-
-      width  = this.width  + wiggle * 2;
-      height = this.height + wiggle * 2;
-
-      return this;
-    }
-    */
-
     public function setPos(v:IPositionable):Entity {
       x = v.x;
       y = v.y;
