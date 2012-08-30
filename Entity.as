@@ -205,22 +205,20 @@
 
       Util.assert(entityChildren.length == 0);
 
-      if (spritesheet != null) {
-        var uid:String = Util.className(spritesheetObj) + spritesheet;
-        if (!(cachedAssets[uid])) {
-          var bd:BitmapData = new BitmapData(C.size, C.size, true, 0);
-          var source:Rectangle = new Rectangle(spritesheet[0] * C.size, spritesheet[1] * C.size, C.size, C.size);
+      //TODO: Remove C.size
 
-          bd.copyPixels(bAsset.bitmapData, source, new Point(0, 0), null, null, true);
+      var uid:String = Util.className(spritesheetObj) + x + " " + y;
+      if (!(cachedAssets[uid])) {
+        var bd:BitmapData = new BitmapData(width, height, true, 0);
+        var source:Rectangle = new Rectangle(x * width, y * height, width, height);
 
-          cachedAssets[uid] = bd;
-        }
+        bd.copyPixels(bAsset.bitmapData, source, new Point(0, 0), null, null, true);
 
-        this.spritesheet = spritesheet;
-        pixels.bitmapData = cachedAssets[uid];
-      } else {
-        this.addChild(bAsset);
+        cachedAssets[uid] = bd;
       }
+
+      this.spritesheet = spritesheet;
+      pixels.bitmapData = cachedAssets[uid];
 
       return this;
 
@@ -246,7 +244,13 @@
 
       var spritesheetSize:Vec = new Vec(spritesheetObj.width, spritesheetObj.height)
 
-      this.tileDimension = (tileDimension == null ? spritesheetSize : tileDimension);
+      if (tileDimension != null) {
+        this.width = tileDimension.x;
+        this.height = tileDimension.y;
+      } else {
+        this.width = spritesheetObj.width;
+        this.height = spritesheetObj.height;
+      }
 
       if (whichTile != null) {
         setTile(whichTile.x, whichTile.y)

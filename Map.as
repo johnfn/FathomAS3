@@ -115,8 +115,9 @@ package {
       if ("gfx" in itemData) {
         if ("spritesheet" in itemData) {
           // This is an awesome feature that I need to explain more when I'm not doing Ludum Dare. TODO
+          var result:Vec = itemData["spritesheet"].clone();
+
           if ("roundOutEdges" in itemData) {
-            var result:Vec = itemData["spritesheet"].clone();
             var X:int = 0;
             var Y:int = 1;
 
@@ -142,12 +143,9 @@ package {
             if (locY != 0 && data[locX][locY - 1].toString() != c.toString()  && locY != heightInTiles - 1 && data[locX][locY + 1].toString() != c.toString()) {
               result.y--;
             }
-
-            //TODO: Hack!
-            e.loadSpritesheet(itemData["gfx"], C.dim, result);
-          } else {
-            e.loadSpritesheet(itemData["gfx"], C.dim, itemData["spritesheet"]);
           }
+
+          e.loadSpritesheet(itemData["gfx"], C.dim, result);
         } else {
           e.loadSpritesheet(itemData["gfx"], C.dim);
         }
