@@ -95,14 +95,20 @@
     private static function makeGrid():Array {
       var grid:Array = Util.make2DArrayFn(mapRef.widthInTiles, mapRef.heightInTiles, function():Array { return []; });
       var list:EntityList = entities.clone();
+      var HACK:int = 1;
 
       for (var i:int = 0; i < list.length; i++) {
         for (var j:int = 0; j < 2; j++) {
           for (var k:int = 0; k < 2; k++) {
-            var gridX:int = (list[i].x + j * list[j].width) / mapRef.tileSize;
-            var gridY:int = (list[i].y + k * list[k].width) / mapRef.tileSize;
+            // HACK is so a tile at (0, 0) with w/h (25, 25) won't appear in 4 different grids
+            var gridX:int = (list[i].x + j * (list[j].width - HACK)) / mapRef.tileSize;
+            var gridY:int = (list[i].y + k * (list[k].width - HACK)) / mapRef.tileSize;
 
             if (gridX < 0 || gridX >= mapRef.widthInTiles || gridY < 0 || gridY >= mapRef.heightInTiles) {
+              continue;
+            }
+
+            if (grid[gridX][gridY].contains(list[i])) {
               continue;
             }
 
@@ -123,7 +129,7 @@
       var list:EntityList = entities.clone();
       var i:int = 0;
 
-      // Move every non-static enemy.
+      // Move every non-static entity.
       for (i = 0; i < list.length; i++) {
         if (list[i].isStatic) continue;
 
@@ -166,13 +172,19 @@
         for (var j:int = 0; j < mapRef.heightInTiles; j++) {
           if (grid[i][j].length < 2) continue;
 
-          trace(grid[i][j].length);
+          //trace(grid[i][j]);
+          //trace("===")
 
           var contents:Array = grid[i][j];
 
           for (var k:int = 0; k < contents.length; k++) {
             if (contents[k].isStatic) continue;
             if (contents[k].reset) continue;
+
+            if (contents[k] is Character) {
+              trace("HUH")
+              trace(contents[k])
+            }
 
             contents[k].x -= contents[k].oldVel.x;
             contents[k].y -= contents[k].oldVel.y;

@@ -75,6 +75,9 @@ package {
       return ++uid;
     }
 
+    // This function is currently broken if val is an object, and there's no
+    // easy way to fix it.
+
     //public static function make2DArrayVal(width:int, height:int, val:*):Array {
     //  return make2DArrayFn(width, height, function():* { return val; });
     //}
