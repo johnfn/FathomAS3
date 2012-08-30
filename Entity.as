@@ -26,6 +26,8 @@
 
     private static var cachedAssets:Dictionary = new Dictionary();
 
+    private var mcClass:*;
+
     protected var pixels:Bitmap = new Bitmap();
 
     protected var spritesheet:Array = []
@@ -190,12 +192,12 @@
     }
 
     // Keep mcClass constant and give this a less cumbersome name.
-    public function updateExternalMC(mcClass:*, spritesheet:Array = null, middleX:Boolean = false):Entity {
+    public function updateExternalMC(spritesheet:Array, middleX:Boolean = false):Entity {
       var bAsset:BitmapAsset;
 
       var count:int = 0;
 
-      bAsset = new mcClass(); //cachedAssets[mcClass]
+      bAsset = new mcClass();
 
       Util.assert(entityChildren.length == 0);
 
@@ -234,6 +236,7 @@
 
     public function fromExternalMC(mcClass:*, spritesheet:Array = null, middleX:Boolean = false):Entity {
       this.usesExternalMC = true;
+      this.mcClass = mcClass;
 
       var className:String = Util.className(mcClass);
 
@@ -247,7 +250,7 @@
         Util.assert(false);
         //this._mc = mcClass;
       } else {
-        updateExternalMC(mcClass, spritesheet, middleX);
+        updateExternalMC(spritesheet, middleX);
       }
 
       width  = this.width  + wiggle * 2;
