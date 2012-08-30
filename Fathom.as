@@ -91,61 +91,68 @@
       container.removeEventListener(Event.ENTER_FRAME, update);
     }
 
-    private static function makeGrid:Array {
-      var grid:Array = Util.make2DArrayVal(mapRef.widthInTiles, mapRef.heightInTiles, []);
+    // TODO you should be able to flag things as no collision (i.e. particles)
+    private static function makeGrid():Array {
+      var grid:Array = Util.make2DArrayFn(mapRef.widthInTiles, mapRef.heightInTiles, function():Array { return []; });
+      var list:EntityList = entities.clone();
 
-      for (i = 0; i < list.length; i++) {
+      for (var i:int = 0; i < list.length; i++) {
         for (var j:int = 0; j < 2; j++) {
           for (var k:int = 0; k < 2; k++) {
             var gridX:int = (list[i].x + j * list[j].width) / mapRef.tileSize;
             var gridY:int = (list[i].y + k * list[k].width) / mapRef.tileSize;
 
-            if (gridX < 0 || gridX >= mapRef.widthInTiles || gridY < 0 || gridY >= mapRef.heightInTiles);
+            if (gridX < 0 || gridX >= mapRef.widthInTiles || gridY < 0 || gridY >= mapRef.heightInTiles) {
+              continue;
+            }
 
             grid[gridX][gridY].push(list[i]);
           }
         }
       }
+
+      return grid;
     }
 
+    // TODO: These should be static functions on MovingEntity.
 
     // A fast way to find collisions is to subdivide the map into a grid and
     // see if any individual square of the grid contains more than one item in
     // it.
-
     private static function moveEverything():void {
       var list:EntityList = entities.clone();
       var i:int = 0;
 
       // Move every non-static enemy.
       for (i = 0; i < list.length; i++) {
-        if (!list[i].isStatic) {
-          list[i].x += list[i].vel.x;
-          list[i].y += list[i].vel.y;
-        }
+        if (list[i].isStatic) continue;
+
+        list[i].x += list[i].vel.x;
+        list[i].y += list[i].vel.y;
+
+        // TODO these should be private.
+        list[i].oldVel = list[i].vel;
+        list[i].reset = false;
       }
 
-      var grid = makeGrid();
+      var grid:Array = makeGrid();
 
       // Set appropriate collision flags.
-
-      // TODO Kinda just think we should set "touched" and let the user do the
-      // rest of the work.
 
       for (i = 0; i < mapRef.widthInTiles; i++) {
         for (var j:int = 0; j < mapRef.widthInTiles; j++) {
           var contents:Array = grid[i][j];
 
           for (var k:int = 0; k < contents.length; k++) {
-            if (!contents[k].isStatic) {
-              var entity:MovingEntity = contents[k] as MovingEntity;
+            if (contents[k].isStatic) continue;
 
-              if (entity.vel.x < 0) entity.touchingLeft = true;
-              if (entity.vel.x > 0) entity.touchingRight = true;
+            var entity:MovingEntity = contents[k] as MovingEntity;
 
-              if (entity.vel.y < 0) entity.touchingTop = true;
-              if (entity.vel.y > 0) entity.touchingBottom = true;
-            }
+            if (entity.vel.x < 0) entity.touchingLeft = true;
+            if (entity.vel.x > 0) entity.touchingRight = true;
+
+            if (entity.vel.y < 0) entity.touchingTop = true;
+            if (entity.vel.y > 0) entity.touchingBottom = true;
           }
         }
       }
@@ -153,11 +160,24 @@
 
     private static function resolveCollisions():void {
       var i:int = 0;
+      var grid:Array = makeGrid();
 
       for (i = 0; i < mapRef.widthInTiles; i++) {
-        var (var j:int = 0; j < mapRef.heightInTiles; j++) {
-          if (grid[i][j].length > 1) {
-            // collision
+        for (var j:int = 0; j < mapRef.heightInTiles; j++) {
+          if (grid[i][j].length < 2) continue;
+
+          trace(grid[i][j].length);
+
+          var contents:Array = grid[i][j];
+
+          for (var k:int = 0; k < contents.length; k++) {
+            if (contents[k].isStatic) continue;
+            if (contents[k].reset) continue;
+
+            contents[k].x -= contents[k].oldVel.x;
+            contents[k].y -= contents[k].oldVel.y;
+
+            contents[k].reset = true;
           }
         }
       }
@@ -170,6 +190,8 @@
 
       // TODO: entities == Fathom.container.children
       fpsTxt.text = fpsFn();
+
+      moveEverything();
 
       for (var i:int = 0; i < list.length; i++) {
         var e:Entity = list[i];
@@ -195,6 +217,8 @@
       if (mapRef.modes().contains(currentMode)) {
         mapRef.update();
       }
+
+      resolveCollisions();
 
       camera.update();
       Util.dealWithVariableKeyRepeatRates();

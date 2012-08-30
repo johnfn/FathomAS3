@@ -75,15 +75,15 @@ package {
       return ++uid;
     }
 
-    public static function make2DArrayVal(width:int, height:int, val:*):Array {
-      return make2DArrayFn(width, height, function():* { return val; });
-    }
+    //public static function make2DArrayVal(width:int, height:int, val:*):Array {
+    //  return make2DArrayFn(width, height, function():* { return val; });
+    //}
 
     public static function make2DArrayFn(width:int, height:int, fn:Function):Array {
-      var result:array = new array(width);
+      var result:Array = new Array(width);
 
       for (var i:int = 0; i < width; i++) {
-        result[i] = new array(height);
+        result[i] = new Array(height);
         for (var j:int = 0; j < height; j++) {
           result[i][j] = fn(i, j);
         }

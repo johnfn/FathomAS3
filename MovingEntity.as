@@ -9,7 +9,8 @@ package {
   public class MovingEntity extends Entity {
     /* Velocity of the MovingEntity. */
     public var vel:Vec = new Vec(0, 0);
-    public var resetVec:Vec = new Vec(0, 0);
+    public var oldVel:Vec = new Vec(0, 0);
+    public var reset:Boolean = false;
 
     public var xColl:EntityList = new EntityList([]);
     public var yColl:EntityList = new EntityList([]);
@@ -25,11 +26,12 @@ package {
     function MovingEntity(x:Number = 0, y:Number = 0, width:Number = 20, height:Number = -1):void {
       super(x, y, width, height);
       _isStatic = false;
-
-      on("post-update", Hooks.resolveCollisions());
     }
 
     public override function update(e:EntityList):void {
+      this.oldVel = this.vel.clone();
+      this.reset = false;
+
       super.update(e);
     }
 
@@ -48,16 +50,5 @@ package {
 
       return this;
     }
-
-    /*
-    TODO: Think this through.
-    public override function collides(other:Entity):Boolean {
-      if (other is MovingEntity && !other.equals(this)) {
-        return super.collides(other);
-      }
-
-      return collisionList.indexOf(other) != -1;
-    }
-    */
   }
 }
