@@ -94,7 +94,7 @@
     // TODO you should be able to flag things as no collision (i.e. particles)
     private static function makeGrid():Array {
       var grid:Array = Util.make2DArrayFn(mapRef.widthInTiles, mapRef.heightInTiles, function():Array { return []; });
-      var list:EntityList = entities.clone();
+      var list:EntityList = entities.get("!nonblocking");
       var HACK:int = 1;
 
       for (var i:int = 0; i < list.length; i++) {
@@ -120,13 +120,36 @@
       return grid;
     }
 
+    /*
+    private static function getInGrid(e:Entity, g:Array):Array {
+      var result:Array = [];
+
+      for (var j:int = 0; j < 2; j++) {
+        for (var k:int = 0; k < 2; k++) {
+          // HACK is so a tile at (0, 0) with w/h (25, 25) won't appear in 4 different grids
+          var gridX:int = (list[i].x + j * (list[j].width - HACK)) / mapRef.tileSize;
+          var gridY:int = (list[i].y + k * (list[k].width - HACK)) / mapRef.tileSize;
+
+          if (gridX < 0 || gridX >= mapRef.widthInTiles || gridY < 0 || gridY >= mapRef.heightInTiles) {
+            continue;
+          }
+
+          result.concat(grid[gridX][gridY]);
+          result.remove(e);
+        }
+      }
+
+      return result;
+    }
+    */
+
     // TODO: These should be static functions on MovingEntity.
 
     // A fast way to find collisions is to subdivide the map into a grid and
     // see if any individual square of the grid contains more than one item in
     // it.
     private static function moveEverything():void {
-      var list:EntityList = entities.clone();
+      var list:EntityList = entities.get("!nonblocking");
       var i:int = 0;
 
       // Move every non-static entity.
@@ -187,7 +210,7 @@
             entity.y += entity.vel.y;
 
             if (entity.currentlyBlocking().length > 0 && (entity.yColl.length == 0 && entity.xColl.length == 0)) {
-              // We are currently on a corner. Our original plan of attack won't work unless we favor one direction over the other. We choose to favor the x direction.
+              // We are currently on a corner. Our original plan of attack won't work unless we favor one direction over the other. We arbitrarily choose to favor the x direction.
               entity.y -= entity.vel.y;
               entity.vel.y = 0;
             }
@@ -195,9 +218,6 @@
         }
       }
     }
-
-    // The reason he moves so slow is becuz down collisions are treated as
-    // right collisions.
 
     private static function resolveCollisions():void {
       var i:int = 0;
@@ -236,7 +256,7 @@
     private static function update(event:Event):void {
       // We copy the entity list so that it doesn't change while we're
       // iterating through it.
-      var list:EntityList = entities.clone();
+      var list:EntityList = entities.get();
 
       // TODO: entities == Fathom.container.children
       fpsTxt.text = fpsFn();
