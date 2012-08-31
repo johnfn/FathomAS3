@@ -151,6 +151,8 @@
 
       // Set appropriate collision flags.
 
+      // TODO: Need to rewrite MovingEntity.touching().
+
       for (i = 0; i < mapRef.widthInTiles; i++) {
         for (var j:int = 0; j < mapRef.widthInTiles; j++) {
           var contents:Array = grid[i][j];
@@ -162,17 +164,40 @@
 
             var entity:MovingEntity = contents[k] as MovingEntity;
 
-            //TODO: this actually doesn't work at all.
+            entity.x -= entity.vel.x;
+            entity.y -= entity.vel.y;
 
-            if (entity.vel.x < 0) entity.touchingLeft = true;
-            if (entity.vel.x > 0) entity.touchingRight = true;
+            entity.x += entity.vel.x;
+            entity.xColl = entity.currentlyBlocking();
+            if (entity.xColl.length > 0) {
+              if (entity.vel.x < 0) entity.touchingLeft = true;
+              if (entity.vel.x > 0) entity.touchingRight = true;
+            }
+            entity.x -= entity.vel.x;
 
-            if (entity.vel.y < 0) entity.touchingTop = true;
-            if (entity.vel.y > 0) entity.touchingBottom = true;
+            entity.y += entity.vel.y;
+            entity.yColl = entity.currentlyBlocking();
+            if (entity.yColl.length > 0) {
+              if (entity.vel.y < 0) entity.touchingTop = true;
+              if (entity.vel.y > 0) entity.touchingBottom = true;
+            }
+            entity.y -= entity.vel.y;
+
+            entity.x += entity.vel.x;
+            entity.y += entity.vel.y;
+
+            if (entity.currentlyBlocking().length > 0 && (entity.yColl.length == 0 && entity.xColl.length == 0)) {
+              // We are currently on a corner. Our original plan of attack won't work unless we favor one direction over the other. We choose to favor the x direction.
+              entity.y -= entity.vel.y;
+              entity.vel.y = 0;
+            }
           }
         }
       }
     }
+
+    // The reason he moves so slow is becuz down collisions are treated as
+    // right collisions.
 
     private static function resolveCollisions():void {
       var i:int = 0;
@@ -189,17 +214,20 @@
 
           for (var k:int = 0; k < contents.length; k++) {
             if (contents[k].isStatic) continue;
-            if (contents[k].reset)    continue;
 
-            if (contents[k] is Character) {
+            var entity:MovingEntity = contents[k] as MovingEntity;
+
+            if (entity.reset) continue;
+
+            if (entity is Character) {
               trace("HUH")
               trace(contents)
             }
 
-            contents[k].x -= contents[k].oldVel.x;
-            contents[k].y -= contents[k].oldVel.y;
+            if (entity.touchingLeft || entity.touchingRight) entity.x -= entity.oldVel.x;
+            if (entity.touchingTop || entity.touchingBottom) entity.y -= entity.oldVel.y;
 
-            contents[k].reset = true;
+            entity.reset = true;
           }
         }
       }
