@@ -120,28 +120,27 @@
       return grid;
     }
 
-    /*
-    private static function getInGrid(e:Entity, g:Array):Array {
+    private static function getInGrid(e:Entity, g:Array):EntityList {
       var result:Array = [];
+      var HACK:int = 1;
 
       for (var j:int = 0; j < 2; j++) {
         for (var k:int = 0; k < 2; k++) {
           // HACK is so a tile at (0, 0) with w/h (25, 25) won't appear in 4 different grids
-          var gridX:int = (list[i].x + j * (list[j].width - HACK)) / mapRef.tileSize;
-          var gridY:int = (list[i].y + k * (list[k].width - HACK)) / mapRef.tileSize;
+          var gridX:int = (e.x + j * (e.width - HACK)) / mapRef.tileSize;
+          var gridY:int = (e.y + k * (e.width - HACK)) / mapRef.tileSize;
 
           if (gridX < 0 || gridX >= mapRef.widthInTiles || gridY < 0 || gridY >= mapRef.heightInTiles) {
             continue;
           }
 
-          result.concat(grid[gridX][gridY]);
+          result.concat(g[gridX][gridY]);
           result.remove(e);
         }
       }
 
-      return result;
+      return new EntityList(result);
     }
-    */
 
     // TODO: These should be static functions on MovingEntity.
 
@@ -151,6 +150,8 @@
     private static function moveEverything():void {
       var list:EntityList = entities.get("!nonblocking");
       var i:int = 0;
+
+      trace("begin");
 
       // Move every non-static entity.
       for (i = 0; i < list.length; i++) {
@@ -163,11 +164,13 @@
         list[i].oldVel = list[i].vel.clone();
         list[i].reset = false;
 
+        list[i].flagsSet = false;
+
         list[i].touchingLeft = false;
         list[i].touchingRight = false;
-
         list[i].touchingTop = false;
         list[i].touchingBottom = false;
+
       }
 
       var grid:Array = makeGrid();
@@ -187,11 +190,14 @@
 
             var entity:MovingEntity = contents[k] as MovingEntity;
 
+            if (entity.flagsSet) continue;
+            entity.flagsSet = true;
+
             entity.x -= entity.vel.x;
             entity.y -= entity.vel.y;
 
             entity.x += entity.vel.x;
-            entity.xColl = entity.currentlyBlocking();
+            entity.xColl = getInGrid(entity, grid); //entity.currentlyBlocking();
             if (entity.xColl.length > 0) {
               if (entity.vel.x < 0) entity.touchingLeft = true;
               if (entity.vel.x > 0) entity.touchingRight = true;
@@ -199,7 +205,7 @@
             entity.x -= entity.vel.x;
 
             entity.y += entity.vel.y;
-            entity.yColl = entity.currentlyBlocking();
+            entity.yColl = getInGrid(entity, grid); //entity.currentlyBlocking();
             if (entity.yColl.length > 0) {
               if (entity.vel.y < 0) entity.touchingTop = true;
               if (entity.vel.y > 0) entity.touchingBottom = true;
@@ -217,6 +223,8 @@
           }
         }
       }
+
+      trace("end")
     }
 
     private static function resolveCollisions():void {
@@ -240,8 +248,8 @@
             if (entity.reset) continue;
 
             if (entity is Character) {
-              trace("HUH")
-              trace(contents)
+              trace("bottom: ", entity.touchingBottom);
+              trace("left: ", entity.touchingLeft);
             }
 
             if (entity.touchingLeft || entity.touchingRight) entity.x -= entity.oldVel.x;

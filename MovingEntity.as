@@ -15,6 +15,8 @@ package {
     public var xColl:EntityList = new EntityList([]);
     public var yColl:EntityList = new EntityList([]);
 
+    public var flagsSet:Boolean       = false;
+
     public var touchingLeft:Boolean   = false;
     public var touchingRight:Boolean  = false;
     public var touchingTop:Boolean    = false;
