@@ -101,6 +101,10 @@
           var gridX:int = (e.x + j * (e.width - HACK)) / mapRef.tileSize;
           var gridY:int = (e.y + k * (e.width - HACK)) / mapRef.tileSize;
 
+          if (gridX < 0 || gridX >= mapRef.widthInTiles || gridY < 0 || gridY >= mapRef.heightInTiles) {
+            continue;
+          }
+
           result.push(new Vec(gridX, gridY));
         }
       }
