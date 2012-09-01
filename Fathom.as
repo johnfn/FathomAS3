@@ -164,8 +164,8 @@
 
         // TODO these should be private.
         list[i].oldVel = list[i].vel.clone();
-        list[i].reset = false;
 
+        list[i].reset = false;
         list[i].flagsSet = false;
 
         list[i].touchingLeft = false;
@@ -180,6 +180,8 @@
 
       // TODO: Need to rewrite MovingEntity.touching().
 
+      // TODO: I feel like looping through the grid is strictly worse than looping
+      // through the entities of the grid.
       for (i = 0; i < mapRef.widthInTiles; i++) {
         for (var j:int = 0; j < mapRef.widthInTiles; j++) {
           var contents:Array = grid[i][j];
@@ -198,7 +200,7 @@
             entity.y -= entity.vel.y;
 
             entity.x += entity.vel.x;
-            entity.xColl = getInGrid(entity, grid); //entity.currentlyBlocking();
+            entity.xColl = getInGrid(entity, grid);
             if (entity.xColl.length > 0) {
               if (entity.vel.x < 0) entity.touchingLeft = true;
               if (entity.vel.x > 0) entity.touchingRight = true;
@@ -206,7 +208,7 @@
             entity.x -= entity.vel.x;
 
             entity.y += entity.vel.y;
-            entity.yColl = getInGrid(entity, grid); //entity.currentlyBlocking();
+            entity.yColl = getInGrid(entity, grid);
             if (entity.yColl.length > 0) {
               if (entity.vel.y < 0) entity.touchingTop = true;
               if (entity.vel.y > 0) entity.touchingBottom = true;
@@ -216,11 +218,12 @@
             entity.x += entity.vel.x;
             entity.y += entity.vel.y;
 
-            if (entity.currentlyBlocking().length > 0 && (entity.yColl.length == 0 && entity.xColl.length == 0)) {
-
+            if (getInGrid(entity, grid).length > 0 && (entity.yColl.length == 0 && entity.xColl.length == 0)) {
               // We are currently on a corner. Our original plan of attack
               // won't work unless we favor one direction over the other. We
               // arbitrarily choose to favor the x direction.
+
+              // Literally a corner case! Ha! Ha!
 
               entity.y -= entity.vel.y;
               entity.vel.y = 0;
@@ -244,17 +247,41 @@
             if (contents[k].isStatic) continue;
 
             var entity:MovingEntity = contents[k] as MovingEntity;
+            var NUDGE:Number = 0.01;
 
             if (entity.reset) continue;
 
-            if (entity is Character) {
-              trace("bottom: ", entity.touchingBottom);
-              trace("left: ", entity.touchingLeft);
-              trace(entity);
+            if (entity.touchingRight) {
+              var rightest:int = 0;
+              for (i = 0; i < entity.xColl.length; i++) {
+                rightest = Math.max(rightest, entity.xColl[i].x - entity.width - NUDGE);
+              }
+
+              entity.x = rightest;
+            } else if (entity.touchingLeft) {
+              var leftist:int = 9999;
+              for (i = 0; i < entity.xColl.length; i++) {
+                leftist = Math.min(leftist, entity.xColl[i].x + entity.xColl[i].width + NUDGE);
+              }
+
+              entity.x = leftist;
             }
 
-            if (entity.touchingLeft || entity.touchingRight) entity.x -= entity.oldVel.x;
-            if (entity.touchingTop || entity.touchingBottom) entity.y -= entity.oldVel.y;
+            if (entity.touchingBottom) {
+              var highest:int = 9999;
+              for (i = 0; i < entity.yColl.length; i++) {
+                highest = Math.min(highest, entity.yColl[i].y - entity.height - NUDGE);
+              }
+
+              entity.y = highest;
+            } else if (entity.touchingTop) {
+              var lowest:int = 0;
+              for (i = 0; i < entity.yColl.length; i++) {
+                lowest = Math.max(lowest, entity.yColl[i].y + entity.yColl[i].height + NUDGE);
+              }
+
+              entity.y = lowest;
+            }
 
             entity.reset = true;
           }
