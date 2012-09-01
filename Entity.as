@@ -72,6 +72,11 @@
       this.width = width;
 
       //TODO: I had this idea about how parents should bubble down events to children.
+
+      // All Entities are added to the container, except the container itself, which
+      // has to be bootstrapped onto the Stage. If Fathom.container does not exist, `this`
+      // must be the container.
+
       if (Fathom.container) {
         this.rememberedParent = Fathom.container;
         addToFathom();
@@ -79,11 +84,7 @@
 
       // Bypass our overridden addChild method.
       super.addChild(pixels);
-
-      // All Entities are added to the container, except the container itself, which
-      // has to be bootstrapped onto the Stage. If Fathom.container does not exist, `this`
-      // must be the container.
-    }
+   }
 
     /*
     public function set absX(val:Number):void {
@@ -284,6 +285,14 @@
     // for instance, I can do something like this:
     //
     // new Entity().fromExternalMC("Explosion").ignoreCollisions().disappearAfter(20);
+
+    public function debugDraw():Entity {
+      graphics.beginFill(0xFF0000);
+      graphics.drawRect(0, 0, this.width, this.height);
+      graphics.endFill();
+
+      return this;
+    }
 
     public function disappearAfter(frames:int):Entity {
       var timeLeft:int = frames;

@@ -101,12 +101,19 @@
       // different slots. The width of the entity would have to be greater
       // than 25 for us to do that. Or the x location would have to be > 0.
 
+      var endSlotX:int = (e.x + e.width) / GRIDSIZE;
+      if ((e.x + e.width) % GRIDSIZE == 0) endSlotX--;
 
-      for (var slotX:int = (e.x / mapRef.tileSize); slotX < Util.divRoundUp(e.x, GRIDSIZE); slotX++) {
-        for (var slotY:int = (e.y / mapRef.tileSize); slotY < Util.divRoundUp(e.y, GRIDSIZE); slotY++) {
+      var endSlotY:int = (e.y + e.height) / GRIDSIZE;
+      if ((e.y + e.height) % GRIDSIZE == 0) endSlotY--;
+
+      for (var slotX:int = (e.x / GRIDSIZE); slotX <= endSlotX; slotX++) {
+        for (var slotY:int = (e.y / GRIDSIZE); slotY <= endSlotY; slotY++) {
           if (slotX < 0 || slotX >= mapRef.widthInTiles || slotY < 0 || slotY >= mapRef.heightInTiles) {
             continue;
           }
+
+          if (e is Character) trace("sx: ", slotX, " sy: ", slotY);
 
           result.push(new Vec(slotX, slotY));
         }
