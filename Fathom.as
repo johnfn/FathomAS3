@@ -92,7 +92,7 @@
     }
 
     private static function getCoords(e:Entity):Array {
-      var HACK:int = 1;
+      var HACK:int = 0;
       var result:Array = [];
 
       for (var j:int = 0; j < 2; j++) {
@@ -235,7 +235,6 @@
 
     private static function resolveCollisions():void {
       var i:int = 0;
-      var grid:Array = makeGrid();
       var list:EntityList = entities.get();
 
       for (i = 0; i < list.length; i++) {
@@ -243,7 +242,7 @@
 
         var entity:MovingEntity = list[i] as MovingEntity;
 
-        var NUDGE:Number = 0.01;
+        var NUDGE:Number = 1;
 
         if (entity.reset) continue;
 
@@ -270,6 +269,7 @@
           }
 
           entity.y = highest;
+          trace("set: ", entity.y);
         } else if (entity.touchingTop) {
           var lowest:int = 0;
           for (i = 0; i < entity.yColl.length; i++) {
