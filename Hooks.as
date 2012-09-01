@@ -105,48 +105,6 @@ package {
       }
     }
 
-    public static function resolveCollisions():Function {
-      return function():void {
-        var i:int;
-        var NUDGE:Number = 0.01;
-
-        if (this.xColl.length == 0 && this.yColl.length == 0) return;
-
-        if (this.touchingRight) {
-          var rightest:int = 0;
-          for (i = 0; i < this.xColl.length; i++) {
-            rightest = Math.max(rightest, this.xColl[i].x - this.width - NUDGE);
-          }
-
-          this.x = rightest;
-        } else if (this.touchingLeft) {
-          var leftist:int = 9999;
-          for (i = 0; i < this.xColl.length; i++) {
-            leftist = Math.min(leftist, this.xColl[i].x + this.xColl[i].width + NUDGE);
-          }
-
-          this.x = leftist;
-        }
-
-        if (this.touchingBottom) {
-          // Place this on top of the highest item we were touching.
-          var highest:int = 9999;
-          for (i = 0; i < this.yColl.length; i++) {
-            highest = Math.min(highest, this.yColl[i].y - this.height - NUDGE);
-          }
-
-          this.y = highest;
-        } else if (this.touchingTop) {
-          var lowest:int = 0;
-          for (i = 0; i < this.yColl.length; i++) {
-            lowest = Math.max(lowest, this.yColl[i].y + this.yColl[i].height + NUDGE);
-          }
-
-          this.y = lowest;
-        }
-      }
-    }
-
     public static function clearCollisions(m:MovingEntity):void {
       m.xColl = new EntityList([]);
       m.yColl = new EntityList([]);
@@ -158,57 +116,6 @@ package {
 
       if (entity.touchingTop) entity.vel.y = Math.max(entity.vel.y, 0);
       if (entity.touchingBottom) entity.vel.y = Math.min(entity.vel.y, 0);
-    }
-
-    /* In the event of a collision, this function will leave you stuck
-       in whatever you collided into. You should call resolveCollisions()
-       in order to fix this.
-
-       The reason that we do this is that it allows us to order our emits so that
-       we have an explicit window where we can perform collision checks.
-
-       TODO: I think that said window should just be the update() function.
-       TODO: platformerLike takes vel as an implicit argument.
-       I should think about whether I like that.
-       */
-    public static function platformerLike(entity:MovingEntity):Function {
-      return function():void {
-        var normalizedVel:Vec = entity.vel.clone().normalize();
-        var steps:int = entity.vel.clone().divide(normalizedVel).NaNsTo(0).max();
-        var that:* = entity;
-
-        // Find which sides we're touching.
-
-        entity.touchingLeft   = false;
-        entity.touchingRight  = false;
-        entity.touchingTop    = false;
-        entity.touchingBottom = false;
-
-        entity.x += entity.vel.x;
-        entity.xColl = entity.currentlyBlocking();
-        if (entity.xColl.length > 0) {
-          if (entity.vel.x < 0) entity.touchingLeft = true;
-          if (entity.vel.x > 0) entity.touchingRight = true;
-        }
-        entity.x -= entity.vel.x;
-
-        entity.y += entity.vel.y;
-        entity.yColl = entity.currentlyBlocking();
-        if (entity.yColl.length > 0) {
-          if (entity.vel.y < 0) entity.touchingTop = true;
-          if (entity.vel.y > 0) entity.touchingBottom = true;
-        }
-        entity.y -= entity.vel.y;
-
-        entity.x += entity.vel.x;
-        entity.y += entity.vel.y;
-
-        if (entity.currentlyBlocking().length > 0 && (entity.yColl.length == 0 && entity.xColl.length == 0)) {
-          // We are currently on a corner. Our original plan of attack won't work unless we favor one direction over the other. We choose to favor the x direction.
-          entity.y -= entity.vel.y;
-          entity.vel.y = 0;
-        }
-      }
     }
 
     public static function fpsCounter():Function {
