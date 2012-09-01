@@ -44,6 +44,12 @@ package {
       return x;
     }
 
+    // Divide a by b, always rounding up unless a % b == 0.
+    // Looks simple, doesn't it? But see: http://stackoverflow.com/questions/921180/how-can-i-ensure-that-a-division-of-integers-is-always-rounded-up
+    public static function divRoundUp(a:Number, b:Number):Number {
+      return (a + b - 1) / b;
+    }
+
     public static function sign(x:Number):Number {
       if (x > 0) return  1;
       if (x < 0) return -1;

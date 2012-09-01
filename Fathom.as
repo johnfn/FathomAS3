@@ -94,18 +94,21 @@
     private static function getCoords(e:Entity):Array {
       var HACK:int = 0;
       var result:Array = [];
+      var GRIDSIZE:int = 25;
 
-      for (var j:int = 0; j < 2; j++) {
-        for (var k:int = 0; k < 2; k++) {
-          // HACK is so a tile at (0, 0) with w/h (25, 25) won't appear in 4 different grids
-          var gridX:int = (e.x + j * (e.width  - HACK)) / mapRef.tileSize;
-          var gridY:int = (e.y + k * (e.height - HACK)) / mapRef.tileSize;
+      // This is subtle. If our gridsize is 25 and we're trying to hash an
+      // entity with width 25 at x location 0, we don't want to put it in two
+      // different slots. The width of the entity would have to be greater
+      // than 25 for us to do that. Or the x location would have to be > 0.
 
-          if (gridX < 0 || gridX >= mapRef.widthInTiles || gridY < 0 || gridY >= mapRef.heightInTiles) {
+
+      for (var slotX:int = (e.x / mapRef.tileSize); slotX < Util.divRoundUp(e.x, GRIDSIZE); slotX++) {
+        for (var slotY:int = (e.y / mapRef.tileSize); slotY < Util.divRoundUp(e.y, GRIDSIZE); slotY++) {
+          if (slotX < 0 || slotX >= mapRef.widthInTiles || slotY < 0 || slotY >= mapRef.heightInTiles) {
             continue;
           }
 
-          result.push(new Vec(gridX, gridY));
+          result.push(new Vec(slotX, slotY));
         }
       }
 
