@@ -98,8 +98,8 @@
       for (var j:int = 0; j < 2; j++) {
         for (var k:int = 0; k < 2; k++) {
           // HACK is so a tile at (0, 0) with w/h (25, 25) won't appear in 4 different grids
-          var gridX:int = (e.x + j * (e.width - HACK)) / mapRef.tileSize;
-          var gridY:int = (e.y + k * (e.width - HACK)) / mapRef.tileSize;
+          var gridX:int = (e.x + j * (e.width  - HACK)) / mapRef.tileSize;
+          var gridY:int = (e.y + k * (e.height - HACK)) / mapRef.tileSize;
 
           if (gridX < 0 || gridX >= mapRef.widthInTiles || gridY < 0 || gridY >= mapRef.heightInTiles) {
             continue;
@@ -144,7 +144,6 @@
       }
 
       return new EntityList(result);
-      //return new EntityList([]);
     }
 
     // TODO: These should be static functions on MovingEntity.
@@ -217,11 +216,15 @@
             entity.x += entity.vel.x;
             entity.y += entity.vel.y;
 
-            /*if (entity.currentlyBlocking().length > 0 && (entity.yColl.length == 0 && entity.xColl.length == 0)) {
-              // We are currently on a corner. Our original plan of attack won't work unless we favor one direction over the other. We arbitrarily choose to favor the x direction.
+            if (entity.currentlyBlocking().length > 0 && (entity.yColl.length == 0 && entity.xColl.length == 0)) {
+
+              // We are currently on a corner. Our original plan of attack
+              // won't work unless we favor one direction over the other. We
+              // arbitrarily choose to favor the x direction.
+
               entity.y -= entity.vel.y;
               entity.vel.y = 0;
-            }*/
+            }
           }
         }
       }
@@ -235,9 +238,6 @@
         for (var j:int = 0; j < mapRef.heightInTiles; j++) {
           if (grid[i][j].length < 2) continue;
 
-          //trace(grid[i][j]);
-          //trace("===")
-
           var contents:Array = grid[i][j];
 
           for (var k:int = 0; k < contents.length; k++) {
@@ -250,11 +250,8 @@
             if (entity is Character) {
               trace("bottom: ", entity.touchingBottom);
               trace("left: ", entity.touchingLeft);
+              trace(entity);
             }
-
-            trace(entity.oldVel);
-            trace(entity.y);
-            trace(entity.height)
 
             if (entity.touchingLeft || entity.touchingRight) entity.x -= entity.oldVel.x;
             if (entity.touchingTop || entity.touchingBottom) entity.y -= entity.oldVel.y;
