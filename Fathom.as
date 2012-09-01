@@ -91,6 +91,23 @@
       container.removeEventListener(Event.ENTER_FRAME, update);
     }
 
+    private static function getCoords(e:Entity):Array {
+      var HACK:int = 1;
+      var result:Array = [];
+
+      for (var j:int = 0; j < 2; j++) {
+        for (var k:int = 0; k < 2; k++) {
+          // HACK is so a tile at (0, 0) with w/h (25, 25) won't appear in 4 different grids
+          var gridX:int = (e.x + j * (e.width - HACK)) / mapRef.tileSize;
+          var gridY:int = (e.y + k * (e.width - HACK)) / mapRef.tileSize;
+
+          result.push(new Vec(gridX, gridY));
+        }
+      }
+
+      return result;
+    }
+
     // TODO you should be able to flag things as no collision (i.e. particles)
     private static function makeGrid():Array {
       var grid:Array = Util.make2DArrayFn(mapRef.widthInTiles, mapRef.heightInTiles, function():Array { return []; });
@@ -98,22 +115,10 @@
       var HACK:int = 1;
 
       for (var i:int = 0; i < list.length; i++) {
-        for (var j:int = 0; j < 2; j++) {
-          for (var k:int = 0; k < 2; k++) {
-            // HACK is so a tile at (0, 0) with w/h (25, 25) won't appear in 4 different grids
-            var gridX:int = (list[i].x + j * (list[j].width - HACK)) / mapRef.tileSize;
-            var gridY:int = (list[i].y + k * (list[k].width - HACK)) / mapRef.tileSize;
+        var coords:Array = getCoords(list[i]);
 
-            if (gridX < 0 || gridX >= mapRef.widthInTiles || gridY < 0 || gridY >= mapRef.heightInTiles) {
-              continue;
-            }
-
-            if (grid[gridX][gridY].contains(list[i])) {
-              continue;
-            }
-
-            grid[gridX][gridY].push(list[i]);
-          }
+        for (var j:int = 0; j < coords.length; j++) {
+          grid[coords[j].x][coords[j].y].push(list[i]);
         }
       }
 
@@ -122,24 +127,20 @@
 
     private static function getInGrid(e:Entity, g:Array):EntityList {
       var result:Array = [];
-      var HACK:int = 1;
+      var coords:Array = getCoords(e);
 
-      for (var j:int = 0; j < 2; j++) {
-        for (var k:int = 0; k < 2; k++) {
-          // HACK is so a tile at (0, 0) with w/h (25, 25) won't appear in 4 different grids
-          var gridX:int = (e.x + j * (e.width - HACK)) / mapRef.tileSize;
-          var gridY:int = (e.y + k * (e.width - HACK)) / mapRef.tileSize;
+      for (var i:int = 0; i < coords.length; i++) {
+        var arr:Array = g[coords[i].x][coords[i].y];
 
-          if (gridX < 0 || gridX >= mapRef.widthInTiles || gridY < 0 || gridY >= mapRef.heightInTiles) {
-            continue;
-          }
-
-          result.concat(g[gridX][gridY]);
-          result.remove(e);
+        for (var l:int = 0; l < arr.length; l++) {
+          result.push(arr[l]);
         }
+
+        result.remove(e);
       }
 
       return new EntityList(result);
+      //return new EntityList([]);
     }
 
     // TODO: These should be static functions on MovingEntity.
@@ -150,8 +151,6 @@
     private static function moveEverything():void {
       var list:EntityList = entities.get("!nonblocking");
       var i:int = 0;
-
-      trace("begin");
 
       // Move every non-static entity.
       for (i = 0; i < list.length; i++) {
@@ -170,7 +169,6 @@
         list[i].touchingRight = false;
         list[i].touchingTop = false;
         list[i].touchingBottom = false;
-
       }
 
       var grid:Array = makeGrid();
@@ -215,16 +213,14 @@
             entity.x += entity.vel.x;
             entity.y += entity.vel.y;
 
-            if (entity.currentlyBlocking().length > 0 && (entity.yColl.length == 0 && entity.xColl.length == 0)) {
+            /*if (entity.currentlyBlocking().length > 0 && (entity.yColl.length == 0 && entity.xColl.length == 0)) {
               // We are currently on a corner. Our original plan of attack won't work unless we favor one direction over the other. We arbitrarily choose to favor the x direction.
               entity.y -= entity.vel.y;
               entity.vel.y = 0;
-            }
+            }*/
           }
         }
       }
-
-      trace("end")
     }
 
     private static function resolveCollisions():void {
@@ -251,6 +247,10 @@
               trace("bottom: ", entity.touchingBottom);
               trace("left: ", entity.touchingLeft);
             }
+
+            trace(entity.oldVel);
+            trace(entity.y);
+            trace(entity.height)
 
             if (entity.touchingLeft || entity.touchingRight) entity.x -= entity.oldVel.x;
             if (entity.touchingTop || entity.touchingBottom) entity.y -= entity.oldVel.y;
