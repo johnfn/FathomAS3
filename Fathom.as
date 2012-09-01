@@ -236,56 +236,50 @@
     private static function resolveCollisions():void {
       var i:int = 0;
       var grid:Array = makeGrid();
+      var list:EntityList = entities.get();
 
-      for (i = 0; i < mapRef.widthInTiles; i++) {
-        for (var j:int = 0; j < mapRef.heightInTiles; j++) {
-          if (grid[i][j].length < 2) continue;
+      for (i = 0; i < list.length; i++) {
+        if (list[i].isStatic) continue;
 
-          var contents:Array = grid[i][j];
+        var entity:MovingEntity = list[i] as MovingEntity;
 
-          for (var k:int = 0; k < contents.length; k++) {
-            if (contents[k].isStatic) continue;
+        var NUDGE:Number = 0.01;
 
-            var entity:MovingEntity = contents[k] as MovingEntity;
-            var NUDGE:Number = 0.01;
+        if (entity.reset) continue;
 
-            if (entity.reset) continue;
-
-            if (entity.touchingRight) {
-              var rightest:int = 0;
-              for (i = 0; i < entity.xColl.length; i++) {
-                rightest = Math.max(rightest, entity.xColl[i].x - entity.width - NUDGE);
-              }
-
-              entity.x = rightest;
-            } else if (entity.touchingLeft) {
-              var leftist:int = 9999;
-              for (i = 0; i < entity.xColl.length; i++) {
-                leftist = Math.min(leftist, entity.xColl[i].x + entity.xColl[i].width + NUDGE);
-              }
-
-              entity.x = leftist;
-            }
-
-            if (entity.touchingBottom) {
-              var highest:int = 9999;
-              for (i = 0; i < entity.yColl.length; i++) {
-                highest = Math.min(highest, entity.yColl[i].y - entity.height - NUDGE);
-              }
-
-              entity.y = highest;
-            } else if (entity.touchingTop) {
-              var lowest:int = 0;
-              for (i = 0; i < entity.yColl.length; i++) {
-                lowest = Math.max(lowest, entity.yColl[i].y + entity.yColl[i].height + NUDGE);
-              }
-
-              entity.y = lowest;
-            }
-
-            entity.reset = true;
+        if (entity.touchingRight) {
+          var rightest:int = 0;
+          for (i = 0; i < entity.xColl.length; i++) {
+            rightest = Math.max(rightest, entity.xColl[i].x - entity.width - NUDGE);
           }
+
+          entity.x = rightest;
+        } else if (entity.touchingLeft) {
+          var leftist:int = 9999;
+          for (i = 0; i < entity.xColl.length; i++) {
+            leftist = Math.min(leftist, entity.xColl[i].x + entity.xColl[i].width + NUDGE);
+          }
+
+          entity.x = leftist;
         }
+
+        if (entity.touchingBottom) {
+          var highest:int = 9999;
+          for (i = 0; i < entity.yColl.length; i++) {
+            highest = Math.min(highest, entity.yColl[i].y - entity.height - NUDGE);
+          }
+
+          entity.y = highest;
+        } else if (entity.touchingTop) {
+          var lowest:int = 0;
+          for (i = 0; i < entity.yColl.length; i++) {
+            lowest = Math.max(lowest, entity.yColl[i].y + entity.yColl[i].height + NUDGE);
+          }
+
+          entity.y = lowest;
+        }
+
+        entity.reset = true;
       }
     }
 
