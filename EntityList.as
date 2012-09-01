@@ -58,6 +58,16 @@
       return resultList;
     }
 
+    public function join(e:EntityList):EntityList {
+      var result:EntityList = clone();
+
+      for (var i:int = 0; i < e.length; i++) {
+        result.push(e[i]);
+      }
+
+      return result;
+    }
+
     public function one(...criteria):Entity {
       var results:EntityList = this.get.apply(this, criteria);
 
@@ -111,7 +121,7 @@
             pass.push(entity);
           }
         } else {
-          throw new Error("Unsupported Criteria type.");
+          throw new Error("Unsupported Criteria type " + criteria + " " + Util.className(criteria));
         }
       }
 

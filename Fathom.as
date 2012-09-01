@@ -181,7 +181,7 @@
       // TODO: Need to rewrite MovingEntity.touching().
 
       // TODO: I feel like looping through the grid is strictly worse than looping
-      // through the entities of the grid.
+      // through every entity.
       for (i = 0; i < mapRef.widthInTiles; i++) {
         for (var j:int = 0; j < mapRef.widthInTiles; j++) {
           var contents:Array = grid[i][j];
