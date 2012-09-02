@@ -139,6 +139,9 @@
       return grid;
     }
 
+    // TODO: Rename to getCollisions
+    // TODO: When this.x + this.width == that.x, that's NOT a collision.
+    // It just has to be that way.
     private static function getInGrid(e:Entity, g:Array):EntityList {
       var result:Array = [];
       var coords:Array = getCoords(e);
@@ -252,21 +255,19 @@
 
         var entity:MovingEntity = list[i] as MovingEntity;
 
-        var NUDGE:Number = 1;
-
         if (entity.reset) continue;
 
         if (entity.touchingRight) {
           var rightest:int = 0;
           for (i = 0; i < entity.xColl.length; i++) {
-            rightest = Math.max(rightest, entity.xColl[i].x - entity.width - NUDGE);
+            rightest = Math.max(rightest, entity.xColl[i].x - entity.width);
           }
 
           entity.x = rightest;
         } else if (entity.touchingLeft) {
           var leftist:int = 9999;
           for (i = 0; i < entity.xColl.length; i++) {
-            leftist = Math.min(leftist, entity.xColl[i].x + entity.xColl[i].width + NUDGE);
+            leftist = Math.min(leftist, entity.xColl[i].x + entity.xColl[i].width);
           }
 
           entity.x = leftist;
@@ -275,7 +276,7 @@
         if (entity.touchingBottom) {
           var highest:int = 9999;
           for (i = 0; i < entity.yColl.length; i++) {
-            highest = Math.min(highest, entity.yColl[i].y - entity.height - NUDGE);
+            highest = Math.min(highest, entity.yColl[i].y - entity.height);
           }
 
           entity.y = highest;
@@ -283,7 +284,7 @@
         } else if (entity.touchingTop) {
           var lowest:int = 0;
           for (i = 0; i < entity.yColl.length; i++) {
-            lowest = Math.max(lowest, entity.yColl[i].y + entity.yColl[i].height + NUDGE);
+            lowest = Math.max(lowest, entity.yColl[i].y + entity.yColl[i].height);
           }
 
           entity.y = lowest;
