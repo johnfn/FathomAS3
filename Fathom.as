@@ -113,8 +113,6 @@
             continue;
           }
 
-          if (e is Character) trace("sx: ", slotX, " sy: ", slotY);
-
           result.push(new Vec(slotX, slotY));
         }
       }
@@ -139,21 +137,22 @@
       return grid;
     }
 
-    // TODO: Rename to getCollisions
     // TODO: When this.x + this.width == that.x, that's NOT a collision.
     // It just has to be that way.
-    private static function getInGrid(e:Entity, g:Array):EntityList {
+    private static function getColliders(e:Entity, g:Array):EntityList {
       var result:Array = [];
       var coords:Array = getCoords(e);
 
       for (var i:int = 0; i < coords.length; i++) {
         var arr:Array = g[coords[i].x][coords[i].y];
 
-        for (var l:int = 0; l < arr.length; l++) {
-          result.push(arr[l]);
-        }
+        for (var j:int = 0; j < arr.length; j++) {
+          if (arr[j] == e) continue;
 
-        result.remove(e);
+          if (e.touchingRect(arr[j])) {
+            result.push(arr[j]);
+          }
+        }
       }
 
       return new EntityList(result);
@@ -213,7 +212,7 @@
             entity.y -= entity.vel.y;
 
             entity.x += entity.vel.x;
-            entity.xColl = getInGrid(entity, grid);
+            entity.xColl = getColliders(entity, grid);
             if (entity.xColl.length > 0) {
               if (entity.vel.x < 0) entity.touchingLeft = true;
               if (entity.vel.x > 0) entity.touchingRight = true;
@@ -221,7 +220,7 @@
             entity.x -= entity.vel.x;
 
             entity.y += entity.vel.y;
-            entity.yColl = getInGrid(entity, grid);
+            entity.yColl = getColliders(entity, grid);
             if (entity.yColl.length > 0) {
               if (entity.vel.y < 0) entity.touchingTop = true;
               if (entity.vel.y > 0) entity.touchingBottom = true;
@@ -231,7 +230,7 @@
             entity.x += entity.vel.x;
             entity.y += entity.vel.y;
 
-            if (getInGrid(entity, grid).length > 0 && (entity.yColl.length == 0 && entity.xColl.length == 0)) {
+            if (getColliders(entity, grid).length > 0 && (entity.yColl.length == 0 && entity.xColl.length == 0)) {
               // We are currently on a corner. Our original plan of attack
               // won't work unless we favor one direction over the other. We
               // arbitrarily choose to favor the x direction.
@@ -280,7 +279,6 @@
           }
 
           entity.y = highest;
-          trace("set: ", entity.y);
         } else if (entity.touchingTop) {
           var lowest:int = 0;
           for (i = 0; i < entity.yColl.length; i++) {

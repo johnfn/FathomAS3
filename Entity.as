@@ -507,10 +507,10 @@
     }
 
     public function touchingRect(rect:Entity):Boolean {
-      return !   (rect.x      > this.x + this.width  ||
-         rect.x + rect.width  < this.x               ||
-         rect.y               > this.y + this.height ||
-         rect.y + rect.height < this.y               );
+      return     (rect.x      < this.x + this.width  &&
+         rect.x + rect.width  > this.x               &&
+         rect.y               < this.y + this.height &&
+         rect.y + rect.height > this.y               );
     }
 
     public function collides(other:Entity):Boolean {
