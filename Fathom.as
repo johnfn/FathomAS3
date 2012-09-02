@@ -158,6 +158,30 @@
       return new EntityList(result);
     }
 
+    private static function setColliders(entity:MovingEntity):void {
+      entity.x -= entity.vel.x;
+      entity.y -= entity.vel.y;
+
+      entity.x += entity.vel.x;
+      entity.xColl = getColliders(entity, grid);
+      if (entity.xColl.length > 0) {
+        if (entity.vel.x < 0) entity.touchingLeft = true;
+        if (entity.vel.x > 0) entity.touchingRight = true;
+      }
+      entity.x -= entity.vel.x;
+
+      entity.y += entity.vel.y;
+      entity.yColl = getColliders(entity, grid);
+      if (entity.yColl.length > 0) {
+        if (entity.vel.y < 0) entity.touchingTop = true;
+        if (entity.vel.y > 0) entity.touchingBottom = true;
+      }
+      entity.y -= entity.vel.y;
+
+      entity.x += entity.vel.x;
+      entity.y += entity.vel.y;
+    }
+
     // TODO: These should be static functions on MovingEntity.
 
     // A fast way to find collisions is to subdivide the map into a grid and
@@ -176,6 +200,7 @@
 
         // TODO these should be private.
         list[i].oldVel = list[i].vel.clone();
+
         list[i].xColl = new EntityList([]);
         list[i].yColl = new EntityList([]);
 
@@ -210,27 +235,7 @@
             if (entity.flagsSet) continue;
             entity.flagsSet = true;
 
-            entity.x -= entity.vel.x;
-            entity.y -= entity.vel.y;
-
-            entity.x += entity.vel.x;
-            entity.xColl = getColliders(entity, grid);
-            if (entity.xColl.length > 0) {
-              if (entity.vel.x < 0) entity.touchingLeft = true;
-              if (entity.vel.x > 0) entity.touchingRight = true;
-            }
-            entity.x -= entity.vel.x;
-
-            entity.y += entity.vel.y;
-            entity.yColl = getColliders(entity, grid);
-            if (entity.yColl.length > 0) {
-              if (entity.vel.y < 0) entity.touchingTop = true;
-              if (entity.vel.y > 0) entity.touchingBottom = true;
-            }
-            entity.y -= entity.vel.y;
-
-            entity.x += entity.vel.x;
-            entity.y += entity.vel.y;
+            setColliders(entity);
 
             if (getColliders(entity, grid).length > 0 && (entity.yColl.length == 0 && entity.xColl.length == 0)) {
               // We are currently on a corner. Our original plan of attack
@@ -247,16 +252,35 @@
       }
     }
 
-    private static function resolveCollisions():void {
-      var i:int = 0;
-      var list:EntityList = entities.get();
+    private static function resolveCollisionGroup(group:Array):void {
+      var selectedEntity:MovingEntity;
+      var groupSize:int = group.length;
 
-      for (i = 0; i < list.length; i++) {
-        if (list[i].isStatic) continue;
+      for (var i:int = 0; i < groupSize; i++) {
+        selectedEntity = null;
 
-        var entity:MovingEntity = list[i] as MovingEntity;
+        for (var j:int = 0; j < group.length; j++) {
+          // See if this entity can be freed.
 
-        if (entity.reset) continue;
+          group[j].x -= group[j].oldVel.x;
+          group[j].y -= group[j].oldVel.y;
+
+          if (getColliders(group[j], grid).length == 0) {
+            selectedEntity = group[j] as MovingEntity;
+          }
+
+          group[j].x += group[j].oldVel.x;
+          group[j].y += group[j].oldVel.y;
+
+          if (selectedEntity != null) {
+            break;
+          }
+        }
+
+        Util.assert(selectedEntity != null);
+        Util.assert(!entity.reset);
+
+        setColliders(entity);
 
         if (entity.touchingRight) {
           var rightest:int = 0;
@@ -291,6 +315,27 @@
         }
 
         entity.reset = true;
+
+        group.remove(entity);
+      }
+    }
+
+    private static function resolveCollisions():void {
+      var i:int = 0;
+      var g:Array = makeGrid();
+      var collisionGroups:Array = [];
+
+      // TODO: Could store this before.
+      for (i = 0; i < mapRef.widthInTiles; i++) {
+        for (var j = 0; j < mapRef.widthInTiles; j++) {
+          var objs:Array = g[i][j];
+
+          if (objs.length < 2) continue;
+
+          for (var k = 0; k < objs.length; k++) {
+            collisionGroups.push(objs[k]);
+          }
+        }
       }
     }
 
