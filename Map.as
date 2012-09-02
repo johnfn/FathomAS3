@@ -282,12 +282,6 @@ package {
       return "[Map]";
     }
 
-    public function startingCorner(corner:Vec):Map {
-      topLeftCorner = corner.multiply(widthInTiles);
-
-      return this;
-    }
-
     public function modes():Array {
       return [0];
     }
