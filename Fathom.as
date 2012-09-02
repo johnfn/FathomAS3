@@ -158,7 +158,7 @@
       return new EntityList(result);
     }
 
-    private static function setColliders(entity:MovingEntity):void {
+    private static function setColliders(entity:MovingEntity, grid:Array):void {
       entity.x -= entity.vel.x;
       entity.y -= entity.vel.y;
 
@@ -235,7 +235,7 @@
             if (entity.flagsSet) continue;
             entity.flagsSet = true;
 
-            setColliders(entity);
+            setColliders(entity, grid);
 
             if (getColliders(entity, grid).length > 0 && (entity.yColl.length == 0 && entity.xColl.length == 0)) {
               // We are currently on a corner. Our original plan of attack
@@ -252,7 +252,7 @@
       }
     }
 
-    private static function resolveCollisionGroup(group:Array):void {
+    private static function resolveCollisionGroup(group:Array, grid:Array):void {
       var selectedEntity:MovingEntity;
       var groupSize:int = group.length;
 
@@ -278,57 +278,57 @@
         }
 
         Util.assert(selectedEntity != null);
-        Util.assert(!entity.reset);
+        Util.assert(!selectedEntity.reset);
 
-        setColliders(entity);
+        setColliders(selectedEntity, grid);
 
-        if (entity.touchingRight) {
+        if (selectedEntity.touchingRight) {
           var rightest:int = 0;
-          for (i = 0; i < entity.xColl.length; i++) {
-            rightest = Math.max(rightest, entity.xColl[i].x - entity.width);
+          for (i = 0; i < selectedEntity.xColl.length; i++) {
+            rightest = Math.max(rightest, selectedEntity.xColl[i].x - selectedEntity.width);
           }
 
-          entity.x = rightest;
-        } else if (entity.touchingLeft) {
+          selectedEntity.x = rightest;
+        } else if (selectedEntity.touchingLeft) {
           var leftist:int = 9999;
-          for (i = 0; i < entity.xColl.length; i++) {
-            leftist = Math.min(leftist, entity.xColl[i].x + entity.xColl[i].width);
+          for (i = 0; i < selectedEntity.xColl.length; i++) {
+            leftist = Math.min(leftist, selectedEntity.xColl[i].x + selectedEntity.xColl[i].width);
           }
 
-          entity.x = leftist;
+          selectedEntity.x = leftist;
         }
 
-        if (entity.touchingBottom) {
+        if (selectedEntity.touchingBottom) {
           var highest:int = 9999;
-          for (i = 0; i < entity.yColl.length; i++) {
-            highest = Math.min(highest, entity.yColl[i].y - entity.height);
+          for (i = 0; i < selectedEntity.yColl.length; i++) {
+            highest = Math.min(highest, selectedEntity.yColl[i].y - selectedEntity.height);
           }
 
-          entity.y = highest;
-        } else if (entity.touchingTop) {
+          selectedEntity.y = highest;
+        } else if (selectedEntity.touchingTop) {
           var lowest:int = 0;
-          for (i = 0; i < entity.yColl.length; i++) {
-            lowest = Math.max(lowest, entity.yColl[i].y + entity.yColl[i].height);
+          for (i = 0; i < selectedEntity.yColl.length; i++) {
+            lowest = Math.max(lowest, selectedEntity.yColl[i].y + selectedEntity.yColl[i].height);
           }
 
-          entity.y = lowest;
+          selectedEntity.y = lowest;
         }
 
-        entity.reset = true;
+        selectedEntity.reset = true;
 
-        group.remove(entity);
+        group.remove(selectedEntity);
       }
     }
 
     private static function resolveCollisions():void {
       var i:int = 0;
-      var g:Array = makeGrid();
+      var grid:Array = makeGrid();
       var collisionGroups:Array = [];
 
       // TODO: Could store this before.
       for (i = 0; i < mapRef.widthInTiles; i++) {
         for (var j = 0; j < mapRef.widthInTiles; j++) {
-          var objs:Array = g[i][j];
+          var objs:Array = grid[i][j];
 
           if (objs.length < 2) continue;
 
@@ -336,6 +336,10 @@
             collisionGroups.push(objs[k]);
           }
         }
+      }
+
+      for (i = 0; i < collisionGroups.length; i++) {
+        resolveCollisionGroup(collisionGroups[i], grid);
       }
     }
 
