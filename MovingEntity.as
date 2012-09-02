@@ -49,12 +49,5 @@ package {
     public override function currentlyTouching(...args):EntityList {
       return xColl.get.apply(this, args).join(yColl.get.apply(this, args));
     }
-
-    public override function setPos(v:IPositionable):Entity {
-      Hooks.clearCollisions(this);
-      super.setPos(v);
-
-      return this;
-    }
   }
 }
