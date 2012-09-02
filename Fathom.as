@@ -176,6 +176,8 @@
 
         // TODO these should be private.
         list[i].oldVel = list[i].vel.clone();
+        list[i].xColl = new EntityList([]);
+        list[i].yColl = new EntityList([]);
 
         list[i].reset = false;
         list[i].flagsSet = false;
