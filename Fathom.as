@@ -259,34 +259,10 @@
     }
 
     private static function resolveCollisionGroup(group:Array, grid:Array):void {
-      var selectedEntity:MovingEntity;
       var groupSize:int = group.length;
 
       for (var i:int = 0; i < groupSize; i++) {
-        selectedEntity = null;
-
-        for (var j:int = 0; j < group.length; j++) {
-          // See if this entity can be freed.
-
-          var curLoc:Vec = group[j].vec();
-
-          group[j].setPosition(group[j].oldLoc);
-
-          if (getColliders(group[j], grid).length == 0) {
-            selectedEntity = group[j] as MovingEntity;
-          }
-
-          group[j].setPosition(curLoc);
-
-          if (selectedEntity != null) {
-            break;
-          }
-        }
-
-        Util.assert(selectedEntity != null);
-        Util.assert(!selectedEntity.reset);
-
-        setColliders(selectedEntity, grid);
+        var selectedEntity:MovingEntity = group[i];
 
         if (selectedEntity.touchingRight || selectedEntity.touchingLeft) {
           selectedEntity.x = selectedEntity.oldLoc.x;
@@ -297,8 +273,6 @@
         }
 
         selectedEntity.reset = true;
-
-        group.remove(selectedEntity);
       }
     }
 
