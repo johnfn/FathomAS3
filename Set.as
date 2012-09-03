@@ -92,5 +92,17 @@ package {
 
         return false;
     }
+
+    public function toString():String {
+        var result:String = "{ ";
+
+        for (var k:* in contents) {
+            result += k.toString() + ", ";
+        }
+
+        result += " }";
+
+        return result;
+    }
   }
 }

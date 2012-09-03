@@ -160,20 +160,23 @@
     }
 
     private static function setColliders(entity:MovingEntity, grid:Array):void {
+      var newXColliders:Set;
+      var newYColliders:Set;
+
       entity.x -= entity.vel.x;
       entity.y -= entity.vel.y;
 
       entity.x += entity.vel.x;
-      entity.xColl = getColliders(entity, grid);
-      if (entity.xColl.length > 0) {
+      newXColliders = getColliders(entity, grid);
+      if (newXColliders.length > 0) {
         if (entity.vel.x < 0) entity.touchingLeft = true;
         if (entity.vel.x > 0) entity.touchingRight = true;
       }
       entity.x -= entity.vel.x;
 
       entity.y += entity.vel.y;
-      entity.yColl = getColliders(entity, grid);
-      if (entity.yColl.length > 0) {
+      newYColliders = getColliders(entity, grid);
+      if (newYColliders.length > 0) {
         if (entity.vel.y < 0) entity.touchingTop = true;
         if (entity.vel.y > 0) entity.touchingBottom = true;
       }
@@ -182,7 +185,7 @@
       entity.x += entity.vel.x;
       entity.y += entity.vel.y;
 
-      if (getColliders(entity, grid).length > 0 && (entity.yColl.length == 0 && entity.xColl.length == 0)) {
+      if (getColliders(entity, grid).length > 0 && (newXColliders.length == 0 && newYColliders.length == 0)) {
         // We are currently on a corner. Our original plan of attack
         // won't work unless we favor one direction over the other. We
         // arbitrarily choose to favor the x direction.
@@ -192,6 +195,20 @@
         entity.y -= entity.vel.y;
         entity.vel.y = 0;
       }
+
+      newXColliders.foreach(function(o):void {
+        if (o.isStatic) return;
+
+        o.xColl.add(entity);
+        entity.xColl.add(o);
+      });
+
+      newYColliders.foreach(function(o):void {
+        if (o.isStatic) return;
+
+        o.yColl.add(entity);
+        entity.yColl.add(o);
+      });
     }
 
     // TODO: These should be static functions on MovingEntity.
@@ -280,8 +297,8 @@
           }
         }
 
-        trace(selectedEntity);
-        trace(selectedEntity.reset);
+        //trace(selectedEntity);
+        //trace(selectedEntity.reset);
 
         Util.assert(selectedEntity != null);
         Util.assert(!selectedEntity.reset);
@@ -290,15 +307,15 @@
 
         if (selectedEntity.touchingRight) {
           var rightest:int = 0;
-          selectedEntity.xColl.foreach(function(o:Entity) {
+          selectedEntity.xColl.foreach(function(o:Entity):void {
             rightest = Math.max(rightest, o.x - selectedEntity.width);
           });
 
           selectedEntity.x = rightest;
         } else if (selectedEntity.touchingLeft) {
           var leftist:int = 9999;
-          selectedEntity.xColl.foreach(function(o:Entity) {
-            leftist = Math.min(leftist, o.x + selectedEntity.xColl[i].width);
+          selectedEntity.xColl.foreach(function(o:Entity):void {
+            leftist = Math.min(leftist, o.x + o.width);
           });
 
           selectedEntity.x = leftist;
@@ -306,15 +323,15 @@
 
         if (selectedEntity.touchingBottom) {
           var highest:int = 9999;
-          selectedEntity.yColl.foreach(function(o:Entity) {
+          selectedEntity.yColl.foreach(function(o:Entity):void {
             highest = Math.min(highest, o.y - selectedEntity.height);
           });
 
           selectedEntity.y = highest;
         } else if (selectedEntity.touchingTop) {
           var lowest:int = 0;
-          selectedEntity.yColl.foreach(function(o:Entity) {
-            lowest = Math.max(lowest, o.y + selectedEntity.yColl[i].height);
+          selectedEntity.yColl.foreach(function(o:Entity):void {
+            lowest = Math.max(lowest, o.y + o.height);
           });
 
           selectedEntity.y = lowest;
@@ -397,13 +414,9 @@
         }
       }*/
 
-      trace("==BEGIN==");
-
       for (i = 0; i < collisionGroups.length; i++) {
         resolveCollisionGroup(collisionGroups[i], grid);
       }
-
-      trace("==END==");
     }
 
     private static function update(event:Event):void {
