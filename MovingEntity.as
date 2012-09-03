@@ -9,7 +9,7 @@ package {
   public class MovingEntity extends Entity {
     /* Velocity of the MovingEntity. */
     public var vel:Vec = new Vec(0, 0);
-    public var oldVel:Vec = new Vec(0, 0);
+    public var oldLoc:Vec = new Vec(0, 0);
     public var reset:Boolean = false;
 
     public var xColl:Set = new Set();
@@ -31,14 +31,9 @@ package {
     }
 
     public override function update(e:EntityList):void {
-      this.oldVel = this.vel.clone();
       this.reset = false;
 
       super.update(e);
-    }
-
-    public override function toString():String {
-      return super.toString() + " with vel: " + vel.toString();
     }
 
     // TODO. This won't return anything you aren't obstructed by.

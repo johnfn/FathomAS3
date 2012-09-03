@@ -180,6 +180,7 @@
         if (entity.vel.y < 0) entity.touchingTop = true;
         if (entity.vel.y > 0) entity.touchingBottom = true;
       }
+
       entity.y -= entity.vel.y;
 
       entity.x += entity.vel.x;
@@ -226,11 +227,12 @@
       for (i = 0; i < list.length; i++) {
         if (list[i].isStatic) continue;
 
+        // TODO these should be private.
+
+        list[i].oldLoc = list[i].vec();
+
         list[i].x += list[i].vel.x;
         list[i].y += list[i].vel.y;
-
-        // TODO these should be private.
-        list[i].oldVel = list[i].vel.clone();
 
         list[i].xColl = new Set();
         list[i].yColl = new Set();
@@ -284,22 +286,22 @@
         for (var j:int = 0; j < group.length; j++) {
           // See if this entity can be freed.
 
-          group[j].x -= group[j].oldVel.x;
-          group[j].y -= group[j].oldVel.y;
+          var curLoc:Vec = group[j].vec();
+
+          group[j].setPosition(group[j].oldLoc);
 
           if (getColliders(group[j], grid).length == 0) {
             selectedEntity = group[j] as MovingEntity;
           }
 
-          group[j].x += group[j].oldVel.x;
-          group[j].y += group[j].oldVel.y;
+          group[j].setPosition(curLoc);
 
           if (selectedEntity != null) {
             break;
           }
         }
 
-        //trace(selectedEntity);
+        trace(selectedEntity);
         //trace(selectedEntity.reset);
 
         Util.assert(selectedEntity != null);
@@ -307,6 +309,15 @@
 
         setColliders(selectedEntity, grid);
 
+        if (selectedEntity.touchingRight || selectedEntity.touchingLeft) {
+          selectedEntity.x = selectedEntity.oldLoc.x;
+        }
+
+        if (selectedEntity.touchingTop || selectedEntity.touchingBottom) {
+          selectedEntity.y = selectedEntity.oldLoc.y;
+        }
+
+        /*
         if (selectedEntity.touchingRight) {
           var rightest:int = 0;
           selectedEntity.xColl.foreach(function(o:Entity):void {
@@ -337,7 +348,7 @@
           });
 
           selectedEntity.y = lowest;
-        }
+        } */
 
         selectedEntity.reset = true;
 

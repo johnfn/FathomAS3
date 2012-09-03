@@ -484,7 +484,7 @@
       return this;
     }
 
-    public function setAbsolutePosition(loc:Vec):void {
+    public function setPosition(loc:Vec):void {
       x = loc.x;
       y = loc.y;
     }
@@ -524,8 +524,12 @@
     public function update(e:EntityList):void {}
 
     public override function toString():String {
-      return "[" + Util.className(this) + super.toString() + " @" + entitySpacePos + " (" + groups() + ") " + uid + "]";
+      return "[" + Util.className(this) + " " + this.x + " " + this.y + "]"
     }
+
+    //public override function toString():String {
+    //  return "[" + Util.className(this) + super.toString() + " @" + entitySpacePos + " (" + groups() + ") " + uid + "]";
+    //}
 
     public function set depth(v:int):void {
       _depth = v;
