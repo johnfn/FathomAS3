@@ -222,6 +222,7 @@
     private static function moveEverything():void {
       var list:EntityList = entities.get("!nonblocking");
       var i:int = 0;
+      var grid:Array = makeGrid();
 
       // Move every non-static entity.
       for (i = 0; i < list.length; i++) {
@@ -244,33 +245,8 @@
         list[i].touchingRight = false;
         list[i].touchingTop = false;
         list[i].touchingBottom = false;
-      }
 
-      var grid:Array = makeGrid();
-
-      // Set appropriate collision flags.
-
-      // TODO: Need to rewrite MovingEntity.touching().
-
-      // TODO: I feel like looping through the grid is strictly worse than looping
-      // through every entity.
-      for (i = 0; i < mapRef.widthInTiles; i++) {
-        for (var j:int = 0; j < mapRef.widthInTiles; j++) {
-          var contents:Array = grid[i][j];
-
-          if (contents.length < 2) continue;
-
-          for (var k:int = 0; k < contents.length; k++) {
-            if (contents[k].isStatic) continue;
-
-            var entity:MovingEntity = contents[k] as MovingEntity;
-
-            if (entity.flagsSet) continue;
-            entity.flagsSet = true;
-
-            setColliders(entity, grid);
-          }
-        }
+        setColliders(list[i], grid);
       }
     }
 
@@ -301,7 +277,7 @@
           }
         }
 
-        trace(selectedEntity);
+        trace("i choose you ", selectedEntity);
         //trace(selectedEntity.reset);
 
         Util.assert(selectedEntity != null);
@@ -309,11 +285,16 @@
 
         setColliders(selectedEntity, grid);
 
+        trace("ycoll ", main.c.yColl);
+        trace("xcoll ", main.c.xColl);
+
         if (selectedEntity.touchingRight || selectedEntity.touchingLeft) {
+          trace("resetting x")
           selectedEntity.x = selectedEntity.oldLoc.x;
         }
 
         if (selectedEntity.touchingTop || selectedEntity.touchingBottom) {
+          trace("resetting y")
           selectedEntity.y = selectedEntity.oldLoc.y;
         }
 
@@ -392,6 +373,8 @@
           curGroup.foreach(function(o:Entity):void {
             if (o.isStatic) return;
 
+            trace("grouping ", o, (o as MovingEntity).xColl);
+
             curGroup.extend((o as MovingEntity).xColl);
             curGroup.extend((o as MovingEntity).yColl);
           });
@@ -411,7 +394,9 @@
 
     private static function resolveCollisions():void {
       var grid:Array = makeGrid();
+      trace("bef ", main.c.yColl)
       var collisionGroups:Array = getCollisionGroups(grid);
+      trace("aft ", main.c.yColl)
 
       trace("---GRPS---");
       for (var i:int = 0; i < collisionGroups.length; i++) {
@@ -421,6 +406,7 @@
       for (var i:int = 0; i < collisionGroups.length; i++) {
         resolveCollisionGroup(collisionGroups[i], grid);
       }
+      trace("aft2 ", main.c.yColl)
     }
 
     private static function update(event:Event):void {
