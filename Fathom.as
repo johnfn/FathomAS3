@@ -360,7 +360,7 @@
     // Get each cluster of collided objects. Only returns non static objects,
     // because static objects never move and we don't care about them.
 
-    private static function getCollisionGroups():Array {
+    private static function getCollisionGroups(grid:Array):Array {
       var e:EntityList = movingEntities();
       var groups:Array = [];
 
@@ -373,10 +373,12 @@
         while (oldLength != curGroup.length) {
           oldLength = curGroup.length;
 
-          for (var o:Object in curGroup) {
-            curGroup.extend(o.xColl);
-            curGroup.extend(o.yColl);
-          }
+          curGroup.foreach(function(o:Entity):void {
+            if (o.isStatic) return;
+
+            curGroup.extend((o as MovingEntity).xColl);
+            curGroup.extend((o as MovingEntity).yColl);
+          });
         }
 
         var arr:Array = curGroup.toArray();
@@ -392,31 +394,15 @@
     }
 
     private static function resolveCollisions():void {
-      var i:int = 0;
       var grid:Array = makeGrid();
-      var collisionGroups:Array = getCollisionGroups(); //[];
+      var collisionGroups:Array = getCollisionGroups(grid);
 
-      // TODO: Could store this before.
-      /*
-      for (i = 0; i < mapRef.widthInTiles; i++) {
-        for (var j = 0; j < mapRef.widthInTiles; j++) {
-          var objs:Array = grid[i][j];
+      trace("---GRPS---");
+      for (var i:int = 0; i < collisionGroups.length; i++) {
+        trace(collisionGroups[i]);
+      }
 
-          if (objs.length < 2) continue;
-
-          var group:Array = [];
-
-          for (var k = 0; k < objs.length; k++) {
-            if (objs[k].isStatic) continue;
-
-            group.push(objs[k]);
-          }
-
-          collisionGroups.push(group);
-        }
-      }*/
-
-      for (i = 0; i < collisionGroups.length; i++) {
+      for (var i:int = 0; i < collisionGroups.length; i++) {
         resolveCollisionGroup(collisionGroups[i], grid);
       }
     }
