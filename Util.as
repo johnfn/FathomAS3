@@ -6,6 +6,7 @@ package {
     import flash.display.DisplayObject;
     import flash.display.Sprite;
     import flash.utils.getQualifiedClassName;
+    import flash.utils.Dictionary;
 
     public static var uid:Number = 0;
     public static var Key:Object = keysToKeyCodes();
@@ -36,22 +37,6 @@ package {
       }
     }
 
-    // TODO: Untested.
-    Array.prototype.removeDuplicates = function():void {
-      var copy:Array = this.slice();
-      var vals:Object = {};
-
-      this = [];
-
-      for (var i:int = 0; i < copy.length; i++) {
-        vals[copy[i]] = true;
-      }
-
-      for each (var k:* in vals) {
-        this.push(k);
-      }
-    }
-
     Array.prototype.extend = function(a:Array):void {
       for (var i:int = 0; i < a.length; i++) {
         this.push(a[i]);
@@ -62,7 +47,7 @@ package {
       return new Vec(this.x, this.y);
     }
 
-    public static function setToArray(s:Object):Array {
+    public static function setToArray(s:Dictionary):Array {
       var result:Array = [];
 
       for (var k:* in s) {

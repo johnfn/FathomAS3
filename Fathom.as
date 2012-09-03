@@ -5,6 +5,7 @@
     import flash.display.MovieClip;
     import flash.display.Stage;
     import flash.events.Event;
+    import flash.utils.Dictionary;
 
     private static var gameloopID:int;
     private static var FPS:int = 0;
@@ -320,8 +321,8 @@
       }
     }
 
-    private static function movingEntities():Array {
-      var result:Array = [];
+    private static function movingEntities():EntityList {
+      var result:EntityList = new EntityList([]);
 
       for (var i:int = 0; i < Fathom.entities.length; i++) {
         if (Fathom.entities[i].isStatic) continue;
@@ -337,14 +338,17 @@
       var groups:Array = [];
 
       while (e.length) {
-        var curGroup:Array = {e.pop() : true};
+        var curGroup:Dictionary = new Dictionary();
+        curGroup[e.pop()] = true;
+
         var added:Boolean = true;
 
         while (added) {
           added = false;
 
-          for (var j:int = 0; j < newElems.length; j++) {
-            var curEnt:MovingEntity = newElems[j];
+          for (var o:Object in curGroup) {
+            var curEnt:MovingEntity = o as MovingEntity;
+
             var c1:EntityList = curEnt.xColl;
             var c2:EntityList = curEnt.yColl;
 
@@ -372,6 +376,10 @@
 
         groups.push(arr);
       }
+
+      trace(groups);
+
+      return groups;
     }
 
     private static function resolveCollisions():void {
