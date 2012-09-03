@@ -141,7 +141,7 @@
     // TODO: When this.x + this.width == that.x, that's NOT a collision.
     // It just has to be that way.
     private static function getColliders(e:Entity, g:Array):Set {
-      var result:Set;
+      var result:Set = new Set();
       var coords:Array = getCoords(e);
 
       for (var i:int = 0; i < coords.length; i++) {
@@ -213,8 +213,8 @@
         // TODO these should be private.
         list[i].oldVel = list[i].vel.clone();
 
-        list[i].xColl = new EntityList([]);
-        list[i].yColl = new EntityList([]);
+        list[i].xColl = new Set();
+        list[i].yColl = new Set();
 
         list[i].reset = false;
         list[i].flagsSet = false;
@@ -290,32 +290,32 @@
 
         if (selectedEntity.touchingRight) {
           var rightest:int = 0;
-          for (i = 0; i < selectedEntity.xColl.length; i++) {
-            rightest = Math.max(rightest, selectedEntity.xColl[i].x - selectedEntity.width);
-          }
+          selectedEntity.xColl.foreach(function(o:Entity) {
+            rightest = Math.max(rightest, o.x - selectedEntity.width);
+          });
 
           selectedEntity.x = rightest;
         } else if (selectedEntity.touchingLeft) {
           var leftist:int = 9999;
-          for (i = 0; i < selectedEntity.xColl.length; i++) {
-            leftist = Math.min(leftist, selectedEntity.xColl[i].x + selectedEntity.xColl[i].width);
-          }
+          selectedEntity.xColl.foreach(function(o:Entity) {
+            leftist = Math.min(leftist, o.x + selectedEntity.xColl[i].width);
+          });
 
           selectedEntity.x = leftist;
         }
 
         if (selectedEntity.touchingBottom) {
           var highest:int = 9999;
-          for (i = 0; i < selectedEntity.yColl.length; i++) {
-            highest = Math.min(highest, selectedEntity.yColl[i].y - selectedEntity.height);
-          }
+          selectedEntity.yColl.foreach(function(o:Entity) {
+            highest = Math.min(highest, o.y - selectedEntity.height);
+          });
 
           selectedEntity.y = highest;
         } else if (selectedEntity.touchingTop) {
           var lowest:int = 0;
-          for (i = 0; i < selectedEntity.yColl.length; i++) {
-            lowest = Math.max(lowest, selectedEntity.yColl[i].y + selectedEntity.yColl[i].height);
-          }
+          selectedEntity.yColl.foreach(function(o:Entity) {
+            lowest = Math.max(lowest, o.y + selectedEntity.yColl[i].height);
+          });
 
           selectedEntity.y = lowest;
         }
