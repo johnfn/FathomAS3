@@ -138,8 +138,6 @@
       return grid;
     }
 
-    // TODO: When this.x + this.width == that.x, that's NOT a collision.
-    // It just has to be that way.
     private static function getColliders(e:Entity, g:Array):Set {
       var result:Set = new Set();
       var coords:Array = getCoords(e);
@@ -247,14 +245,22 @@
         list[i].touchingBottom = false;
 
         setColliders(list[i], grid);
+
+        list[i].x -= list[i].vel.x;
+        list[i].y -= list[i].vel.y;
+      }
+
+      for (i = 0; i < list.length; i++) {
+        if (list[i].isStatic) continue;
+
+        list[i].x += list[i].vel.x;
+        list[i].y += list[i].vel.y;
       }
     }
 
     private static function resolveCollisionGroup(group:Array, grid:Array):void {
       var selectedEntity:MovingEntity;
       var groupSize:int = group.length;
-
-      trace("resolving ", group);
 
       for (var i:int = 0; i < groupSize; i++) {
         selectedEntity = null;
@@ -277,59 +283,18 @@
           }
         }
 
-        trace("i choose you ", selectedEntity);
-        //trace(selectedEntity.reset);
-
         Util.assert(selectedEntity != null);
         Util.assert(!selectedEntity.reset);
 
         setColliders(selectedEntity, grid);
 
-        trace("ycoll ", main.c.yColl);
-        trace("xcoll ", main.c.xColl);
-
         if (selectedEntity.touchingRight || selectedEntity.touchingLeft) {
-          trace("resetting x")
           selectedEntity.x = selectedEntity.oldLoc.x;
         }
 
         if (selectedEntity.touchingTop || selectedEntity.touchingBottom) {
-          trace("resetting y")
           selectedEntity.y = selectedEntity.oldLoc.y;
         }
-
-        /*
-        if (selectedEntity.touchingRight) {
-          var rightest:int = 0;
-          selectedEntity.xColl.foreach(function(o:Entity):void {
-            rightest = Math.max(rightest, o.x - selectedEntity.width);
-          });
-
-          selectedEntity.x = rightest;
-        } else if (selectedEntity.touchingLeft) {
-          var leftist:int = 9999;
-          selectedEntity.xColl.foreach(function(o:Entity):void {
-            leftist = Math.min(leftist, o.x + o.width);
-          });
-
-          selectedEntity.x = leftist;
-        }
-
-        if (selectedEntity.touchingBottom) {
-          var highest:int = 9999;
-          selectedEntity.yColl.foreach(function(o:Entity):void {
-            highest = Math.min(highest, o.y - selectedEntity.height);
-          });
-
-          selectedEntity.y = highest;
-        } else if (selectedEntity.touchingTop) {
-          var lowest:int = 0;
-          selectedEntity.yColl.foreach(function(o:Entity):void {
-            lowest = Math.max(lowest, o.y + o.height);
-          });
-
-          selectedEntity.y = lowest;
-        } */
 
         selectedEntity.reset = true;
 
@@ -349,14 +314,10 @@
       return result;
     }
 
-    // Get each cluster of collided objects. Only returns non static objects,
-    // because static objects never move and we don't care about them.
-
+    // Get each cluster of collided objects.
     private static function getCollisionGroups(grid:Array):Array {
       var e:EntityList = movingEntities();
       var groups:Array = [];
-
-      //TODO: Don't have to return lists of size 1.
 
       while (e.length) {
         var curGroup:Set = new Set();
@@ -373,8 +334,6 @@
           curGroup.foreach(function(o:Entity):void {
             if (o.isStatic) return;
 
-            trace("grouping ", o, (o as MovingEntity).xColl);
-
             curGroup.extend((o as MovingEntity).xColl);
             curGroup.extend((o as MovingEntity).yColl);
           });
@@ -384,9 +343,11 @@
           e.remove(o);
         });
 
-        groups.push(curGroup.filter(function(o:Entity):Boolean {
-            return !o.isStatic;
-          }).toArray());
+        if (curGroup.length > 1) {
+          groups.push(curGroup.filter(function(o:Entity):Boolean {
+              return !o.isStatic;
+            }).toArray());
+        }
       }
 
       return groups;
@@ -394,19 +355,11 @@
 
     private static function resolveCollisions():void {
       var grid:Array = makeGrid();
-      trace("bef ", main.c.yColl)
       var collisionGroups:Array = getCollisionGroups(grid);
-      trace("aft ", main.c.yColl)
-
-      trace("---GRPS---");
-      for (var i:int = 0; i < collisionGroups.length; i++) {
-        trace(collisionGroups[i]);
-      }
 
       for (var i:int = 0; i < collisionGroups.length; i++) {
         resolveCollisionGroup(collisionGroups[i], grid);
       }
-      trace("aft2 ", main.c.yColl)
     }
 
     private static function update(event:Event):void {
