@@ -12,8 +12,8 @@ package {
     public var oldVel:Vec = new Vec(0, 0);
     public var reset:Boolean = false;
 
-    public var xColl:EntityList = new EntityList([]);
-    public var yColl:EntityList = new EntityList([]);
+    public var xColl:Set = new Set();
+    public var yColl:Set = new Set();
 
     public var flagsSet:Boolean       = false;
 
@@ -46,8 +46,9 @@ package {
       return xColl.any.apply(this, args) || yColl.any.apply(this, args);
     }
 
+    // TODO: Destroy this function... later.
     public override function currentlyTouching(...args):EntityList {
-      return xColl.get.apply(this, args).join(yColl.get.apply(this, args));
+      return new EntityList(Set.merge(xColl, yColl).toArray()).get.apply(this, args);
     }
   }
 }

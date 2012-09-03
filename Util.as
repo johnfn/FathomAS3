@@ -6,7 +6,6 @@ package {
     import flash.display.DisplayObject;
     import flash.display.Sprite;
     import flash.utils.getQualifiedClassName;
-    import flash.utils.Dictionary;
 
     public static var uid:Number = 0;
     public static var Key:Object = keysToKeyCodes();
@@ -45,16 +44,6 @@ package {
 
     Sprite.prototype.asVec = function():Vec {
       return new Vec(this.x, this.y);
-    }
-
-    public static function setToArray(s:Dictionary):Array {
-      var result:Array = [];
-
-      for (var k:* in s) {
-        result.push(k);
-      }
-
-      return k;
     }
 
     public static function id(x:*):* {

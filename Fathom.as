@@ -140,8 +140,8 @@
 
     // TODO: When this.x + this.width == that.x, that's NOT a collision.
     // It just has to be that way.
-    private static function getColliders(e:Entity, g:Array):EntityList {
-      var result:Array = [];
+    private static function getColliders(e:Entity, g:Array):Set {
+      var result:Set;
       var coords:Array = getCoords(e);
 
       for (var i:int = 0; i < coords.length; i++) {
@@ -151,12 +151,12 @@
           if (arr[j] == e) continue;
 
           if (e.touchingRect(arr[j])) {
-            result.push(arr[j]);
+            result.add(arr[j]);
           }
         }
       }
 
-      return new EntityList(result);
+      return result;
     }
 
     private static function setColliders(entity:MovingEntity, grid:Array):void {
@@ -257,6 +257,8 @@
       var selectedEntity:MovingEntity;
       var groupSize:int = group.length;
 
+      trace("resolving ", group);
+
       for (var i:int = 0; i < groupSize; i++) {
         selectedEntity = null;
 
@@ -277,6 +279,9 @@
             break;
           }
         }
+
+        trace(selectedEntity);
+        trace(selectedEntity.reset);
 
         Util.assert(selectedEntity != null);
         Util.assert(!selectedEntity.reset);
@@ -333,42 +338,29 @@
       return result;
     }
 
+    // Get each cluster of collided objects. Only returns non static objects,
+    // because static objects never move and we don't care about them.
+
     private static function getCollisionGroups():Array {
       var e:EntityList = movingEntities();
       var groups:Array = [];
 
       while (e.length) {
-        var curGroup:Dictionary = new Dictionary();
-        curGroup[e.pop()] = true;
+        var curGroup:Set = new Set();
+        curGroup.add(e.pop());
 
-        var added:Boolean = true;
+        var oldLength:int = 0;
 
-        while (added) {
-          added = false;
+        while (oldLength != curGroup.length) {
+          oldLength = curGroup.length;
 
           for (var o:Object in curGroup) {
-            var curEnt:MovingEntity = o as MovingEntity;
-
-            var c1:EntityList = curEnt.xColl;
-            var c2:EntityList = curEnt.yColl;
-
-            for (var k:int = 0; k < c1.length; k++) {
-              if (curGroup[c1[k]]) continue;
-
-              added = true;
-              curGroup[c1[k]] = true;
-            }
-
-            for (var k:int = 0; k < c2.length; k++) {
-              if (curGroup[c2[k]]) continue;
-
-              added = true;
-              curGroup[c2[k]] = true;
-            }
+            curGroup.extend(o.xColl);
+            curGroup.extend(o.yColl);
           }
         }
 
-        var arr:Array = Util.setToArray(curGroup);
+        var arr:Array = curGroup.toArray();
 
         for (var i:int = 0; i < arr.length; i++) {
           e.remove(arr[i]);
@@ -377,17 +369,16 @@
         groups.push(arr);
       }
 
-      trace(groups);
-
       return groups;
     }
 
     private static function resolveCollisions():void {
       var i:int = 0;
       var grid:Array = makeGrid();
-      var collisionGroups:Array = [];
+      var collisionGroups:Array = getCollisionGroups(); //[];
 
       // TODO: Could store this before.
+      /*
       for (i = 0; i < mapRef.widthInTiles; i++) {
         for (var j = 0; j < mapRef.widthInTiles; j++) {
           var objs:Array = grid[i][j];
@@ -404,11 +395,15 @@
 
           collisionGroups.push(group);
         }
-      }
+      }*/
+
+      trace("==BEGIN==");
 
       for (i = 0; i < collisionGroups.length; i++) {
         resolveCollisionGroup(collisionGroups[i], grid);
       }
+
+      trace("==END==");
     }
 
     private static function update(event:Event):void {
