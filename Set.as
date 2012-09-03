@@ -69,6 +69,18 @@ package {
         }
     }
 
+    public function filter(f:Function):Set {
+        var result:Set = new Set();
+
+        for (var k:* in contents) {
+            if (f(k)) {
+                result.add(k);
+            }
+        }
+
+        return result;
+    }
+
     public function get length():int {
         return _length;
     }

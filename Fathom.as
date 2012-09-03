@@ -364,9 +364,14 @@
       var e:EntityList = movingEntities();
       var groups:Array = [];
 
+      //TODO: Don't have to return lists of size 1.
+
       while (e.length) {
         var curGroup:Set = new Set();
-        curGroup.add(e.pop());
+        var curEnt:Entity = e.pop();
+        if (curEnt.isStatic) continue;
+
+        curGroup.add(curEnt);
 
         var oldLength:int = 0;
 
@@ -381,13 +386,13 @@
           });
         }
 
-        var arr:Array = curGroup.toArray();
+        curGroup.foreach(function(o:Entity) {
+          e.remove(o);
+        });
 
-        for (var i:int = 0; i < arr.length; i++) {
-          e.remove(arr[i]);
-        }
-
-        groups.push(arr);
+        groups.push(curGroup.filter(function(o:Entity):Boolean {
+            return !o.isStatic;
+          }).toArray());
       }
 
       return groups;
