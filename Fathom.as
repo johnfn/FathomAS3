@@ -180,6 +180,17 @@
 
       entity.x += entity.vel.x;
       entity.y += entity.vel.y;
+
+      if (getColliders(entity, grid).length > 0 && (entity.yColl.length == 0 && entity.xColl.length == 0)) {
+        // We are currently on a corner. Our original plan of attack
+        // won't work unless we favor one direction over the other. We
+        // arbitrarily choose to favor the x direction.
+
+        // Literally a corner case! Ha! Ha!
+
+        entity.y -= entity.vel.y;
+        entity.vel.y = 0;
+      }
     }
 
     // TODO: These should be static functions on MovingEntity.
@@ -236,17 +247,6 @@
             entity.flagsSet = true;
 
             setColliders(entity, grid);
-
-            if (getColliders(entity, grid).length > 0 && (entity.yColl.length == 0 && entity.xColl.length == 0)) {
-              // We are currently on a corner. Our original plan of attack
-              // won't work unless we favor one direction over the other. We
-              // arbitrarily choose to favor the x direction.
-
-              // Literally a corner case! Ha! Ha!
-
-              entity.y -= entity.vel.y;
-              entity.vel.y = 0;
-            }
           }
         }
       }
@@ -320,6 +320,60 @@
       }
     }
 
+    private static function movingEntities():Array {
+      var result:Array = [];
+
+      for (var i:int = 0; i < Fathom.entities.length; i++) {
+        if (Fathom.entities[i].isStatic) continue;
+
+        result.push(Fathom.entities[i]);
+      }
+
+      return result;
+    }
+
+    private static function getCollisionGroups():Array {
+      var e:EntityList = movingEntities();
+      var groups:Array = [];
+
+      while (e.length) {
+        var curGroup:Array = {e.pop() : true};
+        var added:Boolean = true;
+
+        while (added) {
+          added = false;
+
+          for (var j:int = 0; j < newElems.length; j++) {
+            var curEnt:MovingEntity = newElems[j];
+            var c1:EntityList = curEnt.xColl;
+            var c2:EntityList = curEnt.yColl;
+
+            for (var k:int = 0; k < c1.length; k++) {
+              if (curGroup[c1[k]]) continue;
+
+              added = true;
+              curGroup[c1[k]] = true;
+            }
+
+            for (var k:int = 0; k < c2.length; k++) {
+              if (curGroup[c2[k]]) continue;
+
+              added = true;
+              curGroup[c2[k]] = true;
+            }
+          }
+        }
+
+        var arr:Array = Util.setToArray(curGroup);
+
+        for (var i:int = 0; i < arr.length; i++) {
+          e.remove(arr[i]);
+        }
+
+        groups.push(arr);
+      }
+    }
+
     private static function resolveCollisions():void {
       var i:int = 0;
       var grid:Array = makeGrid();
@@ -332,9 +386,15 @@
 
           if (objs.length < 2) continue;
 
+          var group:Array = [];
+
           for (var k = 0; k < objs.length; k++) {
-            collisionGroups.push(objs[k]);
+            if (objs[k].isStatic) continue;
+
+            group.push(objs[k]);
           }
+
+          collisionGroups.push(group);
         }
       }
 

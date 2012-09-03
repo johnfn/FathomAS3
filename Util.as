@@ -36,8 +36,40 @@ package {
       }
     }
 
+    // TODO: Untested.
+    Array.prototype.removeDuplicates = function():void {
+      var copy:Array = this.slice();
+      var vals:Object = {};
+
+      this = [];
+
+      for (var i:int = 0; i < copy.length; i++) {
+        vals[copy[i]] = true;
+      }
+
+      for each (var k:* in vals) {
+        this.push(k);
+      }
+    }
+
+    Array.prototype.extend = function(a:Array):void {
+      for (var i:int = 0; i < a.length; i++) {
+        this.push(a[i]);
+      }
+    }
+
     Sprite.prototype.asVec = function():Vec {
       return new Vec(this.x, this.y);
+    }
+
+    public static function setToArray(s:Object):Array {
+      var result:Array = [];
+
+      for (var k:* in s) {
+        result.push(k);
+      }
+
+      return k;
     }
 
     public static function id(x:*):* {
