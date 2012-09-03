@@ -196,18 +196,20 @@
         entity.vel.y = 0;
       }
 
-      newXColliders.foreach(function(o):void {
+      newXColliders.foreach(function(o:Entity):void {
+        entity.xColl.add(o);
+
         if (o.isStatic) return;
 
-        o.xColl.add(entity);
-        entity.xColl.add(o);
+        (o as MovingEntity).xColl.add(entity);
       });
 
-      newYColliders.foreach(function(o):void {
+      newYColliders.foreach(function(o:Entity):void {
+        entity.yColl.add(o);
+
         if (o.isStatic) return;
 
-        o.yColl.add(entity);
-        entity.yColl.add(o);
+        (o as MovingEntity).yColl.add(entity);
       });
     }
 
