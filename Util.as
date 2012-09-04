@@ -22,6 +22,16 @@ package {
       return -1;
     }
 
+    // TODO: Calls k O(n^2) times; can reduce to O(n) with little trouble.
+
+    /* Ties each element e in the array to a value k(e) and sorts the array
+       how you'd sort the values from low to high. */
+    Array.prototype.sortBy = function(k:Function):void {
+      this.sort(function(a:*, b:*):int {
+        return k(a) - k(b);
+      });
+    }
+
     Array.prototype.contains = function(val:*):Boolean {
       return this.getIndex(val) != -1;
     }

@@ -263,36 +263,26 @@
           var mag:Vec = e.vel.clone().normalize();
           var times:int = e.vel.clone().divide(mag).NaNsTo(0).max();
 
-          if (!e.xColl.length) e.x += e.vel.x;
-          if (!e.yColl.length) e.y += e.vel.y;
+          if (e.xColl.length == 0) e.x += e.vel.x;
+          if (e.yColl.length == 0) e.y += e.vel.y;
 
           for (var j:int = 0; j < times; j++) {
-            if (e.xColl.length) e.x += mag.x;
             if (e.yColl.length) e.y += mag.y;
 
             if (getColliders(e, grid).length) {
+              if (e.yColl.length) e.y -= mag.y;
               break;
             }
           }
 
-          if (e.xColl.length) e.x -= mag.x;
-          if (e.yColl.length) e.y -= mag.y;
-        }
-      }
-    }
+          for (var j:int = 0; j < times; j++) {
+            if (e.xColl.length) e.x += mag.x;
 
-    private static function resolveCollisionGroup(group:Array, grid:Array):void {
-      var groupSize:int = group.length;
-
-      for (var i:int = 0; i < groupSize; i++) {
-        var selectedEntity:MovingEntity = group[i];
-
-        if (selectedEntity.touchingRight || selectedEntity.touchingLeft) {
-          selectedEntity.x = selectedEntity.oldLoc.x;
-        }
-
-        if (selectedEntity.touchingTop || selectedEntity.touchingBottom) {
-          selectedEntity.y = selectedEntity.oldLoc.y;
+            if (getColliders(e, grid).length) {
+              if (e.xColl.length) e.x -= mag.x;
+              break;
+            }
+          }
         }
       }
     }
@@ -307,54 +297,6 @@
       }
 
       return result;
-    }
-
-    // Get each cluster of collided objects.
-    private static function getCollisionGroups(grid:Array):Array {
-      var e:EntityList = movingEntities();
-      var groups:Array = [];
-
-      while (e.length) {
-        var curGroup:Set = new Set();
-        var curEnt:Entity = e.pop();
-        if (curEnt.isStatic) continue;
-
-        curGroup.add(curEnt);
-
-        var oldLength:int = 0;
-
-        while (oldLength != curGroup.length) {
-          oldLength = curGroup.length;
-
-          curGroup.foreach(function(o:Entity):void {
-            if (o.isStatic) return;
-
-            curGroup.extend((o as MovingEntity).xColl);
-            curGroup.extend((o as MovingEntity).yColl);
-          });
-        }
-
-        curGroup.foreach(function(o:Entity):void {
-          e.remove(o);
-        });
-
-        if (curGroup.length > 1) {
-          groups.push(curGroup.filter(function(o:Entity):Boolean {
-              return !o.isStatic;
-            }).toArray());
-        }
-      }
-
-      return groups;
-    }
-
-    private static function resolveCollisions():void {
-      var grid:Array = makeGrid();
-      var collisionGroups:Array = getCollisionGroups(grid);
-
-      for (var i:int = 0; i < collisionGroups.length; i++) {
-        resolveCollisionGroup(collisionGroups[i], grid);
-      }
     }
 
     private static function update(event:Event):void {
@@ -391,8 +333,6 @@
       if (mapRef.modes().contains(currentMode)) {
         mapRef.update();
       }
-
-      resolveCollisions();
 
       camera.update();
       Util.dealWithVariableKeyRepeatRates();
