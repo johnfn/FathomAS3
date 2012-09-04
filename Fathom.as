@@ -262,19 +262,21 @@
         } else {
           var mag:Vec = e.vel.clone().normalize();
           var times:int = e.vel.clone().divide(mag).NaNsTo(0).max();
-          var broke:Boolean = false;
+
+          if (!e.xColl.length) e.x += e.vel.x;
+          if (!e.yColl.length) e.y += e.vel.y;
 
           for (var j:int = 0; j < times; j++) {
-            e.x += mag.x;
-            e.y += mag.y;
+            if (e.xColl.length) e.x += mag.x;
+            if (e.yColl.length) e.y += mag.y;
 
             if (getColliders(e, grid).length) {
               break;
             }
           }
 
-          e.x -= mag.x;
-          e.y -= mag.y;
+          if (e.xColl.length) e.x -= mag.x;
+          if (e.yColl.length) e.y -= mag.y;
         }
       }
     }
