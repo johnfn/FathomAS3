@@ -179,6 +179,9 @@
         if (entity.vel.y > 0) entity.touchingBottom = true;
       }
 
+      entity.touchingAnything = entity.touchingLeft || entity.touchingRight ||
+                                entity.touchingTop  || entity.touchingBottom;
+
       entity.y -= entity.vel.y;
 
       entity.x += entity.vel.x;
@@ -236,13 +239,11 @@
         list[i].xColl = new Set();
         list[i].yColl = new Set();
 
-        list[i].reset = false;
-        list[i].flagsSet = false;
-
         list[i].touchingLeft = false;
         list[i].touchingRight = false;
         list[i].touchingTop = false;
         list[i].touchingBottom = false;
+        list[i].touchingAnything = false;
 
         setColliders(list[i], grid);
 
@@ -253,8 +254,28 @@
       for (i = 0; i < list.length; i++) {
         if (list[i].isStatic) continue;
 
-        list[i].x += list[i].vel.x;
-        list[i].y += list[i].vel.y;
+        var e:MovingEntity = list[i] as MovingEntity;
+
+        if (!e.touchingAnything) {
+          e.x += e.vel.x;
+          e.y += e.vel.y;
+        } else {
+          var mag:Vec = e.vel.clone().normalize();
+          var times:int = e.vel.clone().divide(mag).NaNsTo(0).max();
+          var broke:Boolean = false;
+
+          for (var j:int = 0; j < times; j++) {
+            e.x += mag.x;
+            e.y += mag.y;
+
+            if (getColliders(e, grid).length) {
+              break;
+            }
+          }
+
+          e.x -= mag.x;
+          e.y -= mag.y;
+        }
       }
     }
 
@@ -271,8 +292,6 @@
         if (selectedEntity.touchingTop || selectedEntity.touchingBottom) {
           selectedEntity.y = selectedEntity.oldLoc.y;
         }
-
-        selectedEntity.reset = true;
       }
     }
 
@@ -313,7 +332,7 @@
           });
         }
 
-        curGroup.foreach(function(o:Entity) {
+        curGroup.foreach(function(o:Entity):void {
           e.remove(o);
         });
 

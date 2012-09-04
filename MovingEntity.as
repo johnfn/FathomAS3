@@ -17,10 +17,11 @@ package {
 
     public var flagsSet:Boolean       = false;
 
-    public var touchingLeft:Boolean   = false;
-    public var touchingRight:Boolean  = false;
-    public var touchingTop:Boolean    = false;
-    public var touchingBottom:Boolean = false;
+    public var touchingLeft:Boolean     = false;
+    public var touchingRight:Boolean    = false;
+    public var touchingTop:Boolean      = false;
+    public var touchingBottom:Boolean   = false;
+    public var touchingAnything:Boolean = false;
 
     /* List of all entities that this entity collided with in this time step. */
     internal var collisionList:EntityList = new EntityList([]);
