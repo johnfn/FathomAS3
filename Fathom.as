@@ -221,20 +221,23 @@
     // see if any individual square of the grid contains more than one item in
     // it.
     private static function moveEverything():void {
-      var list:EntityList = entities.get("!nonblocking");
+      var list:EntityList = movingEntities();
       var i:int = 0;
       var grid:Array = makeGrid();
 
+      //TODO: Merge these two loopz.
+
       // Move every non-static entity.
       for (i = 0; i < list.length; i++) {
-        if (list[i].isStatic) continue;
-
         // TODO these should be private.
 
         list[i].oldLoc = list[i].vec();
 
-        list[i].x += list[i].vel.x;
-        list[i].y += list[i].vel.y;
+        list[i].vel.x = Math.floor(list[i].vel.x);
+        list[i].vel.y = Math.floor(list[i].vel.y);
+
+        list[i].x += Math.floor(list[i].vel.x);
+        list[i].y += Math.floor(list[i].vel.y);
 
         list[i].xColl = new Set();
         list[i].yColl = new Set();
@@ -252,35 +255,34 @@
       }
 
       for (i = 0; i < list.length; i++) {
-        if (list[i].isStatic) continue;
-
         var e:MovingEntity = list[i] as MovingEntity;
 
         if (!e.touchingAnything) {
           e.x += e.vel.x;
           e.y += e.vel.y;
         } else {
-          var mag:Vec = e.vel.clone().normalize();
-          var times:int = e.vel.clone().divide(mag).NaNsTo(0).max();
+          var v:Vec = e.vel.clone();
 
-          if (e.xColl.length == 0) e.x += e.vel.x;
-          if (e.yColl.length == 0) e.y += e.vel.y;
+          var xResolved:int, yResolved:int;
 
-          for (var j:int = 0; j < times; j++) {
-            if (e.yColl.length) e.y += mag.y;
+          // Resolve 1 px in the x-direction at a time...
+          for (xResolved = 0; Math.abs(xResolved) < Math.abs(v.x); xResolved++) {
 
-            if (getColliders(e, grid).length) {
-              if (e.yColl.length) e.y -= mag.y;
-              break;
+            // Attempt to resolve as much of dy as possible on every tick.
+            for (var k:int = yResolved; k < Math.abs(v.y); k++) {
+              e.y += Util.sign(v.y);
+              if (getColliders(e, grid).length) {
+                e.y -= Util.sign(v.y);
+
+                break;
+              } else {
+                yResolved++;
+              }
             }
-          }
 
-          for (var j:int = 0; j < times; j++) {
-            if (e.xColl.length) e.x += mag.x;
-
+            e.x += Util.sign(v.x);
             if (getColliders(e, grid).length) {
-              if (e.xColl.length) e.x -= mag.x;
-              break;
+              e.x -= Util.sign(v.x);
             }
           }
         }
