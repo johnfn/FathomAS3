@@ -157,61 +157,6 @@
       return result;
     }
 
-    private static function setColliders(entity:MovingEntity, grid:Array):void {
-      var newXColliders:Set;
-      var newYColliders:Set;
-
-      entity.x -= entity.vel.x;
-      entity.y -= entity.vel.y;
-
-      entity.x += entity.vel.x;
-      newXColliders = getColliders(entity, grid);
-      if (newXColliders.length > 0) {
-        if (entity.vel.x < 0) entity.touchingLeft = true;
-        if (entity.vel.x > 0) entity.touchingRight = true;
-      }
-      entity.x -= entity.vel.x;
-
-      entity.y += entity.vel.y;
-      newYColliders = getColliders(entity, grid);
-      if (newYColliders.length > 0) {
-        if (entity.vel.y < 0) entity.touchingTop = true;
-        if (entity.vel.y > 0) entity.touchingBottom = true;
-      }
-
-      entity.y -= entity.vel.y;
-
-      entity.x += entity.vel.x;
-      entity.y += entity.vel.y;
-
-      if (getColliders(entity, grid).length > 0 && (newXColliders.length == 0 && newYColliders.length == 0)) {
-        // We are currently on a corner. Our original plan of attack
-        // won't work unless we favor one direction over the other. We
-        // arbitrarily choose to favor the x direction.
-
-        // Literally a corner case! Ha! Ha!
-
-        entity.y -= entity.vel.y;
-        entity.vel.y = 0;
-      }
-
-      newXColliders.foreach(function(o:Entity):void {
-        entity.xColl.add(o);
-
-        if (o.isStatic) return;
-
-        (o as MovingEntity).xColl.add(entity);
-      });
-
-      newYColliders.foreach(function(o:Entity):void {
-        entity.yColl.add(o);
-
-        if (o.isStatic) return;
-
-        (o as MovingEntity).yColl.add(entity);
-      });
-    }
-
     // TODO: These should be static functions on MovingEntity.
 
     // A fast way to find collisions is to subdivide the map into a grid and
@@ -234,21 +179,9 @@
         list[i].x = Math.floor(list[i].x);
         list[i].y = Math.floor(list[i].y);
 
-        list[i].x += list[i].vel.x;
-        list[i].y += list[i].vel.y;
-
         list[i].xColl = new Set();
         list[i].yColl = new Set();
 
-        list[i].touchingLeft = false;
-        list[i].touchingRight = false;
-        list[i].touchingTop = false;
-        list[i].touchingBottom = false;
-
-        setColliders(list[i], grid);
-
-        list[i].x -= list[i].vel.x;
-        list[i].y -= list[i].vel.y;
       }
 
       for (i = 0; i < list.length; i++) {
@@ -260,9 +193,11 @@
 
           // Attempt to resolve as much of dy as possible on every tick.
           for (var k:int = yResolved; k < Math.abs(e.vel.y); k++) {
-            e.y += Util.sign(v.y);
+            e.y += Util.sign(e.vel.y);
             if (getColliders(e, grid).length) {
-              e.y -= Util.sign(v.y);
+              e.yColl.extend(getColliders(e, grid));
+
+              e.y -= Util.sign(e.vel.y);
 
               break;
             } else {
@@ -270,11 +205,18 @@
             }
           }
 
-          e.x += Util.sign(v.x);
+          e.x += Util.sign(e.vel.x);
           if (getColliders(e, grid).length) {
-            e.x -= Util.sign(v.x);
+            e.xColl.extend(getColliders(e, grid));
+            e.x -= Util.sign(e.vel.x);
           }
         }
+
+        e.touchingBottom = (e.yColl.length && e.vel.y > 0);
+        e.touchingTop    = (e.yColl.length && e.vel.y < 0);
+
+        e.touchingLeft   = (e.xColl.length && e.vel.x < 0);
+        e.touchingRight  = (e.xColl.length && e.vel.x > 0);
       }
     }
 
