@@ -179,9 +179,6 @@
         if (entity.vel.y > 0) entity.touchingBottom = true;
       }
 
-      entity.touchingAnything = entity.touchingLeft || entity.touchingRight ||
-                                entity.touchingTop  || entity.touchingBottom;
-
       entity.y -= entity.vel.y;
 
       entity.x += entity.vel.x;
@@ -231,13 +228,14 @@
       for (i = 0; i < list.length; i++) {
         // TODO these should be private.
 
-        list[i].oldLoc = list[i].vec();
-
         list[i].vel.x = Math.floor(list[i].vel.x);
         list[i].vel.y = Math.floor(list[i].vel.y);
 
-        list[i].x += Math.floor(list[i].vel.x);
-        list[i].y += Math.floor(list[i].vel.y);
+        list[i].x = Math.floor(list[i].x);
+        list[i].y = Math.floor(list[i].y);
+
+        list[i].x += list[i].vel.x;
+        list[i].y += list[i].vel.y;
 
         list[i].xColl = new Set();
         list[i].yColl = new Set();
@@ -246,7 +244,6 @@
         list[i].touchingRight = false;
         list[i].touchingTop = false;
         list[i].touchingBottom = false;
-        list[i].touchingAnything = false;
 
         setColliders(list[i], grid);
 
@@ -256,34 +253,26 @@
 
       for (i = 0; i < list.length; i++) {
         var e:MovingEntity = list[i] as MovingEntity;
+        var xResolved:int, yResolved:int;
 
-        if (!e.touchingAnything) {
-          e.x += e.vel.x;
-          e.y += e.vel.y;
-        } else {
-          var v:Vec = e.vel.clone();
+        // Resolve 1 px in the x-direction at a time...
+        for (xResolved = 0; xResolved < Math.abs(e.vel.x) + 1; xResolved++) {
 
-          var xResolved:int, yResolved:int;
-
-          // Resolve 1 px in the x-direction at a time...
-          for (xResolved = 0; Math.abs(xResolved) < Math.abs(v.x); xResolved++) {
-
-            // Attempt to resolve as much of dy as possible on every tick.
-            for (var k:int = yResolved; k < Math.abs(v.y); k++) {
-              e.y += Util.sign(v.y);
-              if (getColliders(e, grid).length) {
-                e.y -= Util.sign(v.y);
-
-                break;
-              } else {
-                yResolved++;
-              }
-            }
-
-            e.x += Util.sign(v.x);
+          // Attempt to resolve as much of dy as possible on every tick.
+          for (var k:int = yResolved; k < Math.abs(e.vel.y); k++) {
+            e.y += Util.sign(v.y);
             if (getColliders(e, grid).length) {
-              e.x -= Util.sign(v.x);
+              e.y -= Util.sign(v.y);
+
+              break;
+            } else {
+              yResolved++;
             }
+          }
+
+          e.x += Util.sign(v.x);
+          if (getColliders(e, grid).length) {
+            e.x -= Util.sign(v.x);
           }
         }
       }

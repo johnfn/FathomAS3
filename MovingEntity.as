@@ -9,19 +9,14 @@ package {
   public class MovingEntity extends Entity {
     /* Velocity of the MovingEntity. */
     public var vel:Vec = new Vec(0, 0);
-    public var oldLoc:Vec = new Vec(0, 0);
-    public var reset:Boolean = false;
 
     public var xColl:Set = new Set();
     public var yColl:Set = new Set();
-
-    public var flagsSet:Boolean       = false;
 
     public var touchingLeft:Boolean     = false;
     public var touchingRight:Boolean    = false;
     public var touchingTop:Boolean      = false;
     public var touchingBottom:Boolean   = false;
-    public var touchingAnything:Boolean = false;
 
     /* List of all entities that this entity collided with in this time step. */
     internal var collisionList:EntityList = new EntityList([]);
@@ -29,12 +24,6 @@ package {
     function MovingEntity(x:Number = 0, y:Number = 0, width:Number = 20, height:Number = -1):void {
       super(x, y, width, height);
       _isStatic = false;
-    }
-
-    public override function update(e:EntityList):void {
-      this.reset = false;
-
-      super.update(e);
     }
 
     // TODO. This won't return anything you aren't obstructed by.
