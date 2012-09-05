@@ -167,26 +167,19 @@
       var i:int = 0;
       var grid:Array = makeGrid();
 
-      //TODO: Merge these two loopz.
-
       // Move every non-static entity.
-      for (i = 0; i < list.length; i++) {
-        // TODO these should be private.
-
-        list[i].vel.x = Math.floor(list[i].vel.x);
-        list[i].vel.y = Math.floor(list[i].vel.y);
-
-        list[i].x = Math.floor(list[i].x);
-        list[i].y = Math.floor(list[i].y);
-
-        list[i].xColl = new Set();
-        list[i].yColl = new Set();
-
-      }
-
       for (i = 0; i < list.length; i++) {
         var e:MovingEntity = list[i] as MovingEntity;
         var xResolved:int, yResolved:int;
+
+        e.vel.x = Math.floor(e.vel.x);
+        e.vel.y = Math.floor(e.vel.y);
+
+        e.x = Math.floor(e.x);
+        e.y = Math.floor(e.y);
+
+        e.xColl = new Set();
+        e.yColl = new Set();
 
         // Resolve 1 px in the x-direction at a time...
         for (xResolved = 0; xResolved < Math.abs(e.vel.x) + 1; xResolved++) {
