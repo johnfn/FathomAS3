@@ -92,71 +92,6 @@
       container.removeEventListener(Event.ENTER_FRAME, update);
     }
 
-    private static function getCoords(e:Entity):Array {
-      var HACK:int = 0;
-      var result:Array = [];
-      var GRIDSIZE:int = 25;
-
-      // This is subtle. If our gridsize is 25 and we're trying to hash an
-      // entity with width 25 at x location 0, we don't want to put it in two
-      // different slots. The width of the entity would have to be greater
-      // than 25 for us to do that. Or the x location would have to be > 0.
-
-      var endSlotX:int = (e.x + e.width) / GRIDSIZE;
-      if ((e.x + e.width) % GRIDSIZE == 0) endSlotX--;
-
-      var endSlotY:int = (e.y + e.height) / GRIDSIZE;
-      if ((e.y + e.height) % GRIDSIZE == 0) endSlotY--;
-
-      for (var slotX:int = (e.x / GRIDSIZE); slotX <= endSlotX; slotX++) {
-        for (var slotY:int = (e.y / GRIDSIZE); slotY <= endSlotY; slotY++) {
-          if (slotX < 0 || slotX >= mapRef.widthInTiles || slotY < 0 || slotY >= mapRef.heightInTiles) {
-            continue;
-          }
-
-          result.push(new Vec(slotX, slotY));
-        }
-      }
-
-      return result;
-    }
-
-    // TODO you should be able to flag things as no collision (i.e. particles)
-    private static function makeGrid():Array {
-      var grid:Array = Util.make2DArrayFn(mapRef.widthInTiles, mapRef.heightInTiles, function():Array { return []; });
-      var list:EntityList = entities.get("!nonblocking");
-      var HACK:int = 1;
-
-      for (var i:int = 0; i < list.length; i++) {
-        var coords:Array = getCoords(list[i]);
-
-        for (var j:int = 0; j < coords.length; j++) {
-          grid[coords[j].x][coords[j].y].push(list[i]);
-        }
-      }
-
-      return grid;
-    }
-
-    private static function getColliders(e:Entity, g:Array):Set {
-      var result:Set = new Set();
-      var coords:Array = getCoords(e);
-
-      for (var i:int = 0; i < coords.length; i++) {
-        var arr:Array = g[coords[i].x][coords[i].y];
-
-        for (var j:int = 0; j < arr.length; j++) {
-          if (arr[j] == e) continue;
-
-          if (e.touchingRect(arr[j])) {
-            result.add(arr[j]);
-          }
-        }
-      }
-
-      return result;
-    }
-
     // TODO: These should be static functions on MovingEntity.
 
     // A fast way to find collisions is to subdivide the map into a grid and
@@ -164,11 +99,10 @@
     // it.
     private static function moveEverything():void {
       var list:EntityList = movingEntities();
-      var i:int = 0;
-      var grid:Array = makeGrid();
+      var grid:SpatialHash = new SpatialHash(Fathom.entities.get("!nonblocking"));
 
       // Move every non-static entity.
-      for (i = 0; i < list.length; i++) {
+      for (var i:int = 0; i < list.length; i++) {
         var e:MovingEntity = list[i] as MovingEntity;
         var xResolved:int, yResolved:int;
 
@@ -187,8 +121,8 @@
           // Attempt to resolve as much of dy as possible on every tick.
           for (var k:int = yResolved; k < Math.abs(e.vel.y); k++) {
             e.y += Util.sign(e.vel.y);
-            if (getColliders(e, grid).length) {
-              e.yColl.extend(getColliders(e, grid));
+            if (grid.collides(e)) {
+              e.yColl.extend(grid.getColliders(e));
 
               e.y -= Util.sign(e.vel.y);
 
@@ -199,8 +133,8 @@
           }
 
           e.x += Util.sign(e.vel.x);
-          if (getColliders(e, grid).length) {
-            e.xColl.extend(getColliders(e, grid));
+          if (grid.collides(e)) {
+            e.xColl.extend(grid.getColliders(e));
             e.x -= Util.sign(e.vel.x);
           }
         }

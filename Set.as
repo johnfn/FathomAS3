@@ -1,6 +1,6 @@
 package {
-  // This class mimics the Set data type found in languages like Python.
 
+  // This class mimics the Set data type found in languages like Python.
   public class Set {
     import flash.utils.Dictionary;
 
