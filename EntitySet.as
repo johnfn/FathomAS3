@@ -1,14 +1,14 @@
 ﻿package {
 	import flash.debugger.enterDebugger;
 
-  public class EntityList extends Set {
-    function EntityList(entities:Array = null):void {
+  public class EntitySet extends Set {
+    function EntitySet(entities:Array = null):void {
       super(entities);
     }
 
-    public function get(...criteria):EntityList {
+    public function get(...criteria):EntitySet {
 
-      var eList:EntityList = clone();
+      var eList:EntitySet = clone();
 
       for (var i:int = 0; i < criteria.length; i++) {
         eList = eList.myfilter(criteria[i]);
@@ -17,16 +17,16 @@
       return eList;
     }
 
-    public function clone():EntityList {
-      return new EntityList(this.toArray());
+    public function clone():EntitySet {
+      return new EntitySet(this.toArray());
     }
 
-    public function union(...criteria):EntityList {
-      var eList:EntityList = clone();
-      var resultList:EntityList = new EntityList([]);
+    public function union(...criteria):EntitySet {
+      var eList:EntitySet = clone();
+      var resultList:EntitySet = new EntitySet([]);
 
       for (var i:int = 0; i < criteria.length; i++) {
-        var filteredList:EntityList = eList.myfilter(criteria[i]);
+        var filteredList:EntitySet = eList.myfilter(criteria[i]);
 
         for each (var e:Entity in filteredList) {
           resultList.add(e);
@@ -37,12 +37,12 @@
     }
 
     public function one(...criteria):Entity {
-      var results:EntityList = this.get.apply(this, criteria);
+      var results:EntitySet = this.get.apply(this, criteria);
 
       if (results.length == 0) {
-        throw new Error("EntityList#one called with criteria "+ criteria.toString()+ ", but no results found.");
+        throw new Error("EntitySet#one called with criteria "+ criteria.toString()+ ", but no results found.");
       } else if (results.length > 1) {
-        throw new Error("EntityList#one called with criteria "+ criteria.toString()+ ", and "+ results.length+ " results found.");
+        throw new Error("EntitySet#one called with criteria "+ criteria.toString()+ ", and "+ results.length+ " results found.");
       }
 
       for each (var e:Entity in results) {
@@ -72,7 +72,7 @@
     //
     // * Function -> match all entities e such that f(e) == true.
 
-    public function myfilter(criteria:*):EntityList {
+    public function myfilter(criteria:*):EntitySet {
       var pass:Array = [];
       var desired:Boolean = true;
 
@@ -96,7 +96,7 @@
         }
       }
 
-      return new EntityList(pass);
+      return new EntitySet(pass);
     }
   }
 }

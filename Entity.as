@@ -407,7 +407,7 @@
     }
 
     // TODO: Needs a better name.
-    public function currentlyTouching(...args):EntityList {
+    public function currentlyTouching(...args):EntitySet {
       var that:* = this;
 
       // It is important that we use *their* collision method, not ours.
@@ -420,7 +420,7 @@
       return Fathom.entities.get.apply(this, args.concat(touchesMe));
     }
 
-    public function currentlyBlocking(...args):EntityList {
+    public function currentlyBlocking(...args):EntitySet {
       return currentlyTouching.apply(this, args.concat("!non-blocking"));
     }
 
@@ -521,7 +521,7 @@
       return hitTestPoint(point.x, point.y);
     }
 
-    public function update(e:EntityList):void {}
+    public function update(e:EntitySet):void {}
 
     public override function toString():String {
       return "[" + Util.className(this) + " " + this.x + " " + this.y + "]"

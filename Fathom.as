@@ -18,7 +18,7 @@
 
     public static var mapRef:Map;
     public static var fpsTxt:Text;
-    public static var entities:EntityList = new EntityList([]);
+    public static var entities:EntitySet = new EntitySet([]);
     public static var container:Entity;
     public static var initialized:Boolean = false;
     public static var stage:Stage;
@@ -98,7 +98,7 @@
     // see if any individual square of the grid contains more than one item in
     // it.
     private static function moveEverything():void {
-      var list:EntityList = movingEntities();
+      var list:EntitySet = movingEntities();
       var grid:SpatialHash = new SpatialHash(Fathom.entities.get("!nonblocking"));
 
       // Move every non-static entity.
@@ -111,8 +111,8 @@
         e.x = Math.floor(e.x);
         e.y = Math.floor(e.y);
 
-        e.xColl = new EntityList();
-        e.yColl = new EntityList();
+        e.xColl = new EntitySet();
+        e.yColl = new EntitySet();
 
         // Resolve 1 px in the x-direction at a time...
         for (xResolved = 0; xResolved < Math.abs(e.vel.x) + 1; xResolved++) {
@@ -146,7 +146,7 @@
       }
     }
 
-    private static function movingEntities():EntityList {
+    private static function movingEntities():EntitySet {
       return Fathom.entities.get(function(e:Entity):Boolean {
         return !e.isStatic;
       });
@@ -155,7 +155,7 @@
     private static function update(event:Event):void {
       // We copy the entity list so that it doesn't change while we're
       // iterating through it.
-      var list:EntityList = entities.get();
+      var list:EntitySet = entities.get();
 
       // TODO: entities == Fathom.container.children
       fpsTxt.text = fpsFn();
