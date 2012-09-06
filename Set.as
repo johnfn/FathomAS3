@@ -72,7 +72,7 @@ package {
             iterationList.remove(item);
         }
 
-        contents[item] = undefined;
+        delete contents[item];
         _length--;
     }
 
