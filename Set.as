@@ -76,14 +76,6 @@ package {
         _length--;
     }
 
-    // TODO: Eventually just override for-in
-
-    public function foreach(f:Function):void {
-        for (var k:* in contents) {
-            f(k);
-        }
-    }
-
     public function has(item:*):Boolean {
 
         // This looks redundant, but if we don't have the item
