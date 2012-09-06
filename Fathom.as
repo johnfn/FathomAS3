@@ -102,8 +102,7 @@
       var grid:SpatialHash = new SpatialHash(Fathom.entities.get("!nonblocking"));
 
       // Move every non-static entity.
-      for (var i:int = 0; i < list.length; i++) {
-        var e:MovingEntity = list[i] as MovingEntity;
+      for each (var e:MovingEntity in list) {
         var xResolved:int, yResolved:int;
 
         e.vel.x = Math.floor(e.vel.x);
@@ -112,8 +111,8 @@
         e.x = Math.floor(e.x);
         e.y = Math.floor(e.y);
 
-        e.xColl = new Set();
-        e.yColl = new Set();
+        e.xColl = new EntityList();
+        e.yColl = new EntityList();
 
         // Resolve 1 px in the x-direction at a time...
         for (xResolved = 0; xResolved < Math.abs(e.vel.x) + 1; xResolved++) {
@@ -148,15 +147,9 @@
     }
 
     private static function movingEntities():EntityList {
-      var result:EntityList = new EntityList([]);
-
-      for (var i:int = 0; i < Fathom.entities.length; i++) {
-        if (Fathom.entities[i].isStatic) continue;
-
-        result.push(Fathom.entities[i]);
-      }
-
-      return result;
+      return Fathom.entities.get(function(e:Entity):Boolean {
+        return !e.isStatic;
+      });
     }
 
     private static function update(event:Event):void {
@@ -169,9 +162,7 @@
 
       moveEverything();
 
-      for (var i:int = 0; i < list.length; i++) {
-        var e:Entity = list[i];
-
+      for each (var e:Entity in list) {
         if (!e.modes().contains(currentMode)) continue;
 
         // This acts as a pseudo garbage-collector. We separate out the

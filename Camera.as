@@ -307,33 +307,32 @@ package {
     }
 
     public function update():void {
-      var that:Camera = this;
-
-      for (var key:String in events) {
-        events[key]();
-      }
-
-      easeXY();
+      var e:Entity;
+      var camScaleX:Number = normalWidth / width;
+      var camScaleY:Number = normalHeight / height;
 
       if (!this.isFocused) {
         trace("WARNING: Camera has no focus, so you probably won't see anything.");
       }
 
-      var camScaleX:Number = normalWidth / width;
-      var camScaleY:Number = normalHeight / height;
+      for each (var event:Function in events) {
+        event();
+      }
 
-      Fathom.entities.get("!no-camera").each(function(e:Entity):void {
-        e.cameraSpaceX = (e.x - that.x) * camScaleX;
-        e.cameraSpaceY = (e.y - that.y) * camScaleY;
+      easeXY();
+
+      for each (e in Fathom.entities.get("!no-camera")) {
+        e.cameraSpaceX = (e.x - this.x) * camScaleX;
+        e.cameraSpaceY = (e.y - this.y) * camScaleY;
 
         e.scaleX = e.cameraSpaceScaleX * camScaleX;
         e.scaleY = e.cameraSpaceScaleY * camScaleY;
-      });
+      }
 
-      Fathom.entities.get("no-camera").each(function(e:Entity):void {
+      for each (e in Fathom.entities.get("no-camera")) {
         e.cameraSpaceX = e.x;
         e.cameraSpaceY = e.y;
-      });
+      }
     }
   }
 }

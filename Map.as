@@ -91,9 +91,9 @@ package {
     private function updatePersistentItems(diff:Vec):void {
       hideCurrentPersistentItems();
 
-      Fathom.entities.get("!persistent").each(function(e:Entity):void {
+      for each (var e:Entity in Fathom.entities.get("!persistent")) {
         e.destroy();
-      });
+      }
 
       topLeftCorner.add(diff)
 

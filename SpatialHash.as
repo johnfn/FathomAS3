@@ -13,11 +13,11 @@ package {
 		function SpatialHash(list:EntityList) {
 		    grid = Util.make2DArrayFn(widthInTiles, heightInTiles, function():Array { return []; });
 
-		    for (var i:int = 0; i < list.length; i++) {
-		        var coords:Array = getCoords(list[i]);
+		    for each (var e:Entity in list) {
+		    	var coords:Array = getCoords(e);
 
 		        for (var j:int = 0; j < coords.length; j++) {
-			        grid[coords[j].x][coords[j].y].push(list[i]);
+			        grid[coords[j].x][coords[j].y].push(e);
 		        }
 		    }
 		}

@@ -1,33 +1,13 @@
 ﻿package {
 	import flash.debugger.enterDebugger;
 
-  //TODO: extends Vector.<Entity>
-
-  public dynamic class EntityList extends Array {
-    function EntityList(entities:Array):void {
-      if (entities is Array) {
-        for (var i:int = 0; i < entities.length; i++) {
-          this[i] = entities[i];
-        }
-      }
-    }
-
-    public function each(f:Function):void {
-      for (var i:int = 0; i < length; i++) {
-        f(this[i]);
-      }
-    }
-
-    public function first():Entity {
-      return this[0];
-    }
-
-    //TODO: A bit weird that this is the only non mutable fn.
-    public function add(entity:Entity):void {
-      this.push(entity);
+  public class EntityList extends Set {
+    function EntityList(entities:Array = null):void {
+      super(entities);
     }
 
     public function get(...criteria):EntityList {
+
       var eList:EntityList = clone();
 
       for (var i:int = 0; i < criteria.length; i++) {
@@ -38,7 +18,7 @@
     }
 
     public function clone():EntityList {
-      return new EntityList(this);
+      return new EntityList(this.toArray());
     }
 
     public function union(...criteria):EntityList {
@@ -48,24 +28,12 @@
       for (var i:int = 0; i < criteria.length; i++) {
         var filteredList:EntityList = eList.myfilter(criteria[i]);
 
-        for (var j:int = 0; j < filteredList.length; j++) {
-          if (!resultList.contains(filteredList[j])) {
-            resultList.push(filteredList[j]);
-          }
+        for each (var e:Entity in filteredList) {
+          resultList.add(e);
         }
       }
 
       return resultList;
-    }
-
-    public function join(e:EntityList):EntityList {
-      var result:EntityList = clone();
-
-      for (var i:int = 0; i < e.length; i++) {
-        result.push(e[i]);
-      }
-
-      return result;
     }
 
     public function one(...criteria):Entity {
@@ -77,7 +45,12 @@
         throw new Error("EntityList#one called with criteria "+ criteria.toString()+ ", and "+ results.length+ " results found.");
       }
 
-      return results.first();
+      for each (var e:Entity in results) {
+        return e;
+      }
+
+      Util.assert(false); // It's impossible to ever get here. Ever.
+      return null;
     }
 
     public function any(...criteria):Boolean {
@@ -88,7 +61,7 @@
       return this.get.apply(this, criteria).length == 0;
     }
 
-    // Filters a list by 1 criteria item. Does not mutate the list.
+    // Filters a list by 1 criteria item. Returns the filtered list.
     //
     // Criteria types:
     //
@@ -108,9 +81,7 @@
         criteria = criteria.substring(1);
       }
 
-      for (var i:int = 0; i < this.length; i++){
-        var entity:Entity = this[i];
-
+      for each (var entity:Entity in this) {
         if (criteria is String) {
           if ((entity.groups().indexOf(criteria) != -1) == desired) {
             pass.push(entity);

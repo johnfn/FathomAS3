@@ -76,7 +76,7 @@ package {
         _length--;
     }
 
-    public function has(item:*):Boolean {
+    public function contains(item:*):Boolean {
 
         // This looks redundant, but if we don't have the item
         // contents[item] == undefined.
@@ -129,16 +129,6 @@ package {
       }
 
       return result;
-    }
-
-    public function any(f:Function):Boolean {
-        for (var k:* in contents) {
-            if (f(k)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     public function toString():String {

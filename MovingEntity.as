@@ -10,8 +10,8 @@ package {
     /* Velocity of the MovingEntity. */
     public var vel:Vec = new Vec(0, 0);
 
-    public var xColl:Set = new Set();
-    public var yColl:Set = new Set();
+    public var xColl:EntityList = new EntityList();
+    public var yColl:EntityList = new EntityList();
 
     public var touchingLeft:Boolean     = false;
     public var touchingRight:Boolean    = false;
