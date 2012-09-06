@@ -402,12 +402,7 @@
       return this;
     }
 
-    public function touching(...args):Boolean {
-      return currentlyTouching.apply(this, args).length > 0;
-    }
-
-    // TODO: Needs a better name.
-    public function currentlyTouching(...args):EntitySet {
+    public function touchingSet(...args):EntitySet {
       var that:* = this;
 
       // It is important that we use *their* collision method, not ours.
@@ -420,8 +415,16 @@
       return Fathom.entities.get.apply(this, args.concat(touchesMe));
     }
 
-    public function currentlyBlocking(...args):EntitySet {
-      return currentlyTouching.apply(this, args.concat("!non-blocking"));
+    public function isTouching(...args):Boolean {
+      return touchingSet.apply(this, args).length > 0;
+    }
+
+    public function blockingSet(...args):EntitySet {
+      return touchingSet.apply(this, args.concat("!non-blocking"));
+    }
+
+    public function isBlocked(...args):Boolean {
+      return blockingSet.apply(this).length > 0;
     }
 
     /* This causes the Entity to cease existing in-game. The only way to
@@ -457,7 +460,7 @@
       Util.assert(rememberedParent != null);
     }
 
-    /* This permanently removes an Entity. It can't be add()ed back. */
+    /* This flags an Entity to be removed permanently. It can't be add()ed back. */
     public function destroy():void {
       for (var i:int = 0; i < entityChildren.length; i++){
         entityChildren[i].destroy();
@@ -467,6 +470,9 @@
     }
 
     //TODO: Does not entirely clear memory.
+
+    // If an entity is flagged for removal with destroy(), clearMemory() will eventually
+    // be called on it.
     public function clearMemory():void {
       removeFromFathom();
 

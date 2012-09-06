@@ -27,12 +27,11 @@ package {
     }
 
     // TODO. This won't return anything you aren't obstructed by.
-    public override function touching(...args):Boolean {
+    public override function isTouching(...args):Boolean {
       return xColl.any.apply(this, args) || yColl.any.apply(this, args);
     }
 
-    // TODO: Destroy this function... later.
-    public override function currentlyTouching(...args):EntitySet {
+    public override function touchingSet(...args):EntitySet {
       return new EntitySet(Set.merge(xColl, yColl).toArray()).get.apply(this, args);
     }
   }
