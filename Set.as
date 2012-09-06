@@ -1,8 +1,10 @@
 package {
+  import flash.utils.Proxy;
+  import flash.utils.Dictionary;
+  import flash.utils.flash_proxy;
 
   // This class mimics the Set data type found in languages like Python.
-  public class Set {
-    import flash.utils.Dictionary;
+  public class Set extends Proxy {
 
     private var contents:Dictionary = new Dictionary();
     private var _length:int = 0;
@@ -15,7 +17,45 @@ package {
         }
     }
 
+    override flash_proxy function hasProperty(name:*):Boolean {
+        return name in contents;
+    }
+
+    /* These two functions are the special sauce that make the for-in loop work. */
+
+    private var startedIterating:Boolean = false;
+    private var iterationList:Array = [];
+
+    override flash_proxy function nextNameIndex(index:int):int {
+        if (index == 0 && startedIterating) {
+            throw new Error("Sorry, can't double loop through the same Set. I can fix this, it's just a minor hassle.");
+        }
+
+        if (!startedIterating) {
+            startedIterating = true;
+
+            for (var k:* in contents) {
+                iterationList.push(k);
+            }
+        }
+
+        if (index >= iterationList.length) {
+            startedIterating = false;
+            return 0;
+        }
+
+        return index + 1;
+    }
+
+    override flash_proxy function nextValue(index:int):* {
+        return iterationList[index - 1];
+    }
+
     public function add(item:*):void {
+        if (startedIterating && !iterationList.contains(item)) {
+            iterationList.push(item);
+        }
+
         if (!contents[item]) {
             _length++;
         }
@@ -26,6 +66,10 @@ package {
     public function remove(item:*):void {
         if (!contents[item]) {
             throw new Error("Set#remove called on non-existant item");
+        }
+
+        if (startedIterating && iterationList.contains(item)) {
+            iterationList.remove(item);
         }
 
         contents[item] = undefined;
