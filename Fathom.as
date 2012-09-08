@@ -149,11 +149,11 @@
           }
         }
 
-        e.touchingBottom = (e.yColl.length && e.vel.y > 0);
-        e.touchingTop    = (e.yColl.length && e.vel.y < 0);
+        e.touchingBottom = (e.yColl.any("!non-blocking") && e.vel.y > 0);
+        e.touchingTop    = (e.yColl.any("!non-blocking") && e.vel.y < 0);
 
-        e.touchingLeft   = (e.xColl.length && e.vel.x < 0);
-        e.touchingRight  = (e.xColl.length && e.vel.x > 0);
+        e.touchingLeft   = (e.xColl.any("!non-blocking") && e.vel.x < 0);
+        e.touchingRight  = (e.xColl.any("!non-blocking") && e.vel.x > 0);
       }
     }
 
