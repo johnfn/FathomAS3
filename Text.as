@@ -16,9 +16,11 @@ package {
     private var typewriting:Boolean = false;
     private var typewriteTick:Function;
     private var fixedWidth:Boolean = false;
+    private var textClass:Class = null;
 
-    function Text(content:String = ""):void {
+    function Text(content:String = "", textClass:Class = null):void {
       this.content = content;
+      this.textClass = textClass;
 
       super(0, 0, 0, 0);
       graphics.clear();
@@ -30,7 +32,7 @@ package {
       textField.selectable = false;
       textField.wordWrap = true;
 
-      textField.filters = [new DropShadowFilter(1.0, 45, 0, 1, 0, 0, 1)];
+      textField.filters = [new DropShadowFilter(2.0, 45, 0, 1, 0, 0, 1)];
       textField.width = 200;
 
       addChild(textField);
@@ -93,9 +95,13 @@ package {
 
       //TODO: Don't make this every time.
       var newFormat:TextFormat = new TextFormat();
-      newFormat.size = 14;
-      newFormat.font = "Arial";
-      textField.setTextFormat(newFormat);
+      newFormat.font = "BittyFont";
+      newFormat.size = 16;
+
+      textField.embedFonts = true;
+      textField.defaultTextFormat = newFormat;
+      textField.antiAliasType = "advanced";
+      textField.text = s;
     }
 
     public function advanceText():void {
