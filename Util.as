@@ -81,7 +81,7 @@ package {
     }
 
     public static function printStackTrace():void {
-      var e:Error = new Error("[ignore this]");
+      var e:Error = new Error("[stack trace requested - no error]");
       trace(e.getStackTrace());
     }
 

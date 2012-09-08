@@ -12,6 +12,7 @@
 
   import flash.display.Bitmap;
   import flash.geom.Rectangle;
+  import flash.geom.Matrix;
 
   import Hooks;
   import Util;
@@ -280,19 +281,35 @@
       return this;
     }
 
+    public function flipBitmapData(original:BitmapData, axis:String = "x"):BitmapData {
+      var flipped:BitmapData = new BitmapData(original.width, original.height, true, 0);
+      var matrix:Matrix
+      if(axis == "x") {
+          matrix = new Matrix( -1, 0, 0, 1, original.width, 0);
+      } else {
+          matrix = new Matrix( 1, 0, 0, -1, 0, original.height);
+      }
+      flipped.draw(original, matrix, null, null, null, true);
+      return flipped;
+    }
+
     // These two are in Camera space.
     public function get cameraSpaceScaleX():Number { return scaleX; }
     public function get cameraSpaceScaleY():Number { return scaleY; }
 
+    protected var facing:int = 1;
+
     // Pass in the x-coordinate of your velocity, and this'll orient
     // the Entity in that direction.
     protected function face(dir:int):void {
-      if (dir > 0 && this.scaleX < 0) {
-        this.scaleX *= -1;
+      if (dir > 0 && facing < 0) {
+        pixels.bitmapData = flipBitmapData(pixels.bitmapData)
+        facing = dir;
         return;
       }
-      if (dir < 0 && this.scaleX > 0) {
-        this.scaleX *= -1;
+      if (dir < 0 && facing > 0) {
+        pixels.bitmapData = flipBitmapData(pixels.bitmapData)
+        facing = dir;
         return;
       }
     }
