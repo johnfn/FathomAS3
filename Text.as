@@ -15,12 +15,9 @@ package {
 
     private var typewriting:Boolean = false;
     private var typewriteTick:Function;
-    private var fixedWidth:Boolean = false;
-    private var textClass:Class = null;
 
-    function Text(content:String = "", textClass:Class = null):void {
+    function Text(content:String = "", textName:String = null):void {
       this.content = content;
-      this.textClass = textClass;
 
       super(0, 0, 0, 0);
       graphics.clear();
@@ -37,7 +34,15 @@ package {
 
       addChild(textField);
 
-      fixedWidth = false;
+      var newFormat:TextFormat = new TextFormat();
+      if (textName != null) {
+        newFormat.font = textName;
+      }
+      newFormat.size = 16;
+
+      textField.embedFonts = true;
+      textField.defaultTextFormat = newFormat;
+      textField.antiAliasType = "advanced";
     }
 
     override public function set width(val:Number):void {
@@ -45,26 +50,6 @@ package {
         textField.width = width;
         textField.height = 200;
       }
-
-      fixedWidth = true;
-    }
-
-    override public function set x(val:Number):void {
-      if (textField) {
-        textField.x = val;
-        trace(val);
-        trace(this.parent.x);
-      }
-
-      super.x = val;
-    }
-
-    override public function set y(val:Number):void {
-      if (textField) {
-        textField.y = val;
-      }
-
-      super.y = val;
     }
 
     public function set color(val:uint):void {
@@ -90,17 +75,8 @@ package {
     }
 
     public function set text(s:String):void {
-      textField.text = s;
       textField.width = 200; //textField.textWidth;
 
-      //TODO: Don't make this every time.
-      var newFormat:TextFormat = new TextFormat();
-      newFormat.font = "BittyFont";
-      newFormat.size = 16;
-
-      textField.embedFonts = true;
-      textField.defaultTextFormat = newFormat;
-      textField.antiAliasType = "advanced";
       textField.text = s;
     }
 

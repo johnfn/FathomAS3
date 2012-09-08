@@ -86,11 +86,31 @@
       super.addChild(pixels);
    }
 
-    /*
-    public function set absX(val:Number):void {
-      //bla bla bla local2Global TODO
+    public function get absX():Number {
+      var p:DisplayObjectContainer = this;
+      var result:int = 0;
+
+      while (p != null) {
+        result += p.x;
+
+        p = p.parent;
+      }
+
+      return result;
     }
-    */
+
+    public function get absY():Number {
+      var p:DisplayObjectContainer = this;
+      var result:int = 0;
+
+      while (p != null) {
+        result += p.y;
+
+        p = p.parent;
+      }
+
+      return result;
+    }
 
     public override function set x(val:Number):void {
       entitySpacePos.x = val;
