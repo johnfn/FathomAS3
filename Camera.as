@@ -312,7 +312,7 @@ package {
       var camScaleY:Number = normalHeight / height;
 
       if (!this.isFocused) {
-        trace("WARNING: Camera has no focus, so you probably won't see anything.");
+        Util.log("WARNING: Camera has no focus, so you probably won't see anything.");
       }
 
       for each (var event:Function in events) {

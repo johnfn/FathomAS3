@@ -82,13 +82,26 @@ package {
 
     public static function printStackTrace():void {
       var e:Error = new Error("[stack trace requested - no error]");
-      trace(e.getStackTrace());
+      Util.log(e.getStackTrace());
+    }
+
+    /* The reason for this wrapper method is to separate debugging messages
+       that should eventually be removed from more serious error logs, which
+       should stay. For instance, if you're checking the x value of an Entity, do
+       trace(e.x). If you just failed an assertion, do Util.log("Assertion failed!").
+
+       We separate them so that it's easy to search for "trace(" and find the debugging
+       messages that you need to remove.
+       */
+
+    public static function log(...args):void {
+      trace.apply(this, args);
     }
 
     public static function assert(b:Boolean):void {
       if (!b) {
         var e:Error = new Error("Assertion failed.");
-        trace(e.getStackTrace());
+        Util.log(e.getStackTrace());
         fscommand("quit");
         throw e;
       }

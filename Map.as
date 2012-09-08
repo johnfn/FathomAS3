@@ -103,7 +103,7 @@ package {
     private function addPersistentItem(c:Color, x:int, y:int):void {
       if (!(c.toString() in persistentItemMapping)) {
         if (c.toString() != "#ffffff") {
-          trace("Color without data: " + c.toString());
+          Util.log("Color without data: " + c.toString());
         }
         return;
       }

@@ -36,7 +36,6 @@
     protected var spritesheet:Array = []
     protected var groupArray:Array = ["persistent"];
     protected var entityChildren:Array = [];
-    protected var _ignoresCollisions:Boolean = false;
     protected var _depth:int = 0;
 
     // These is purely for debugging purposes.
@@ -346,12 +345,6 @@
       return this;
     }
 
-    public function ignoreCollisions():Entity {
-      _ignoresCollisions = true;
-
-      return this;
-    }
-
     public function raiseToTop():void {
       if (this.parent) {
         this.parent.setChildIndex(this, this.parent.numChildren - 1);
@@ -555,7 +548,7 @@
     }
 
     public function collides(other:Entity):Boolean {
-      return !_ignoresCollisions && (!(this == other)) && touchingRect(other);
+      return (!(this == other)) && touchingRect(other);
     }
 
     public function collidesPt(point:Point):Boolean {
@@ -565,7 +558,7 @@
     public function update(e:EntitySet):void {}
 
     public override function toString():String {
-      return "[" + Util.className(this) + " " + this.x + " " + this.y + "]"
+      return "[" + Util.className(this) + " " + this.x + " " + this.y + " " + this.groups() + "]"
     }
 
     //public override function toString():String {
