@@ -72,7 +72,7 @@
     //
     // * Function -> match all entities e such that f(e) == true.
 
-    public function myfilter(criteria:*):EntitySet {
+    private function myfilter(criteria:*):EntitySet {
       var pass:Array = [];
       var desired:Boolean = true;
 

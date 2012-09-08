@@ -77,7 +77,10 @@
       Fathom.stage.addChild(Fathom.container);
 
       fpsFn = Hooks.fpsCounter();
-      fpsTxt = new Text(200, 20);
+      fpsTxt = new Text();
+      fpsTxt.setPos(new Vec(200, 20));
+      fpsTxt.width = 200;
+      //fpsTxt.visible = false;
 
       Util._initializeKeyInput(container);
     }
@@ -99,7 +102,7 @@
     // it.
     private static function moveEverything():void {
       var list:EntitySet = movingEntities();
-      var grid:SpatialHash = new SpatialHash(Fathom.entities.get("!nonblocking"));
+      var grid:SpatialHash = new SpatialHash(Fathom.entities.get());
 
       // Move every non-static entity.
       for each (var e:MovingEntity in list) {
@@ -121,20 +124,28 @@
           for (var k:int = yResolved; k < Math.abs(e.vel.y); k++) {
             e.y += Util.sign(e.vel.y);
             if (grid.collides(e)) {
-              e.yColl.extend(grid.getColliders(e));
+              var yColliders:EntitySet = grid.getColliders(e);
 
-              e.y -= Util.sign(e.vel.y);
+              e.yColl.extend(yColliders);
 
-              break;
-            } else {
-              yResolved++;
+              if (yColliders.any("!non-blocking")) {
+                e.y -= Util.sign(e.vel.y);
+                break;
+              }
             }
+
+            yResolved++;
           }
 
           e.x += Util.sign(e.vel.x);
           if (grid.collides(e)) {
-            e.xColl.extend(grid.getColliders(e));
-            e.x -= Util.sign(e.vel.x);
+            var xColliders:EntitySet = grid.getColliders(e);
+
+            e.xColl.extend(xColliders);
+
+            if (xColliders.any("!non-blocking")) {
+              e.x -= Util.sign(e.vel.x);
+            }
           }
         }
 

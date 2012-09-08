@@ -17,36 +17,60 @@ package {
     private var typewriteTick:Function;
     private var fixedWidth:Boolean = false;
 
-    function Text(x:Number = 0, y:Number = 0, content:String = "", width:int = -1):void {
+    function Text(content:String = ""):void {
       this.content = content;
 
       super(0, 0, 0, 0);
       graphics.clear();
 
       textField = new TextField();
+
       text = content;
 
       textField.selectable = false;
-      textField.x = x;
-      textField.y = y;
       textField.wordWrap = true;
 
       textField.filters = [new DropShadowFilter(1.0, 45, 0, 1, 0, 0, 1)];
+      textField.width = 200;
 
       addChild(textField);
 
-      if (width == -1) {
-        fixedWidth = false;
-      } else {
-        textField.width = width;
-        textField.height = 200;
-        fixedWidth = true;
-      }
+      fixedWidth = false;
     }
 
-    //TODO entities have color?
-    public function set textColor(val:uint):void {
+    override public function set width(val:Number):void {
+      if (textField) {
+        textField.width = width;
+        textField.height = 200;
+      }
+
+      fixedWidth = true;
+    }
+
+    override public function set x(val:Number):void {
+      if (textField) {
+        textField.x = val;
+        trace(val);
+        trace(this.parent.x);
+      }
+
+      super.x = val;
+    }
+
+    override public function set y(val:Number):void {
+      if (textField) {
+        textField.y = val;
+      }
+
+      super.y = val;
+    }
+
+    public function set color(val:uint):void {
       textField.textColor = val;
+    }
+
+    public function get color():uint {
+      return textField.textColor;
     }
 
     public function advanceOnKeypress(key:int):Text {
@@ -65,10 +89,9 @@ package {
 
     public function set text(s:String):void {
       textField.text = s;
-      if (!fixedWidth) {
-        textField.width = textField.textWidth;
-      }
+      textField.width = 200; //textField.textWidth;
 
+      //TODO: Don't make this every time.
       var newFormat:TextFormat = new TextFormat();
       newFormat.size = 14;
       newFormat.font = "Arial";
@@ -117,6 +140,7 @@ package {
     public override function clearMemory():void {
       textField = null;
       content = null;
+      typewriteTick = null;
 
       super.clearMemory();
     }

@@ -490,11 +490,6 @@
       return this;
     }
 
-    public function setPosition(loc:Vec):void {
-      x = loc.x;
-      y = loc.y;
-    }
-
     public function sortDepths():void {
       entityChildren.sort(function(a:Entity, b:Entity):int {
         return a.depth - b.depth;

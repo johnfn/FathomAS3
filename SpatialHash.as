@@ -48,8 +48,8 @@ package {
 	    }
 
 	    /* Return the entity at x, y in the spatial hash. */
-		public function getAt(x:int, y:int):Set {
-			return new Set(grid[x][y]);
+		public function getAt(x:int, y:int):EntitySet {
+			return new EntitySet(grid[x][y]);
 		}
 
 		/* Returns whether the entity e collides with any object in the hash,
@@ -73,8 +73,8 @@ package {
 		}
 
 		/* Return every entity the entity e collides with, excluding itself. */
-	    public function getColliders(e:Entity):Set {
-	      var result:Set = new Set();
+	    public function getColliders(e:Entity):EntitySet {
+	      var result:EntitySet = new EntitySet();
 	      var coords:Array = getCoords(e);
 
 	      for (var i:int = 0; i < coords.length; i++) {
