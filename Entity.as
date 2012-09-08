@@ -482,6 +482,8 @@
 
     /* This flags an Entity to be removed permanently. It can't be add()ed back. */
     public function destroy():void {
+      Util.assert(Fathom.entities.contains(this));
+
       for (var i:int = 0; i < entityChildren.length; i++){
         entityChildren[i].destroy();
       }
@@ -499,7 +501,6 @@
       events = null;
 
       destroyed = true;
-      Fathom.entities.remove(this);
     }
 
     public function addGroups(...args):Entity {

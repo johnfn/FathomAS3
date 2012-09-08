@@ -80,6 +80,11 @@ package {
       return split[split.length - 1];
     }
 
+    public static function printStackTrace():void {
+      var e:Error = new Error("[ignore this]");
+      trace(e.getStackTrace());
+    }
+
     public static function assert(b:Boolean):void {
       if (!b) {
         var e:Error = new Error("Assertion failed.");
