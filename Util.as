@@ -95,7 +95,7 @@ package {
        */
 
     public static function log(...args):void {
-      trace.apply(this, args);
+      trace.apply(null, args);
     }
 
     public static function assert(b:Boolean):void {

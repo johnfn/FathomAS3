@@ -434,31 +434,6 @@
       return this;
     }
 
-    public function touchingSet(...args):EntitySet {
-      var that:* = this;
-
-      // It is important that we use *their* collision method, not ours.
-      // TODO: This will lead to disaster down the line (imagine colliding two maps!)
-
-      var touchesMe:Function = function(other:Entity):Boolean {
-        return other.collides(that);
-      };
-
-      return Fathom.entities.get.apply(this, args.concat(touchesMe));
-    }
-
-    public function isTouching(...args):Boolean {
-      return touchingSet.apply(this, args).length > 0;
-    }
-
-    public function blockingSet(...args):EntitySet {
-      return touchingSet.apply(this, args.concat("!non-blocking"));
-    }
-
-    public function isBlocked(...args):Boolean {
-      return blockingSet.apply(this).length > 0;
-    }
-
     /* This causes the Entity to cease existing in-game. The only way to
        bring it back is to call addToFathom(). */
     public function removeFromFathom(recursing:Boolean = false):void {

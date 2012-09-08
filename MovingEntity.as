@@ -27,12 +27,16 @@ package {
     }
 
     // TODO. This won't return anything you aren't obstructed by.
-    public override function isTouching(...args):Boolean {
+    public function isTouching(...args):Boolean {
       return xColl.any.apply(this, args) || yColl.any.apply(this, args);
     }
 
-    public override function touchingSet(...args):EntitySet {
+    public function touchingSet(...args):EntitySet {
       return new EntitySet(Set.merge(xColl, yColl).toArray()).get.apply(this, args);
+    }
+
+    public function isBlocked(...args):Boolean {
+      return isTouching("!non-blocking");
     }
   }
 }
