@@ -83,7 +83,7 @@
 
       for each (var entity:Entity in this) {
         if (criteria is String) {
-          if ((entity.groups().indexOf(criteria) != -1) == desired) {
+          if ((entity.groups().contains(criteria)) == desired) {
             pass.push(entity);
           }
 

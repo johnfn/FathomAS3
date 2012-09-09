@@ -34,7 +34,7 @@
 
     protected var pixels:Bitmap = new Bitmap();
     protected var spritesheet:Array = []
-    protected var groupArray:Array = ["persistent"];
+    protected var groupSet:Set = new Set(["persistent"]);
     protected var entityChildren:Array = [];
     protected var _depth:int = 0;
 
@@ -491,9 +491,7 @@
     }
 
     public function addGroups(...args):Entity {
-      for (var i:int = 0; i < args.length; i++) {
-        groupArray.push(args[i]);
-      }
+      groupSet.extend(new Set(args));
 
       return this;
     }
@@ -511,8 +509,8 @@
     //TODO: Group strings to enums with Inheritable property.
     //TODO: There is a possible namespace collision here. assert no 2 groups have same name.
     //TODO: Enumerations are better.
-    public function groups():Array {
-      return groupArray.concat(Util.className(this));
+    public function groups():Set {
+      return groupSet.concat(Util.className(this));
     }
 
     public function touchingRect(rect:Entity):Boolean {

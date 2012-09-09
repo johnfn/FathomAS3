@@ -66,7 +66,7 @@ package {
       return this;
     }
 
-    public override function groups():Array {
+    public override function groups():Set {
       return super.groups().concat("updates-while-paused");
     }
 

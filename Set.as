@@ -3,6 +3,9 @@ package {
   import flash.utils.Dictionary;
   import flash.utils.flash_proxy;
 
+  // TODO: High level stuff - should have some consistency with mutable/immutable
+  // function calls.
+
   // This class mimics the Set data type found in languages like Python.
   public class Set extends Proxy {
 
@@ -103,6 +106,21 @@ package {
         for (var k:* in other.contents) {
             add(k);
         }
+    }
+
+    public function concat(...args):Set {
+        var result:Set = new Set();
+        var k:*;
+
+        for (k in contents) {
+            result.add(k);
+        }
+
+        for (var i:int = 0; i < args.length; i++) {
+            result.add(args[i]);
+        }
+
+        return result;
     }
 
     public function filter(f:Function):Set {
