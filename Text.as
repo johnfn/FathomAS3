@@ -113,6 +113,10 @@ package {
       off("pre-update", this.typewriteTick);
     }
 
+    override public function groups():Set {
+      return super.groups().concat("no-camera", "non-blocking");
+    }
+
     public override function clearMemory():void {
       textField = null;
       content = null;
