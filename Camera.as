@@ -329,8 +329,6 @@ package {
         e.scaleY = e.cameraSpaceScaleY * camScaleY;
       }
 
-      trace(Fathom.entities.get("no-camera"));
-
       for each (e in Fathom.entities.get("no-camera")) {
         e.cameraSpaceX = e.x;
         e.cameraSpaceY = e.y;

@@ -88,10 +88,10 @@ package {
     /* The reason for this wrapper method is to separate debugging messages
        that should eventually be removed from more serious error logs, which
        should stay. For instance, if you're checking the x value of an Entity, do
-       trace(e.x). If you just failed an assertion, do Util.log("Assertion failed!").
+       trace (e.x). If you just failed an assertion, do Util.log("Assertion failed!").
 
-       We separate them so that it's easy to search for "trace(" and find the debugging
-       messages that you need to remove.
+       We separate them so that it's easy to search for "trace" with a following "("
+       to find debugging messages you need to remove.
        */
 
     public static function log(...args):void {

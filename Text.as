@@ -19,37 +19,27 @@ package {
     function Text(content:String = "", textName:String = null):void {
       this.content = content;
 
-      super(0, 0, 0, 0);
-      graphics.clear();
-
-      textField = new TextField();
-
-      text = content;
-
-      textField.selectable = false;
-      textField.wordWrap = true;
-
-      textField.filters = [new DropShadowFilter(2.0, 45, 0, 1, 0, 0, 1)];
-      textField.width = 200;
-
-      addChild(textField);
-
       var newFormat:TextFormat = new TextFormat();
-      if (textName != null) {
-        newFormat.font = textName;
-      }
+      if (textName != null) newFormat.font = textName;
       newFormat.size = 16;
 
+      textField = new TextField();
+      textField.selectable = false;
+      textField.wordWrap = true;
+      textField.filters = [new DropShadowFilter(2.0, 45, 0, 1, 0, 0, 1)];
       textField.embedFonts = true;
       textField.defaultTextFormat = newFormat;
       textField.antiAliasType = "advanced";
+      textField.width = 200;
+      text = content;
+
+      super(0, 0, 0, 0);
+      //TODO figure out why there's an error if you flip these two lines.
+      addChild(textField);
     }
 
     override public function set width(val:Number):void {
-      if (textField) {
-        textField.width = width;
-        textField.height = 200;
-      }
+      textField.width = val;
     }
 
     public function set color(val:uint):void {
@@ -66,17 +56,11 @@ package {
       return this;
     }
 
-    public override function groups():Set {
-      return super.groups().concat("updates-while-paused");
-    }
-
     public function get text():String {
       return textField.text;
     }
 
     public function set text(s:String):void {
-      textField.width = 200; //textField.textWidth;
-
       textField.text = s;
     }
 
