@@ -16,19 +16,26 @@ package {
     private var typewriting:Boolean = false;
     private var typewriteTick:Function;
 
+    private var normalTextFormat:TextFormat = new TextFormat();
+    private var redTextFormat:TextFormat = new TextFormat();
+
     function Text(content:String = "", textName:String = null):void {
       this.content = content;
 
-      var newFormat:TextFormat = new TextFormat();
-      if (textName != null) newFormat.font = textName;
-      newFormat.size = 16;
+      if (textName != null) normalTextFormat.font = textName;
+      normalTextFormat.size = 16;
+      normalTextFormat.color = 0xFFFFFF;
+
+      if (textName != null) redTextFormat.font = textName;
+      redTextFormat.size = 16;
+      redTextFormat.color = 0xFF0000;
 
       textField = new TextField();
       textField.selectable = false;
       textField.wordWrap = true;
       textField.filters = [new DropShadowFilter(2.0, 45, 0, 1, 0, 0, 1)];
       textField.embedFonts = true;
-      textField.defaultTextFormat = newFormat;
+      textField.defaultTextFormat = normalTextFormat;
       textField.antiAliasType = "advanced";
       text = content;
 
@@ -70,8 +77,37 @@ package {
       return textField.text;
     }
 
+
+    // Interpolate the string by adding colors. Any words between *stars* are
+    // colored red.
     public function set text(s:String):void {
-      textField.text = s;
+      var pairs:Array = [];
+      var currentPair:Array = [];
+      var idx:int = 0;
+      var resultString:String = "";
+      var i:int;
+
+      for (i = 0; i < s.length; i++) {
+        idx++;
+
+        if (s.charAt(i) == "*") {
+          idx--;
+          currentPair.push(idx);
+        } else {
+          resultString += s.charAt(i);
+        }
+
+        if (currentPair.length == 2) {
+          pairs.push(currentPair);
+          currentPair = [];
+        }
+      }
+
+      textField.text = resultString;
+
+      for (i = 0; i < pairs.length; i++) {
+        textField.setTextFormat(redTextFormat, pairs[i][0], pairs[i][1]);
+      }
     }
 
     public function advanceText():void {
