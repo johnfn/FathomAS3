@@ -163,18 +163,24 @@
       });
     }
 
+    private static function updateFPS():void {
+      fpsTxt.text = fpsFn();
+    }
+
     private static function update(event:Event):void {
       // We copy the entity list so that it doesn't change while we're
       // iterating through it.
       var list:EntitySet = entities.get();
 
-      // TODO: entities == Fathom.container.children
-      fpsTxt.text = fpsFn();
+      // Similarly, if something changes the current mode, that shouldn't
+      // be reflected until the next update cycle.
+      var cachedMode:int = currentMode;
 
+      updateFPS();
       moveEverything();
 
       for each (var e:Entity in list) {
-        if (!e.modes().contains(currentMode)) continue;
+        if (!e.modes().contains(cachedMode)) continue;
 
         // This acts as a pseudo garbage-collector. We separate out the
         // destroyed() call from the clearMemory() call because we sometimes
