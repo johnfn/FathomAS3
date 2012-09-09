@@ -38,11 +38,18 @@ package {
 
       // You need to set the width after you add the TextField - otherwise, it'll
       // be reset to 0.
-      textField.width = 200;
+      width = 200;
+      height = 200;
     }
 
     override public function set width(val:Number):void {
       textField.width = val;
+      super.width = val;
+    }
+
+    override public function set height(val:Number):void {
+      textField.height = val;
+      super.height = val;
     }
 
     public function set color(val:uint):void {
