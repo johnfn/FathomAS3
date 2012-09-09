@@ -30,12 +30,15 @@ package {
       textField.embedFonts = true;
       textField.defaultTextFormat = newFormat;
       textField.antiAliasType = "advanced";
-      textField.width = 200;
       text = content;
 
       super(0, 0, 0, 0);
-      //TODO figure out why there's an error if you flip these two lines.
+
       addChild(textField);
+
+      // You need to set the width after you add the TextField - otherwise, it'll
+      // be reset to 0.
+      textField.width = 200;
     }
 
     override public function set width(val:Number):void {
