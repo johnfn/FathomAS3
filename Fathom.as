@@ -108,8 +108,8 @@
       for each (var e:MovingEntity in list) {
         var xResolved:int, yResolved:int;
 
-        e.vel.x = Math.floor(e.vel.x);
-        e.vel.y = Math.floor(e.vel.y);
+        e.vel.x = int(e.vel.x);
+        e.vel.y = int(e.vel.y);
 
         e.x = Math.floor(e.x);
         e.y = Math.floor(e.y);
