@@ -438,6 +438,7 @@
        bring it back is to call addToFathom(). */
     public function removeFromFathom(recursing:Boolean = false):void {
       Util.assert(this.parent != null);
+
       if (!Fathom.entities.contains(this)) {
         trace(this, " removed but not in Fathom.")
         Util.assert(false);
@@ -460,10 +461,6 @@
       Util.assert(!destroyed);
       Util.assert(!this.parent);
 
-      for (var i:int = 0; i < entityChildren.length; i++){
-        entityChildren[i].addToFathom(true);
-      }
-
       if (!recursing) rememberedParent.addChild(this);
 
       Fathom.entities.add(this);
@@ -474,10 +471,6 @@
     /* This flags an Entity to be removed permanently. It can't be add()ed back. */
     public function destroy():void {
       Util.assert(Fathom.entities.contains(this));
-
-      for (var i:int = 0; i < entityChildren.length; i++){
-        entityChildren[i].destroy();
-      }
 
       destroyed = true;
     }
