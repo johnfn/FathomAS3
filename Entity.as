@@ -438,6 +438,10 @@
        bring it back is to call addToFathom(). */
     public function removeFromFathom(recursing:Boolean = false):void {
       Util.assert(this.parent != null);
+      if (!Fathom.entities.contains(this)) {
+        trace(this, " removed but not in Fathom.")
+        Util.assert(false);
+      }
 
       this.rememberedParent = this.parent;
 
