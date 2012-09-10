@@ -56,7 +56,7 @@
     public function get isStatic():Boolean { return _isStatic; }
     private function set isStatic(val:Boolean):void { _isStatic = val; }
 
-    function Entity(x:Number = 0, y:Number = 0, width:Number = 20, height:Number = -1):void {
+    function Entity(x:Number = 0, y:Number = 0, width:Number = -1, height:Number = -1):void {
       if (height == -1) height = width;
 
       if (!Fathom.initialized) {
@@ -68,8 +68,9 @@
 
       this.x = x;
       this.y = y;
-      this.height = height;
-      this.width = width;
+
+      if (width != -1) this.height = height;
+      if (height != -1) this.width = width;
 
       //TODO: I had this idea about how parents should bubble down events to children.
 
@@ -359,6 +360,7 @@
     }
 
     public override function addChild(child:DisplayObject):DisplayObject {
+      if (!entityChildren) throw new Error("You need to call super() before addChild().")
       Util.assert(!entityChildren.contains(child));
 
       super.addChild(child);

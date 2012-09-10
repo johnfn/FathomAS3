@@ -20,6 +20,8 @@ package {
     private var redTextFormat:TextFormat = new TextFormat();
 
     function Text(content:String = "", textName:String = null):void {
+      super(0, 0);
+
       this.content = content;
 
       if (textName != null) normalTextFormat.font = textName;
@@ -38,8 +40,6 @@ package {
       textField.defaultTextFormat = normalTextFormat;
       textField.antiAliasType = "advanced";
       text = content;
-
-      super(0, 0, 0, 0);
 
       addChild(textField);
 
