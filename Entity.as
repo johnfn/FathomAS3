@@ -200,15 +200,11 @@
     // Set this entities graphics to be the sprite at (x, y) on the provided spritesheet.
     public function setTile(x:int, y:int):Entity {
       Util.assert(this.spritesheetObj != null);
-
-      //TODO: Cache this
-      var bAsset:BitmapAsset = spritesheetObj;
-
-      var count:int = 0;
-
       Util.assert(entityChildren.length == 0);
 
+      var bAsset:BitmapAsset = spritesheetObj; //TODO: Cache this
       var uid:String = Util.className(spritesheetObj) + x + " " + y;
+
       if (!(cachedAssets[uid])) {
         var bd:BitmapData = new BitmapData(width, height, true, 0);
         var source:Rectangle = new Rectangle(x * width, y * height, width, height);
@@ -218,11 +214,10 @@
         cachedAssets[uid] = bd;
       }
 
-      this.spritesheet = spritesheet;
+      this.spritesheet = [x, y];
       pixels.bitmapData = cachedAssets[uid];
 
       return this;
-
     }
 
     // TODO: This could eventually be called setOrigin.
