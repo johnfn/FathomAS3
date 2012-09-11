@@ -220,6 +220,14 @@
       return this;
     }
 
+    public function get spriteX():int {
+      return this.spritesheet[0];
+    }
+
+    public function get spriteY():int {
+      return this.spritesheet[1];
+    }
+
     // TODO: This could eventually be called setOrigin.
     public function setRotationOrigin(x:Number, y:Number):Entity {
       pixels.x -= x;
