@@ -13,6 +13,7 @@
   import flash.display.Bitmap;
   import flash.geom.Rectangle;
   import flash.geom.Matrix;
+  import flash.events.*;
 
   import Hooks;
   import Util;
@@ -328,6 +329,20 @@
     //
     // new Entity().fromExternalMC("Explosion").ignoreCollisions().disappearAfter(20);
 
+    // TODO: These two need work.
+
+    public function listen(f:Function):Entity {
+      this.addEventListener(Event.ENTER_FRAME, f);
+
+      return this;
+    }
+
+    public function unlisten(f:Function):Entity {
+      this.removeEventListener(Event.ENTER_FRAME, f);
+
+      return this;
+    }
+
     public function debugDraw():Entity {
       graphics.beginFill(0xFF0000);
       graphics.drawRect(0, 0, this.width, this.height);
@@ -384,59 +399,6 @@
       super.removeChild(child);
 
       return child;
-    }
-
-    /*
-    public function addEvent(event:Function):Entity {
-      on("post-update", event);
-    }
-    */
-
-    //TODO: I don't think I like this interface.
-    public function on(event:String, callback:Function):Entity {
-      var prevEvents:Array = events[event] || [];
-
-      if (! (callback in prevEvents)) {
-        prevEvents.push(callback);
-      }
-
-      events[event] = prevEvents;
-
-      return this;
-    }
-
-    public function off(event:String, callback:Function = null):Entity {
-      if (!events[event]) {
-        throw "Don't have that event!";
-      }
-
-      if (callback != null) {
-        events[event].remove(callback);
-      } else {
-        events[event] = [];
-      }
-
-      return this;
-    }
-
-    public function listen(callback:Function = null):Entity {
-      on("pre-update", callback);
-
-      return this;
-    }
-
-    public function emit(event:String):Entity {
-      if (event in events) {
-        var hooks:Array = events[event];
-
-        for (var i:int = 0; i < hooks.length; i++){
-          var hook:Function = hooks[i];
-
-          hook.call(this)
-        }
-      }
-
-      return this;
     }
 
     /* This causes the Entity to cease existing in-game. The only way to

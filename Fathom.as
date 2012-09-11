@@ -193,9 +193,7 @@
 
         // Util.assert(e.parent != null);
 
-        e.emit("pre-update");
         e.update(entities);
-        e.emit("post-update");
       }
 
       if (mapRef.modes().contains(currentMode)) {

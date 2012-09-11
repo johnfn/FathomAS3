@@ -112,7 +112,8 @@ package {
 
     public function advanceText():void {
       if (typewriting) {
-        stopTypewriting(this);
+        // TODO: Haven't done this yet.
+        Util.assert(false);
       } else {
         destroy();
       }
@@ -130,7 +131,10 @@ package {
 
       this.typewriteTick = function():void {
         if (counter > that.content.length) {
-          stopTypewriting(that);
+          textField.text = content;
+          typewriting = false;
+
+          that.unlisten(this.typewriteTick);
           return;
         }
 
@@ -138,15 +142,9 @@ package {
         counter++;
       }
 
-      on("pre-update", this.typewriteTick);
+      listen(this.typewriteTick);
 
       return this;
-    }
-
-    public function stopTypewriting(t:Text):void {
-      textField.text = content;
-      typewriting = false;
-      off("pre-update", this.typewriteTick);
     }
 
     override public function groups():Set {
