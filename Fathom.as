@@ -101,7 +101,7 @@
     // see if any individual square of the grid contains more than one item in
     // it.
     private static function moveEverything():void {
-      var list:EntitySet = movingEntities();
+      var list:Set = movingEntities().filter(function(e:MovingEntity) { return e.modes().contains(currentMode); });
       var grid:SpatialHash = new SpatialHash(Fathom.entities.get());
 
       // Move every non-static entity.
