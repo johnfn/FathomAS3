@@ -1,6 +1,8 @@
 package {
-	// AnimationHandler takes care of animating Entities. You add animations with
-	// addAnimation
+	// AnimationHandler takes care of animating Entities. You add animations
+	// with addAnimations(), turn one on with setAnimation(),  and Entity will
+	// take care of the rest.
+
 	public class AnimationHandler {
 		private var animations:Object = {};
 
@@ -8,11 +10,17 @@ package {
 		private var currentFrame:int = 0;
 		private var currentTick:int = 0;
 		private var ticksPerFrame:int = 10;
-		private var sprite:Sprite;
+		private var ent:Entity;
+		private var _hasAnyAnimations:Boolean = false;
 
-		function AnimationHandler(s:Sprite) {
+		function AnimationHandler(s:Entity) {
 			currentAnimation = "default";
-			this.sprite = s;
+			this.ent = s;
+		}
+
+		// TODO: Bad naming
+		public function hasAnyAnimations():Boolean {
+			return _hasAnyAnimations;
 		}
 
 		// We assume that you hold y is constant, with numFrames frames starting at x.
@@ -20,11 +28,12 @@ package {
 		public function addAnimation(name:String, frameX:int, frameY:int, numFrames:int):void {
 			var frames:Array = [];
 
-			for (var i:int = frameX; i < frameX + numFrames; i++) {
-				frames.push(i);
+			for (var i:int = 0; i < numFrames; i++) {
+				frames.push(frameX + i);
 			}
 
 			animations[name] = {"frames": frames, "y": frameY };
+			_hasAnyAnimations = true;
 		}
 
 		// In case addAnimation() isn't good enough, you can just use an array
@@ -32,6 +41,7 @@ package {
 
 		public function addAnimationArray(name:String, frames:Array, frameY:int):void {
 			animations[name] = {"frames": frames, "y": frameY };
+			_hasAnyAnimations = true;
 		}
 
 		public function deleteAnimation(name:String):void {
@@ -54,18 +64,18 @@ package {
 		public function addAnimations(animationList:Object):void {
 	        for (var animName:String in animationList) {
 		        var val:Object = animationList[animName];
-		        var frames = [];
+		        var frames:Array = [];
 		        var y:int;
 
 		        if (val["startPos"]) {
-		          addAnimation(animName, startPos[0], startPos[1], val["numFrames"]);
+		          addAnimation(animName, val["startPos"][0], val["startPos"][1], val["numFrames"]);
 		        } else {
 		          addAnimationArray(animName, val["array"], val["y"]);
 		        }
 	        }
 		}
 
-		public var advance():void {
+		public function advance():void {
 			var lastFrame:int = currentFrame;
 
 			++currentTick;
@@ -74,7 +84,7 @@ package {
 				++currentFrame;
 				currentTick = 0;
 
-				if (currentFrame > animations[currentAnimation]["frames"].length) {
+				if (currentFrame >= animations[currentAnimation]["frames"].length) {
 					currentFrame = 0;
 				}
 			}
@@ -82,7 +92,7 @@ package {
 			// Update tile if necessary.
 
 			if (lastFrame != currentFrame) {
-				this.sprite.setTile(currentFrame, animations[currentAnimation]["y"]);
+				this.ent.setTile(currentFrame, animations[currentAnimation]["y"]);
 			}
 		}
 

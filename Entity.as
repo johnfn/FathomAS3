@@ -39,7 +39,7 @@
     protected var entityChildren:Array = [];
     protected var _depth:int = 0;
 
-    protected var animations:animationHandler;
+    protected var animations:AnimationHandler;
 
     // These is purely for debugging purposes.
     protected static var counter:int = 0;
@@ -88,6 +88,8 @@
 
       // Bypass our overridden addChild method.
       super.addChild(pixels);
+
+      animations = new AnimationHandler(this);
    }
 
     public function get absX():Number {
@@ -220,10 +222,7 @@
       this.spritesheet = [x, y];
       pixels.bitmapData = cachedAssets[uid];
 
-      if (!animations) {
-        animations = new AnimationHandler(this);
-        animations.addAnimation("default", x, y, 1);
-      }
+      animations.addAnimation("default", x, y, 1);
 
       return this;
     }
@@ -500,7 +499,7 @@
     }
 
     public function update(e:EntitySet):void {
-      if (animations != null) {
+      if (animations.hasAnyAnimations()) {
         animations.advance();
       }
     }
