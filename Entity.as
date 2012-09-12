@@ -39,7 +39,7 @@
     protected var entityChildren:Array = [];
     protected var _depth:int = 0;
 
-    protected var animationHandler:animationHandler = new AnimationHandler();
+    protected var animations:animationHandler;
 
     // These is purely for debugging purposes.
     protected static var counter:int = 0;
@@ -220,7 +220,10 @@
       this.spritesheet = [x, y];
       pixels.bitmapData = cachedAssets[uid];
 
-      animationHandler.addAnimation("default", x, y, 1);
+      if (!animations) {
+        animations = new AnimationHandler(this);
+        animations.addAnimation("default", x, y, 1);
+      }
 
       return this;
     }
@@ -496,7 +499,11 @@
       return hitTestPoint(point.x, point.y);
     }
 
-    public function update(e:EntitySet):void {}
+    public function update(e:EntitySet):void {
+      if (animations != null) {
+        animations.advance();
+      }
+    }
 
     public override function toString():String {
       return "[" + Util.className(this) + " " + this.x + " " + this.y + " " + this.groups() + "]"
