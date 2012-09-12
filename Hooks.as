@@ -21,24 +21,6 @@ package {
       }
     }
 
-    // Every tick the key is down.
-    public static function keyDown(key:Number, callback:Function):Function {
-      return function():void {
-        if (Util.keyIsDown(key)) {
-          callback();
-        }
-      }
-    }
-
-    // Exactly at the start of a keypress.
-    public static function keyRecentlyDown(key:Number, callback:Function):Function {
-      return function():void {
-        if (Util.keyRecentlyDown(key)) {
-          callback();
-        }
-      }
-    }
-
     //TODO...
     public static function entityDestroyed(e:Entity, callback:Function):Function {
       var sentCallback:Boolean = false;
@@ -47,14 +29,6 @@ package {
         if (!sentCallback) {
           callback();
           sentCallback = true;
-        }
-      }
-    }
-
-    public static function keyRecentlyUp(key:Number, callback:Function):Function {
-      return function():void {
-        if (Util.keyRecentlyUp(key)) {
-          callback();
         }
       }
     }

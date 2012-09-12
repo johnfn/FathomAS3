@@ -67,11 +67,14 @@ package {
       return textField.textColor;
     }
 
+    /*
+    //TODO
     public function advanceOnKeypress(key:int):Text {
       listen(Hooks.keyRecentlyDown(key, advanceText));
 
       return this;
     }
+    */
 
     public function get text():String {
       return textField.text;

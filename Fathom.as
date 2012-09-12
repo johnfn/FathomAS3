@@ -82,7 +82,7 @@
       fpsTxt.width = 200;
       //fpsTxt.visible = false;
 
-      Util._initializeKeyInput(container);
+      MagicKeyObject._initializeKeyInput(container);
     }
 
     public static function start():void {
@@ -201,7 +201,7 @@
       }
 
       camera.update();
-      Util.dealWithVariableKeyRepeatRates();
+      MagicKeyObject.dealWithVariableKeyRepeatRates();
     }
   }
 }
