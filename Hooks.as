@@ -35,7 +35,7 @@ package {
 
     //TODO: Not a Hook.
     public static function hasLeftMap(who:Entity, map:Map):Boolean {
-      if (who.x < 0 || who.y < 0 || who.x > map.width - who.width || who.y > map.height - who.width) {
+      if (who.absX < 0 || who.absY < 0 || who.absX > map.width - who.width || who.absY > map.height - who.width) {
         return true;
       }
 
