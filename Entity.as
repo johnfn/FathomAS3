@@ -39,6 +39,8 @@
     protected var entityChildren:Array = [];
     protected var _depth:int = 0;
 
+    protected var animationHandler:animationHandler = new AnimationHandler();
+
     // These is purely for debugging purposes.
     protected static var counter:int = 0;
     protected var uid:Number = ++counter;
@@ -217,6 +219,8 @@
 
       this.spritesheet = [x, y];
       pixels.bitmapData = cachedAssets[uid];
+
+      animationHandler.addAnimation("default", x, y, 1);
 
       return this;
     }
@@ -497,10 +501,6 @@
     public override function toString():String {
       return "[" + Util.className(this) + " " + this.x + " " + this.y + " " + this.groups() + "]"
     }
-
-    //public override function toString():String {
-    //  return "[" + Util.className(this) + super.toString() + " @" + entitySpacePos + " (" + groups() + ") " + uid + "]";
-    //}
 
     public function set depth(v:int):void {
       _depth = v;
