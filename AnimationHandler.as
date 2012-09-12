@@ -3,13 +3,16 @@ package {
 	// addAnimation
 	public class AnimationHandler {
 		private var animations:Object = {};
+
 		private var currentAnimation:String = "";
 		private var currentFrame:int = 0;
 		private var currentTick:int = 0;
 		private var ticksPerFrame:int = 10;
+		private var sprite:Sprite;
 
-		function AnimationHandler() {
-
+		function AnimationHandler(s:Sprite) {
+			currentAnimation = "default";
+			this.sprite = s;
 		}
 
 		// We assume that you hold y is constant, with numFrames frames starting at x.
@@ -21,30 +24,65 @@ package {
 				frames.push(i);
 			}
 
-			animations[name] = frames;
+			animations[name] = {"frames": frames, "y": frameY };
 		}
 
 		// In case addAnimation() isn't good enough, you can just use an array
 		// to specify x positions of frames.
 
 		public function addAnimationArray(name:String, frames:Array, frameY:int):void {
-			animations[name] = frames;
+			animations[name] = {"frames": frames, "y": frameY };
 		}
 
 		public function deleteAnimation(name:String):void {
 			delete animations[name];
 		}
 
+	    /* Convenient function for adding many animations simultaneously.
+
+	    addAnimations({ "walk": {startPos: [0, 0], numFrames: 4 }
+	                  , "die" : {startPos: [4, 0], numFrames: 4 }
+	                  , "hurt": {array: [1, 3, 5], y: 0}
+	                  });
+
+	    "start" is the starting x and y position of the animation on the tilesheet.
+	    "numFrames" is the length of the animation.
+
+	    You can alternatively specify an array and a y value.
+	    */
+
+		public function addAnimations(animationList:Object):void {
+	        for (var animName:String in animationList) {
+		        var val:Object = animationList[animName];
+		        var frames = [];
+		        var y:int;
+
+		        if (val["startPos"]) {
+		          addAnimation(animName, startPos[0], startPos[1], val["numFrames"]);
+		        } else {
+		          addAnimationArray(animName, val["array"], val["y"]);
+		        }
+	        }
+		}
+
 		public var advance():void {
+			var lastFrame:int = currentFrame;
+
 			++currentTick;
 
 			if (currentTick > ticksPerFrame) {
 				++currentFrame;
 				currentTick = 0;
 
-				if (currentFrame > animations[currentAnimation].length) {
+				if (currentFrame > animations[currentAnimation]["frames"].length) {
 					currentFrame = 0;
 				}
+			}
+
+			// Update tile if necessary.
+
+			if (lastFrame != currentFrame) {
+				this.sprite.setTile(currentFrame, animations[currentAnimation]["y"]);
 			}
 		}
 
@@ -58,10 +96,6 @@ package {
 				currentTick = 0;
 				currentFrame  = 0;
 			}
-		}
-
-		public function setConstantY(val:int):void {
-			constantY = val;
 		}
 
 		public function getAnimationFrame():int {
