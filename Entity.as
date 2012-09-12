@@ -31,7 +31,9 @@
     // Rename spritesheetObj and spritesheet
     // spritesheetObj isnt even necessarily a spritesheet
     private var spritesheetObj:* = null;
-    private var tileDimension:Vec;
+
+    protected var spriteSheetWidth:int = -1;
+    protected var spriteSheetHeight:int = -1;
 
     protected var pixels:Bitmap = new Bitmap();
     protected var spritesheet:Array = []
@@ -72,8 +74,13 @@
       this.x = x;
       this.y = y;
 
-      if (width != -1) this.height = height;
-      if (height != -1) this.width = width;
+      if (height != -1) {
+        this.height = height;
+      }
+
+      if (width != -1) {
+        this.width = width;
+      }
 
       //TODO: I had this idea about how parents should bubble down events to children.
 
@@ -118,86 +125,8 @@
       return result;
     }
 
-    public override function set x(val:Number):void {
-      entitySpacePos.x = val;
-    }
-
-    public override function get x():Number {
-      return entitySpacePos.x;
-    }
-
-    public override function set y(val:Number):void {
-      entitySpacePos.y = val;
-    }
-
-    public override function get y():Number {
-      return entitySpacePos.y;
-    }
-
-
-
-    public function set cameraSpaceX(val:Number):void {
-      cameraSpacePos.x = val;
-      super.x = cameraSpacePos.x;
-    }
-
-    public function get cameraSpaceX():Number {
-      return cameraSpacePos.x;
-    }
-
-    public function set cameraSpaceY(val:Number):void {
-      cameraSpacePos.y = val;
-      super.y = cameraSpacePos.y
-    }
-
-    public function get cameraSpaceY():Number {
-      return cameraSpacePos.y;
-    }
-
-
-    public override function set width(val:Number):void {
-      entitySpacePos.width = val;
-    }
-
-    public override function get width():Number {
-      return entitySpacePos.width;
-    }
-
-    public override function set height(val:Number):void {
-      entitySpacePos.height = val;
-    }
-
-    public override function get height():Number {
-      return entitySpacePos.height;
-    }
-
-    public function rect():Rect {
-      return new Rect(entitySpacePos.x, entitySpacePos.y, width, height);
-    }
-
-    public function vec():Vec {
-      return new Vec(entitySpacePos.x, entitySpacePos.y);
-    }
-
     public function withDepth(d:int):Entity {
       _depth = d;
-
-      return this;
-    }
-
-    private function getChildrenOf(mc:Sprite):Array {
-      var children:Array = [];
-
-      for (var i:int = 0; i < mc.numChildren; i++) {
-        children[i] = mc.getChildAt(i);
-      }
-
-      return children;
-    }
-
-    public function removeMC():Entity {
-      Fathom.container.addChild(this);
-      this.visible = false;
 
       return this;
     }
@@ -211,8 +140,10 @@
       var uid:String = Util.className(spritesheetObj) + x + " " + y;
 
       if (!(cachedAssets[uid])) {
-        var bd:BitmapData = new BitmapData(width, height, true, 0);
-        var source:Rectangle = new Rectangle(x * width, y * height, width, height);
+        trace(spriteSheetHeight, spriteSheetWidth);
+
+        var bd:BitmapData = new BitmapData(spriteSheetWidth, spriteSheetHeight, true, 0);
+        var source:Rectangle = new Rectangle(x * spriteSheetWidth, y * spriteSheetHeight, spriteSheetWidth, spriteSheetHeight);
 
         bd.copyPixels(bAsset.bitmapData, source, new Point(0, 0), null, null, true);
 
@@ -256,11 +187,11 @@
       var spritesheetSize:Vec = new Vec(spritesheetObj.width, spritesheetObj.height)
 
       if (tileDimension != null) {
-        this.width = tileDimension.x;
-        this.height = tileDimension.y;
+        this.spriteSheetWidth = tileDimension.x;
+        this.spriteSheetHeight = tileDimension.y;
       } else {
-        this.width = spritesheetObj.width;
-        this.height = spritesheetObj.height;
+        this.spriteSheetWidth = spritesheetObj.width;
+        this.spriteSheetHeight = spritesheetObj.height;
       }
 
       if (whichTile != null) {
@@ -272,15 +203,9 @@
       return this;
     }
 
+    // In the case that your Entity is just one big static image, you can use loadImage().
     public function loadImage(imgClass:*):Entity {
-      Util.assert(this.spritesheetObj == null);
-
-      this.spritesheetObj = new imgClass();
-
-      this.tileDimension = new Vec(spritesheetObj.width, spritesheetObj.height)
-
-      setTile(0, 0);
-
+      loadSpritesheet(imgClass);
       return this;
     }
 
@@ -525,5 +450,66 @@
 
     // Modes for which this entity receives events.
     public function modes():Array { return [0]; }
+
+
+    // Uninteresting getters and setters.
+
+    public override function set x(val:Number):void {
+      entitySpacePos.x = val;
+    }
+
+    public override function get x():Number {
+      return entitySpacePos.x;
+    }
+
+    public override function set y(val:Number):void {
+      entitySpacePos.y = val;
+    }
+
+    public override function get y():Number {
+      return entitySpacePos.y;
+    }
+
+    public function set cameraSpaceX(val:Number):void {
+      cameraSpacePos.x = val;
+      super.x = cameraSpacePos.x;
+    }
+
+    public function get cameraSpaceX():Number {
+      return cameraSpacePos.x;
+    }
+
+    public function set cameraSpaceY(val:Number):void {
+      cameraSpacePos.y = val;
+      super.y = cameraSpacePos.y
+    }
+
+    public function get cameraSpaceY():Number {
+      return cameraSpacePos.y;
+    }
+
+    public override function set width(val:Number):void {
+      entitySpacePos.width = val;
+    }
+
+    public override function get width():Number {
+      return entitySpacePos.width;
+    }
+
+    public override function set height(val:Number):void {
+      entitySpacePos.height = val;
+    }
+
+    public override function get height():Number {
+      return entitySpacePos.height;
+    }
+
+    public function rect():Rect {
+      return new Rect(entitySpacePos.x, entitySpacePos.y, width, height);
+    }
+
+    public function vec():Vec {
+      return new Vec(entitySpacePos.x, entitySpacePos.y);
+    }
   }
 }
