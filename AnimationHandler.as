@@ -32,15 +32,19 @@ package {
 				frames.push(frameX + i);
 			}
 
-			animations[name] = {"frames": frames, "y": frameY };
+			animations[name] = { "frames": frames, "y": frameY };
 			_hasAnyAnimations = true;
+		}
+
+		public function toString():String {
+			return "[Animation " + currentAnimation + " " + currentFrame + "]";
 		}
 
 		// In case addAnimation() isn't good enough, you can just use an array
 		// to specify x positions of frames.
 
 		public function addAnimationArray(name:String, frames:Array, frameY:int):void {
-			animations[name] = {"frames": frames, "y": frameY };
+			animations[name] = { "frames": frames, "y": frameY };
 			_hasAnyAnimations = true;
 		}
 
