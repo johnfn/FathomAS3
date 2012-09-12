@@ -108,7 +108,7 @@
 
       // Move every non-static entity.
       for each (var e:MovingEntity in list) {
-        var xResolved:int, yResolved:int;
+        var xResolved:int = 0, yResolved:int = 0;
 
         e.vel.x = int(e.vel.x);
         e.vel.y = int(e.vel.y);
