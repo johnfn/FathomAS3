@@ -26,11 +26,11 @@ package {
       return -1;
     }
 
-    // TODO: Calls k O(n^2) times; can reduce to O(n) with little trouble.
-
     /* Ties each element e in the array to a value k(e) and sorts the array
        how you'd sort the values from low to high. */
     Array.prototype.sortBy = function(k:Function):void {
+      // TODO: Calls k O(n^2) times; can reduce to O(n) with little trouble.
+
       this.sort(function(a:*, b:*):int {
         return k(a) - k(b);
       });
@@ -54,10 +54,6 @@ package {
       for (var i:int = 0; i < a.length; i++) {
         this.push(a[i]);
       }
-    }
-
-    Sprite.prototype.asVec = function():Vec {
-      return new Vec(this.x, this.y);
     }
 
     public static function id(x:*):* {
@@ -100,6 +96,43 @@ package {
 
     public static function log(...args):void {
       trace.apply(null, args);
+    }
+
+    // Short for print (like in Ruby). Attempts to print a human readable representation
+    // of the given object, for any object type.
+    public static function p(o:*):void {
+      Util.log(Util.pHelper(o));
+    }
+
+    // Recursive helper method for Util.p.
+    private static function pHelper(o:*):String {
+      var result:String;
+
+      if (Util.className(o) == "Object") {
+        var object:Object = o as Object;
+        result = "{ "
+
+        for (var k:String in object) {
+          result += k + ": " + pHelper(object[k]) + ", ";
+        }
+
+        result = result.slice(0, -2) + " ";
+
+        result += "}";
+      } else if (Util.className(o) == "Array") {
+        var arr:Array = o as Array;
+        result = "["
+
+        for (var i:int = 0; i < arr.length; i++) {
+          result += pHelper(arr[i]) + (i == arr.length - 1 ? "" : ", ");
+        }
+
+        result += "]";
+      } else {
+        result = o.toString();
+      }
+
+      return result;
     }
 
     public static function assert(b:Boolean):void {
