@@ -9,7 +9,13 @@ package {
 
     public static var uid:Number = 0;
     public static var Key:Object = keysToKeyCodes();
-    private static var keyStates:Array = [];
+    public static var keyStates:Array = [];
+
+    public static var KeyDown:MagicKeyObject;
+    public static var KeyJustDown:MagicKeyObject;
+
+    public static var KeyUp:MagicKeyObject;
+    public static var KeyJustUp:MagicKeyObject;
 
     //TODO: Should move Array.prototype stuff into separate ArrayExtensions class.
 
@@ -235,6 +241,12 @@ package {
       for (var i:int = 0; i < 255; i++) {
         keyStates[i] = new KeyState();
       }
+
+      Util.KeyDown = new MagicKeyObject(KeyState.KEYSTATE_DOWN);
+      Util.KeyJustDown = new MagicKeyObject(KeyState.KEYSTATE_JUST_DOWN);
+
+      Util.KeyUp = new MagicKeyObject(KeyState.KEYSTATE_UP);
+      Util.KeyJustUp = new MagicKeyObject(KeyState.KEYSTATE_JUST_UP);
     }
 
     private static function keysToKeyCodes():Object {
@@ -254,6 +266,33 @@ package {
     }
   }
 }
+
+import flash.utils.Proxy;
+import flash.utils.flash_proxy;
+
+dynamic class MagicKeyObject extends Proxy {
+  private var type:int;
+  private var otherType:int;
+
+  function MagicKeyObject(type:int) {
+    this.type = type;
+
+    if (this.type == KeyState.KEYSTATE_DOWN) {
+      this.otherType = KeyState.KEYSTATE_JUST_DOWN;
+    } else if (this.type == KeyState.KEYSTATE_UP) {
+      this.otherType = KeyState.KEYSTATE_JUST_UP;
+    } else {
+      this.otherType = this.type;
+    }
+  }
+
+  override flash_proxy function getProperty(which:*):* {
+    which = Util.Key[which];
+
+    return (Util.keyStates[which].state == type || Util.keyStates[which].state == otherType)
+  }
+}
+
 
 class KeyState {
   public static var KEYSTATE_JUST_DOWN:int = 0;
