@@ -140,8 +140,6 @@
       var uid:String = Util.className(spritesheetObj) + x + " " + y;
 
       if (!(cachedAssets[uid])) {
-        trace(spriteSheetHeight, spriteSheetWidth);
-
         var bd:BitmapData = new BitmapData(spriteSheetWidth, spriteSheetHeight, true, 0);
         var source:Rectangle = new Rectangle(x * spriteSheetWidth, y * spriteSheetHeight, spriteSheetWidth, spriteSheetHeight);
 
@@ -424,9 +422,7 @@
     }
 
     public function update(e:EntitySet):void {
-      if (animations.hasAnyAnimations()) {
-        animations.advance();
-      }
+      animations.advance();
     }
 
     public override function toString():String {

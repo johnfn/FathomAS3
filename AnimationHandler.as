@@ -1,6 +1,6 @@
 package {
 	// AnimationHandler takes care of animating Entities. You add animations
-	// with addAnimations(), turn one on with setAnimation(),  and Entity will
+	// with addAnimations(), turn one on with play(),  and Entity will
 	// take care of the rest.
 
 	public class AnimationHandler {
@@ -9,18 +9,13 @@ package {
 		private var currentAnimation:String = "";
 		private var currentFrame:int = 0;
 		private var currentTick:int = 0;
-		private var ticksPerFrame:int = 10;
+		private var ticksPerFrame:int = 6;
 		private var ent:Entity;
-		private var _hasAnyAnimations:Boolean = false;
+		private var andThenFn:Function = null;
 
 		function AnimationHandler(s:Entity) {
 			currentAnimation = "default";
 			this.ent = s;
-		}
-
-		// TODO: Bad naming
-		public function hasAnyAnimations():Boolean {
-			return _hasAnyAnimations;
 		}
 
 		// We assume that you hold y is constant, with numFrames frames starting at x.
@@ -29,11 +24,10 @@ package {
 			var frames:Array = [];
 
 			for (var i:int = 0; i < numFrames; i++) {
-				frames.push(frameX + i);
+				frames.push([frameX + i, frameY]);
 			}
 
-			animations[name] = { "frames": frames, "y": frameY };
-			_hasAnyAnimations = true;
+			animations[name] = frames;
 		}
 
 		public function toString():String {
@@ -44,8 +38,21 @@ package {
 		// to specify x positions of frames.
 
 		public function addAnimationArray(name:String, frames:Array, frameY:int):void {
-			animations[name] = { "frames": frames, "y": frameY };
-			_hasAnyAnimations = true;
+			var framesWithY:Array = [];
+
+			for (var i:int = 0; i < frames.length; i++) {
+				framesWithY.push([frames[i], frameY]);
+			}
+
+			animations[name] = framesWithY;
+		}
+
+		// In case you don't want to hold y constant, you can specify the x and y coordinate of
+		// each frame.
+
+		// addAnimationXY("walk", [[0, 0], [0, 1], [0, 2]]);
+		public function addAnimationXY(name:String, frames:Array):void {
+			animations[name] = frames;
 		}
 
 		public function deleteAnimation(name:String):void {
@@ -80,7 +87,12 @@ package {
 		}
 
 		public function advance():void {
+			if (!hasAnyAnimations()) {
+				return;
+			}
+
 			var lastFrame:int = currentFrame;
+			var callback:Boolean = false; // TODO: When/if I do issue #9, I should remove this.
 
 			++currentTick;
 
@@ -88,28 +100,56 @@ package {
 				++currentFrame;
 				currentTick = 0;
 
-				if (currentFrame >= animations[currentAnimation]["frames"].length) {
+				if (currentFrame >= animations[currentAnimation].length) {
 					currentFrame = 0;
+
+					if (andThenFn != null) {
+						andThenFn();
+
+						callback = true;
+						andThenFn = null;
+					}
 				}
 			}
 
 			// Update tile if necessary.
 
-			if (lastFrame != currentFrame) {
-				this.ent.setTile(currentFrame, animations[currentAnimation]["y"]);
+			if (lastFrame != currentFrame && !callback) {
+				this.ent.setTile(animations[currentAnimation][currentFrame][0], animations[currentAnimation][currentFrame][1]);
 			}
+		}
+
+		private function hasAnyAnimations():Boolean {
+			for (var i:String in animations) {
+				return true;
+			}
+
+			return false;
 		}
 
 		public function hasAnimation(name:String):Boolean {
 			return (name in animations);
 		}
 
-		public function setAnimation(name:String):void {
+		public function play(name:String):AnimationHandler {
 			if (currentAnimation != name) {
 				currentAnimation = name;
 				currentTick = 0;
 				currentFrame  = 0;
 			}
+
+			return this;
+		}
+
+		/* Typical usage of this function looks like this:
+
+			   animations.play("die").andThen(this.destroy);
+
+		   */
+		public function andThen(f:Function):AnimationHandler {
+			this.andThenFn = f;
+
+			return this;
 		}
 
 		public function getAnimationFrame():int {
