@@ -198,6 +198,8 @@
         e.update(entities);
       }
 
+      Particles.updateAll();
+
       if (mapRef.modes().contains(cachedMode)) {
         mapRef.update();
       }

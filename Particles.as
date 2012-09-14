@@ -1,5 +1,9 @@
 package {
 
+	import flash.display.Sprite;
+	import mx.core.BitmapAsset;
+	import flash.utils.Dictionary;
+
 	public class Particles {
 		private static var particleEffects:Array = [];
 
@@ -11,9 +15,9 @@ package {
 		private var lifetimeLow:int = 60;
 		private var lifetimeHigh:int = 90;
 
-		private var spawnLoc:Rect = new Rect(0, 0, 500, 0);
+		private var spawnLoc:Rect = new Rect(0, 0, 500, 500);
 
-		private var velYLow:int = -2;
+		private var velXLow:int = -2;
 		private var velXHigh:int = 2;
 
 		private var velYLow:int = -2;
@@ -70,7 +74,7 @@ package {
 			Particles.particleEffects.remove(p);
 		}
 
-		public static function updateEffects():void {
+		public static function updateAll():void {
 			for (var i:int = 0; i < Particles.particleEffects.length; i++) {
 				Particles.particleEffects[i].update();
 			}
@@ -87,7 +91,7 @@ package {
 			// See if we should make a new particle.
 			if (Math.random() < spawnRate) {
 				var newParticle:Sprite;
-				var particleData:Object = {};
+				var newData:Object = {};
 
 				if (deadParticles.length > 0) {
 					newParticle = deadParticles.pop();
@@ -97,21 +101,35 @@ package {
 					newParticle.addChild(bAsset);
 				}
 
-				particleData.life = Util.randRange(lifetimeLow, lifetimeHigh);
-				particleData.vel = new Vec(Util.randRange(velXLow, velXHigh),
+				newData.life = Util.randRange(lifetimeLow, lifetimeHigh);
+				newData.vel = new Vec(Util.randRange(velXLow, velXHigh),
 					                       Util.randRange(velYLow, velYHigh));
-				newParticle.x = Util.randRange(spawnLoc.x, spawnLoc.right);
-				newParticle.y = Util.randRange(spawnLoc.y, spawnLoc.bottom);
+
+				newData.x = Util.randRange(spawnLoc.x, spawnLoc.right);
+				newData.y = Util.randRange(spawnLoc.y, spawnLoc.bottom);
+
+				particleData[newParticle] = newData;
+
+				Fathom.container.addChild(newParticle);
 			}
 
 			// Update each particle.
-			for (var p:Sprite in particleData) {
+			for (var pObj:* in particleData) {
+				var p:Sprite = pObj as Sprite;
 				var data:Object = particleData[p];
 
-				p.x += p.vel.x;
-				p.y += p.vel.y;
+				data.x += data.vel.x;
+				data.y += data.vel.y;
 
-				// Kill the particle.
+				pObj.x = data.x;
+				pObj.y = data.y;
+
+				// Since we're (currently) not using Entities, we need to
+				// manually translate to camera space.
+
+				Fathom.camera.translateSingleObject(p);
+
+				// Kill the particle, if necessary.
 				if (data["life"]-- == 0) {
 					delete particleData[p];
 					deadParticles.push(p);

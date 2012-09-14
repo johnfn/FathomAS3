@@ -334,5 +334,13 @@ package {
         e.cameraSpaceY = e.y;
       }
     }
+
+    public function translateSingleObject(s:Sprite):void {
+      var camScaleX:Number = normalWidth / width;
+      var camScaleY:Number = normalHeight / height;
+
+      s.x = (s.x - this.x) * camScaleX;
+      s.y = (s.y - this.y) * camScaleY;
+    }
   }
 }
