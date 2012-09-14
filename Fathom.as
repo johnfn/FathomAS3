@@ -168,7 +168,7 @@
 
     private static function updateFPS():void {
       fpsTxt.text = fpsFn();
-      trace(fpsTxt.text);
+      //trace(fpsTxt.text);
     }
 
     private static function update(event:Event):void {

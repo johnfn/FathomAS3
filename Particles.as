@@ -7,23 +7,30 @@ package {
 	public class Particles {
 		private static var particleEffects:Array = [];
 
+		// Recycling particles within ALL particle effects.
+		private static var recycledParticles:Array = [];
+
+		// Recycling particles within this particle effect.
 		private var deadParticles:Array = [];
 
 		// Number from 0 to 1 - % chance of spawning the particle on a single frame.
-		private var spawnRate:Number = 0.5;
+		private var spawnRate:Number = 1;
 
 		private var lifetimeLow:int = 60;
 		private var lifetimeHigh:int = 90;
 
 		private var flickerOnDeath:Boolean = true;
 
+		private var following:Boolean = false;
+		private var followTarget:Entity = null;
+
 		private var spawnLoc:Rect = new Rect(0, 0, 500, 500);
 
-		private var velXLow:int = -2;
-		private var velXHigh:int = 2;
+		private var velXLow:Number = -2;
+		private var velXHigh:Number = 2;
 
-		private var velYLow:int = -2;
-		private var velYHigh:int = 2;
+		private var velYLow:Number = 1;
+		private var velYHigh:Number = 4;
 
 		private var stopParticleGen:int = -1;
 
@@ -62,16 +69,45 @@ package {
 			return this;
 		}
 
-		public function withVelX(newXLow:int, newXHigh:int):Particles {
+
+		public function spawnAt(x:int, y:int, width:int, height:int):Particles {
+			spawnLoc = new Rect(x, y, width, height);
+
+			return this;
+		}
+
+		// TODO: Not fully implemented.
+		public function andFollow(e:Entity):Particles {
+			following = true;
+			followTarget = e;
+
+			return this;
+		}
+
+		public function withVelX(newXLow:Number, newXHigh:Number):Particles {
 			this.velXLow  = newXLow;
 			this.velXHigh = newXHigh;
 
 			return this;
 		}
 
-		public function withVelY(newYLow:int, newYHigh:int):Particles {
+		public function withVelY(newYLow:Number, newYHigh:Number):Particles {
 			this.velYLow  = newYLow;
 			this.velYHigh = newYHigh;
+
+			return this;
+		}
+
+		public function spawnParticles(num:int):Particles {
+			for (var i:int = 0; i < num; i++) {
+				spawnParticle();
+			}
+
+			return this;
+		}
+
+		public function andThenStop():Particles {
+			spawnRate = 0;
 
 			return this;
 		}
@@ -98,43 +134,58 @@ package {
 			}
 		}
 
+		public function spawnParticle():Particles {
+			var newParticle:Sprite;
+			var newData:Object = {};
+
+			if (deadParticles.length > 0) {
+				newParticle = deadParticles.pop();
+			} else {
+				var bAsset:BitmapAsset = new baseMC();
+				newParticle = new Sprite();
+				newParticle.addChild(bAsset);
+			}
+
+			newData.life = Util.randRange(lifetimeLow, lifetimeHigh);
+			newData.vel = new Vec(Util.randRange(velXLow, velXHigh),
+				                       Util.randRange(velYLow, velYHigh));
+
+			newData.x = Util.randRange(spawnLoc.x, spawnLoc.right);
+			newData.y = Util.randRange(spawnLoc.y, spawnLoc.bottom);
+
+			particleData[newParticle] = newData;
+
+			Fathom.container.addChild(newParticle);
+
+			return this;
+		}
+
+		private function killThisParticleEffect():void {
+			Particles.removeParticleEffect(this);
+		}
+
 		public function update():void {
+			var particlesLeft:Boolean = true;
+
 			stopParticleGen--;
 
 			if (stopParticleGen == 0) {
-				Particles.removeParticleEffect(this);
+				killThisParticleEffect();
+
 				return;
 			}
 
 			// See if we should make a new particle.
 			if (Math.random() < spawnRate) {
-				var newParticle:Sprite;
-				var newData:Object = {};
-
-				if (deadParticles.length > 0) {
-					newParticle = deadParticles.pop();
-				} else {
-					var bAsset:BitmapAsset = new baseMC();
-					newParticle = new Sprite();
-					newParticle.addChild(bAsset);
-				}
-
-				newData.life = Util.randRange(lifetimeLow, lifetimeHigh);
-				newData.vel = new Vec(Util.randRange(velXLow, velXHigh),
-					                       Util.randRange(velYLow, velYHigh));
-
-				newData.x = Util.randRange(spawnLoc.x, spawnLoc.right);
-				newData.y = Util.randRange(spawnLoc.y, spawnLoc.bottom);
-
-				particleData[newParticle] = newData;
-
-				Fathom.container.addChild(newParticle);
+				spawnParticle();
 			}
 
 			// Update each particle.
 			for (var pObj:* in particleData) {
 				var p:Sprite = pObj as Sprite;
 				var data:Object = particleData[p];
+
+				particlesLeft = true;
 
 				data.x += data.vel.x;
 				data.y += data.vel.y;
@@ -154,13 +205,17 @@ package {
 					delete particleData[p];
 					deadParticles.push(p);
 
-					p.visible = true;
+					p.parent.removeChild(p);
 				}
 
 				// Flicker if necessary
 				if (flickerOnDeath && lifeLeft < 10) {
 					p.visible = (lifeLeft / 3) % 2 == 0;
 				}
+			}
+
+			if (!particlesLeft) {
+				killThisParticleEffect();
 			}
 		}
 	}
