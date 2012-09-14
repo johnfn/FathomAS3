@@ -78,6 +78,7 @@
 
       fpsFn = Hooks.fpsCounter();
       fpsTxt = new Text();
+      fpsTxt.addGroups("no-camera", "non-blocking");
       fpsTxt.setPos(new Vec(200, 20));
       fpsTxt.width = 200;
       //fpsTxt.visible = false;
@@ -167,6 +168,7 @@
 
     private static function updateFPS():void {
       fpsTxt.text = fpsFn();
+      trace(fpsTxt.text);
     }
 
     private static function update(event:Event):void {
