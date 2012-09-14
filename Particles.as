@@ -15,6 +15,8 @@ package {
 		private var lifetimeLow:int = 60;
 		private var lifetimeHigh:int = 90;
 
+		private var flickerOnDeath:Boolean = true;
+
 		private var spawnLoc:Rect = new Rect(0, 0, 500, 500);
 
 		private var velXLow:int = -2;
@@ -40,6 +42,22 @@ package {
 		public function withLifetime(newLow:int, newHigh:int):Particles {
 			this.lifetimeLow = newLow;
 			this.lifetimeHigh = newHigh;
+
+			return this;
+		}
+
+		// This naming scheme only really makes sense with chaining:
+
+		// new Particles().withLifetime(50, 90).thatFlicker();
+
+		public function thatFlicker():Particles {
+			flickerOnDeath = true;
+
+			return this;
+		}
+
+		public function thatDontFlicker():Particles {
+			flickerOnDeath = false;
 
 			return this;
 		}
@@ -129,10 +147,19 @@ package {
 
 				Fathom.camera.translateSingleObject(p);
 
+				var lifeLeft:int = data["life"]--;
+
 				// Kill the particle, if necessary.
-				if (data["life"]-- == 0) {
+				if (lifeLeft == 0) {
 					delete particleData[p];
 					deadParticles.push(p);
+
+					p.visible = true;
+				}
+
+				// Flicker if necessary
+				if (flickerOnDeath && lifeLeft < 10) {
+					p.visible = (lifeLeft / 3) % 2 == 0;
 				}
 			}
 		}
