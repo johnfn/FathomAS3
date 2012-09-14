@@ -322,7 +322,8 @@
     // Remove child: The child entity does not belong to this entity as a child.
     // It continues to exist in the game.
     public override function removeChild(child:DisplayObject):DisplayObject {
-      Util.assert(entityChildren.contains(child));
+      if (child is Entity) Util.assert(entityChildren.contains(child));
+
       entityChildren.remove(child);
 
       super.removeChild(child);
