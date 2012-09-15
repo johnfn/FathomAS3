@@ -280,17 +280,6 @@ package {
 
       // Recalculate the camera's bounds.
 
-      // It's posisble that we went off the edge, so we force the camera's rect to
-      // be valid.
-
-      if (left + width > camBoundingRect.right) {
-        left = camBoundingRect.right - width;
-      }
-
-      if (top + height > camBoundingRect.bottom) {
-        top = camBoundingRect.bottom - height;
-      }
-
       // At this point, a Rect with top left coords (top, left) and width
       // (_width, _height) would satisfy all of the provided constraints.
 
