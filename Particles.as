@@ -19,12 +19,16 @@ package {
 		private var lifetimeLow:int = 60;
 		private var lifetimeHigh:int = 90;
 
-		private var flickerOnDeath:Boolean = true;
+		private var flickerOnDeath:Boolean = false;
+		private var fadeOut:Boolean = false;
 
 		private var following:Boolean = false;
 		private var followTarget:Entity = null;
 
 		private var spawnLoc:Rect = new Rect(0, 0, 500, 500);
+
+		private var scaleX:Number = 1;
+		private var scaleY:Number = 1;
 
 		private var velXLow:Number = -2;
 		private var velXHigh:Number = 2;
@@ -63,12 +67,11 @@ package {
 			return this;
 		}
 
-		public function thatDontFlicker():Particles {
-			flickerOnDeath = false;
+		public function thatFade():Particles {
+			fadeOut = true;
 
 			return this;
 		}
-
 
 		public function spawnAt(x:int, y:int, width:int, height:int):Particles {
 			spawnLoc = new Rect(x, y, width, height);
@@ -94,6 +97,13 @@ package {
 		public function withVelY(newYLow:Number, newYHigh:Number):Particles {
 			this.velYLow  = newYLow;
 			this.velYHigh = newYHigh;
+
+			return this;
+		}
+
+		public function withScale(scale:Number):Particles {
+			this.scaleX = scale;
+			this.scaleY = scale;
 
 			return this;
 		}
@@ -147,6 +157,8 @@ package {
 			}
 
 			newData.life = Util.randRange(lifetimeLow, lifetimeHigh);
+			newData.totalLife = newData.life;
+
 			newData.vel = new Vec(Util.randRange(velXLow, velXHigh),
 				                       Util.randRange(velYLow, velYHigh));
 
@@ -154,6 +166,9 @@ package {
 			newData.y = Util.randRange(spawnLoc.y, spawnLoc.bottom);
 
 			particleData[newParticle] = newData;
+
+			newParticle.scaleX = scaleX;
+			newParticle.scaleY = scaleY;
 
 			Fathom.container.addChild(newParticle);
 
@@ -211,6 +226,10 @@ package {
 				// Flicker if necessary
 				if (flickerOnDeath && lifeLeft < 10) {
 					p.visible = (lifeLeft / 3) % 2 == 0;
+				}
+
+				if (fadeOut) {
+					p.alpha = lifeLeft / data.totalLife;
 				}
 			}
 
