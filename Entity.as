@@ -151,7 +151,15 @@
       this.spritesheet = [x, y];
       pixels.bitmapData = cachedAssets[uid];
 
-      animations.addAnimation("default", x, y, 1);
+      if (!animations.hasAnimation("default")) {
+        animations.addAnimation("default", x, y, 1);
+      }
+
+      // TODO: Implicit assumption that bitmap faces right.
+      // TODO: Caching?
+      if (facing == -1) {
+        pixels.bitmapData = flipBitmapData(pixels.bitmapData)
+      }
 
       return this;
     }

@@ -145,7 +145,7 @@ package {
 
 			   animations.play("die").andThen(this.destroy);
 
-		   */
+ 	    */
 		public function andThen(f:Function):AnimationHandler {
 			this.andThenFn = f;
 
