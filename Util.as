@@ -17,14 +17,6 @@ package {
 
     //TODO: Should move Array.prototype stuff into separate ArrayExtensions class.
 
-    // Array::indexOf only works with String values.
-    Array.prototype.getIndex = function(val:*):int {
-      for (var i:int = 0; i < this.length; i++) {
-        if (this[i] == val) return i;
-      }
-
-      return -1;
-    }
 
     /* Ties each element e in the array to a value k(e) and sorts the array
        how you'd sort the values from low to high. */
@@ -38,6 +30,15 @@ package {
 
     Array.prototype.contains = function(val:*):Boolean {
       return this.getIndex(val) != -1;
+    }
+
+    // Array::indexOf only works with String values.
+    Array.prototype.getIndex = function(val:*):int {
+      for (var i:int = 0; i < this.length; i++) {
+        if (this[i] == val) return i;
+      }
+
+      return -1;
     }
 
     // Remove all occurances of item from array.
@@ -55,6 +56,15 @@ package {
         this.push(a[i]);
       }
     }
+
+    Array.prototype.setPropertyIsEnumerable('sortBy', false);
+    Array.prototype.setPropertyIsEnumerable('contains', false);
+    Array.prototype.setPropertyIsEnumerable('collect', false);
+    Array.prototype.setPropertyIsEnumerable('getIndex', false);
+    Array.prototype.setPropertyIsEnumerable('remove', false);
+    Array.prototype.setPropertyIsEnumerable('extend', false);
+
+
 
     public static function id(x:*):* {
       return x;
