@@ -42,7 +42,7 @@ package {
 
 		private var baseMC:Class;
 
-		public function Particles(baseMC:Class):void {
+		public function Particles(baseMC:Class, width:int = -1):void {
 			this.baseMC = baseMC;
 
 			particleEffects.push(this);
