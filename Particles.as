@@ -206,12 +206,7 @@ package {
 				pObj.x = data.x;
 				pObj.y = data.y;
 
-				/*
-				// Since we're (currently) not using Entities, we need to
-				// manually translate to camera space.
-
-				Fathom.camera.translateSingleObject(p);
-				*/
+				pObj.update(null);
 
 				var lifeLeft:int = data["life"]--;
 
