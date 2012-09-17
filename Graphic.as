@@ -26,7 +26,7 @@ package {
     // The location of the entity, after camera transformations.
     public var cameraSpacePos:Rect;
 
-    protected var animations:AnimationHandler;
+    public var animations:AnimationHandler;
 
     protected var pixels:Bitmap = new Bitmap();
     protected var spritesheet:Array = []
@@ -241,6 +241,20 @@ package {
 
       return this;
     }
+
+    /*
+    public function destroy():void {
+	    entitySpacePos = null;
+	    cameraSpacePos = null;
+	    animations = null;
+	    pixels = null;
+	    spritesheet = null;
+	    groupSet = null;
+	    entityChildren = null;
+	    cachedAssets = null;
+	    spritesheetObj = null;
+    }
+    */
 
     // Uninteresting getters and setters.
 

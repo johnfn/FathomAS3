@@ -34,6 +34,15 @@ package {
 			return "[Animation " + currentAnimation + " " + currentFrame + "]";
 		}
 
+		// Stops all animations and resets all counters.
+
+		public function stop():void {
+			currentAnimation = "";
+			currentFrame = 0;
+			currentTick = 0;
+			andThenFn = null;
+		}
+
 		// In case addAnimation() isn't good enough, you can just use an array
 		// to specify x positions of frames.
 

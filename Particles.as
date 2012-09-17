@@ -40,6 +40,11 @@ package {
 
 		private var particleData:Dictionary = new Dictionary();
 
+		private var animated:Boolean = false;
+		private var animationFrames:Array;
+		// dimensions of the particle. currently only defined if thie particle is animated, TODO.
+		private var particleDim:Vec;
+
 		private var baseMC:Class;
 
 		public function Particles(baseMC:Class, width:int = -1):void {
@@ -54,6 +59,31 @@ package {
 			this.lifetimeLow = newLow;
 			this.lifetimeHigh = newHigh;
 
+			return this;
+		}
+
+		// Makes the assumption that the baseMC is a height * numFrames by width spritesheet.
+		// Yep, square frames for now. TODO.
+		public function animateFromSpritesheet():Particles {
+			var width:int, height:int;
+			var asset:BitmapAsset = new baseMC();
+			var animationFrames:Array = [];
+
+			animated = true;
+
+			// Initialize the baseMC just to get its width and height.
+			width = asset.width;
+			height = asset.height;
+
+			particleDim = new Vec(asset.height, asset.height);
+
+			Util.assert(width % height == 0);
+
+			for (var i:int = 0; i < width / height; i++) {
+				animationFrames.push([i, 0]);
+			}
+
+			this.animationFrames = animationFrames;
 			return this;
 		}
 
@@ -83,6 +113,8 @@ package {
 		public function andFollow(e:Entity):Particles {
 			following = true;
 			followTarget = e;
+
+			Util.assert(false);
 
 			return this;
 		}
@@ -151,7 +183,15 @@ package {
 			if (deadParticles.length > 0) {
 				newParticle = deadParticles.pop();
 			} else {
-				newParticle = new Graphic().loadImage(baseMC);
+				newParticle = new Graphic();
+				if (animated) {
+			        newParticle.loadSpritesheet(baseMC, particleDim, new Vec(animationFrames[0][0], animationFrames[0][1]));
+
+					newParticle.animations.addAnimationXY("particle", animationFrames);
+					newParticle.animations.play("particle");
+				} else {
+					newParticle.loadImage(baseMC);
+				}
 			}
 
 			newData.life = Util.randRange(lifetimeLow, lifetimeHigh);
@@ -195,7 +235,7 @@ package {
 
 			// Update each particle.
 			for (var pObj:* in particleData) {
-				var p:Sprite = pObj as Sprite;
+				var p:Graphic = pObj as Graphic;
 				var data:Object = particleData[p];
 
 				particlesLeft = true;
@@ -206,6 +246,7 @@ package {
 				pObj.x = data.x;
 				pObj.y = data.y;
 
+				// TODO: Graphics should just update themselves.
 				pObj.update(null);
 
 				var lifeLeft:int = data["life"]--;
@@ -216,6 +257,10 @@ package {
 					deadParticles.push(p);
 
 					p.parent.removeChild(p);
+
+					if (animated) {
+						p.animations.stop();
+					}
 				}
 
 				// Flicker if necessary
