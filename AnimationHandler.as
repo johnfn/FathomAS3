@@ -1,6 +1,6 @@
 package {
-	// AnimationHandler takes care of animating Entities. You add animations
-	// with addAnimations(), turn one on with play(),  and Entity will
+	// AnimationHandler takes care of animating Graphics. You add animations
+	// with addAnimations(), turn one on with play(), and advance() will
 	// take care of the rest.
 
 	public class AnimationHandler {
@@ -10,12 +10,12 @@ package {
 		private var currentFrame:int = 0;
 		private var currentTick:int = 0;
 		private var ticksPerFrame:int = 6;
-		private var ent:Entity;
+		private var gfx:Graphic;
 		private var andThenFn:Function = null;
 
-		function AnimationHandler(s:Entity) {
+		function AnimationHandler(s:Graphic) {
 			currentAnimation = "default";
-			this.ent = s;
+			this.gfx = s;
 		}
 
 		// We assume that you hold y is constant, with numFrames frames starting at x.
@@ -115,7 +115,7 @@ package {
 			// Update tile if necessary.
 
 			if (lastFrame != currentFrame && !callback) {
-				this.ent.setTile(animations[currentAnimation][currentFrame][0], animations[currentAnimation][currentFrame][1]);
+				this.gfx.setTile(animations[currentAnimation][currentFrame][0], animations[currentAnimation][currentFrame][1]);
 			}
 		}
 

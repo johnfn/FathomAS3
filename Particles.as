@@ -145,15 +145,13 @@ package {
 		}
 
 		public function spawnParticle():Particles {
-			var newParticle:Sprite;
+			var newParticle:Graphic;
 			var newData:Object = {};
 
 			if (deadParticles.length > 0) {
 				newParticle = deadParticles.pop();
 			} else {
-				var bAsset:BitmapAsset = new baseMC();
-				newParticle = new Sprite();
-				newParticle.addChild(bAsset);
+				newParticle = new Graphic().loadImage(baseMC);
 			}
 
 			newData.life = Util.randRange(lifetimeLow, lifetimeHigh);
@@ -208,10 +206,12 @@ package {
 				pObj.x = data.x;
 				pObj.y = data.y;
 
+				/*
 				// Since we're (currently) not using Entities, we need to
 				// manually translate to camera space.
 
 				Fathom.camera.translateSingleObject(p);
+				*/
 
 				var lifeLeft:int = data["life"]--;
 

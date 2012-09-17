@@ -295,6 +295,7 @@ package {
       this.isFocused = true;
     }
 
+    // TODO: Remove this whole thing and thereby decouple Camera and Graphic (woo!)
     public function update():void {
       var e:Entity;
       var camScaleX:Number = normalWidth / width;
@@ -324,12 +325,12 @@ package {
       }
     }
 
-    public function translateSingleObject(s:Sprite):void {
+    public function translateSingleObject(s:Graphic):void {
       var camScaleX:Number = normalWidth / width;
       var camScaleY:Number = normalHeight / height;
 
-      s.x = (s.x - this.x) * camScaleX;
-      s.y = (s.y - this.y) * camScaleY;
+      s.cameraSpaceX = (s.x - this.x) * camScaleX;
+      s.cameraSpaceY = (s.y - this.y) * camScaleY;
     }
   }
 }

@@ -26,8 +26,6 @@
     // The update loop in Fathom will eventually destroy it.
     public var destroyed:Boolean = false;
 
-    protected var animations:AnimationHandler;
-
     // These is purely for debugging purposes.
     protected static var counter:int = 0;
     protected var uid:Number = ++counter;
@@ -57,21 +55,7 @@
         this.rememberedParent = Fathom.container;
         addToFathom();
       }
-
-      // Bypass our overridden addChild method.
-      super.addChild(pixels);
-
-      animations = new AnimationHandler(this);
    }
-
-    public override function setTile(x:int, y:int):Graphic {
-      if (!animations.hasAnimation("default")) {
-        animations.addAnimation("default", x, y, 1);
-      }
-
-      return super.setTile(x, y);
-    }
-
 
     public function withDepth(d:int):Entity {
       _depth = d;
@@ -252,8 +236,8 @@
       return hitTestPoint(point.x, point.y);
     }
 
-    public function update(e:EntitySet):void {
-      animations.advance();
+    public override function update(e:EntitySet):void {
+      super.update(e);
     }
 
     public override function toString():String {

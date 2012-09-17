@@ -73,8 +73,11 @@
       Fathom.initialized = true;
 
       Fathom.FPS = FPS;
+
       Fathom.container = new Entity();
       Fathom.stage.addChild(Fathom.container);
+
+      Fathom._camera = new Camera(stage).scaleBy(1).setEaseSpeed(3);
 
       fpsFn = Hooks.fpsCounter();
       fpsTxt = new Text();

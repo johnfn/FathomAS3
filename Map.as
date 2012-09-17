@@ -272,7 +272,7 @@ package {
 
       for (var i:int = 0; i < items.length; i++) {
         if (Hooks.hasLeftMap(items[i], this)) {
-          Util.assert(items[i].groups().indexOf("Character") == -1);
+          Util.assert(!items[i].groups().contains("Character"));
           this.itemSwitchedMaps(items[i]);
         }
       }

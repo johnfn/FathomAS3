@@ -26,6 +26,8 @@ package {
     // The location of the entity, after camera transformations.
     public var cameraSpacePos:Rect;
 
+    protected var animations:AnimationHandler;
+
     protected var pixels:Bitmap = new Bitmap();
     protected var spritesheet:Array = []
     protected var groupSet:Set = new Set(["persistent"]);
@@ -59,6 +61,11 @@ package {
         if (width != -1) {
 	        this.width = width;
         }
+
+        animations = new AnimationHandler(this);
+
+	    // Bypass our overridden addChild method.
+	    super.addChild(pixels);
   	}
 
     public function get absX():Number {
@@ -112,6 +119,10 @@ package {
       // TODO: Caching?
       if (facing == -1) {
         pixels.bitmapData = flipBitmapData(pixels.bitmapData)
+      }
+
+      if (!animations.hasAnimation("default")) {
+        animations.addAnimation("default", x, y, 1);
       }
 
       return this;
@@ -218,12 +229,19 @@ package {
       return _depth;
     }
 
+    //TODO...
+    public function update(e:EntitySet):void {
+      animations.advance();
+      Fathom.camera.translateSingleObject(this);
+    }
+
     public function add(p:IPositionable):Graphic {
       this.x += p.x;
       this.y += p.y;
 
       return this;
     }
+
     // Uninteresting getters and setters.
 
     public override function set x(val:Number):void {
