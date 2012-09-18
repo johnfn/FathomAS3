@@ -107,12 +107,6 @@
       return this;
     }
 
-    public function raiseToTop():void {
-      if (this.parent) {
-        this.parent.setChildIndex(this, this.parent.numChildren - 1);
-      }
-    }
-
     /* Put this entity in the middle of the screen. Useful for dialogs,
        inventory screens, etc. */
     public function centerOnScreen():void {

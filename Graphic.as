@@ -68,6 +68,15 @@ package {
 	    super.addChild(pixels);
   	}
 
+    public function raiseToTop():void {
+    	Util.assert(this.parent != null);
+
+        if (this.parent) {
+	        this.parent.setChildIndex(this, this.parent.numChildren - 1);
+        }
+    }
+
+
     public function get absX():Number {
       var p:DisplayObjectContainer = this;
       var result:int = 0;
