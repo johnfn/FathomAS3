@@ -82,6 +82,12 @@ package {
                  return  0;
     }
 
+    public static function bind(x:Number, low:Number, high:Number):Number {
+      if (x < low) return low;
+      if (x > high) return high;
+      return x;
+    }
+
     public static function className(c:*):String {
       var qualifiedName:String = getQualifiedClassName(c);
       if (qualifiedName.indexOf(":") == -1) return qualifiedName;

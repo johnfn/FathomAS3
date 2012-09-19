@@ -112,51 +112,54 @@
 
       // Move every non-static entity.
       for each (var e:MovingEntity in list) {
-        var xResolved:int = 0, yResolved:int = 0;
+        var oldVelX:Number = e.vel.x;
+        var oldVelY:Number = e.vel.y;
+        var onceThrough:Boolean = true;
 
         e.xColl = new EntitySet();
         e.yColl = new EntitySet();
 
         // Resolve 1 px in the x-direction at a time...
-        for (xResolved = 0; xResolved < Math.floor(Math.abs(e.vel.x)) + 1; xResolved++) {
-
+        for (; onceThrough || oldVelX != 0;) {
           // Attempt to resolve as much of dy as possible on every tick.
-          for (var k:int = yResolved; k < Math.floor(Math.abs(e.vel.y)); k++) {
-            e.y += Util.sign(e.vel.y);
+          for (; oldVelY != 0;) {
+            var amtY:Number = Util.bind(oldVelY, -1, 1);
+
+            e.y += amtY;
+            oldVelY -= amtY;
+
             if (grid.collides(e)) {
               var yColliders:EntitySet = grid.getColliders(e);
 
               e.yColl.extend(yColliders);
 
               if (yColliders.any("!non-blocking")) {
-                e.y -= Util.sign(e.vel.y);
+                e.y -= amtY;
+                oldVelY += amtY;
                 break;
               }
             }
-
-            yResolved++;
           }
 
-          if (xResolved == 0) xResolved++;
-          if (xResolved > Math.abs(e.vel.x)) break;
+          onceThrough = false;
 
-          e.x += Util.sign(e.vel.x);
+          var amtX:Number = Util.bind(oldVelX, -1, 1);
+
+          e.x += amtX;
+          oldVelX -= amtX;
           if (grid.collides(e)) {
             var xColliders:EntitySet = grid.getColliders(e);
 
             e.xColl.extend(xColliders);
 
             if (xColliders.any("!non-blocking")) {
-              e.x -= Util.sign(e.vel.x);
+              e.x -= amtX;
             }
           }
         }
 
         e.xColl.extend(grid.getColliders(e));
         e.yColl.extend(grid.getColliders(e));
-
-        e.x = Math.floor(e.x);
-        e.y = Math.floor(e.y);
 
         e.touchingBottom = (e.yColl.any("!non-blocking") && e.vel.y > 0);
         e.touchingTop    = (e.yColl.any("!non-blocking") && e.vel.y < 0);
