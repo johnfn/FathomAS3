@@ -158,6 +158,9 @@
           }
         }
 
+        e.x = Math.floor(e.x);
+        e.y = Math.floor(e.y);
+
         e.xColl.extend(grid.getColliders(e));
         e.yColl.extend(grid.getColliders(e));
 

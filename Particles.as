@@ -197,8 +197,8 @@ package {
 			newData.life = Util.randRange(lifetimeLow, lifetimeHigh);
 			newData.totalLife = newData.life;
 
-			newData.vel = new Vec(Util.randRange(velXLow, velXHigh),
-				                       Util.randRange(velYLow, velYHigh));
+			newData.vel = new Vec(Util.randNum(velXLow, velXHigh),
+				                  Util.randNum(velYLow, velYHigh));
 
 			newData.x = Util.randRange(spawnLoc.x, spawnLoc.right);
 			newData.y = Util.randRange(spawnLoc.y, spawnLoc.bottom);

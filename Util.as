@@ -221,5 +221,9 @@ package {
     public static function randRange(low:int, high:int):int {
       return low + Math.floor(Math.random() * (high - low));
     }
+
+    public static function randNum(low:Number, high:Number):Number {
+      return low + (Math.random() * (high - low));
+    }
   }
 }
