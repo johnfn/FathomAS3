@@ -114,20 +114,14 @@
       for each (var e:MovingEntity in list) {
         var xResolved:int = 0, yResolved:int = 0;
 
-        e.vel.x = int(e.vel.x);
-        e.vel.y = int(e.vel.y);
-
-        e.x = Math.floor(e.x);
-        e.y = Math.floor(e.y);
-
         e.xColl = new EntitySet();
         e.yColl = new EntitySet();
 
         // Resolve 1 px in the x-direction at a time...
-        for (xResolved = 0; xResolved < Math.abs(e.vel.x) + 1; xResolved++) {
+        for (xResolved = 0; xResolved < Math.floor(Math.abs(e.vel.x)) + 1; xResolved++) {
 
           // Attempt to resolve as much of dy as possible on every tick.
-          for (var k:int = yResolved; k < Math.abs(e.vel.y); k++) {
+          for (var k:int = yResolved; k < Math.floor(Math.abs(e.vel.y)); k++) {
             e.y += Util.sign(e.vel.y);
             if (grid.collides(e)) {
               var yColliders:EntitySet = grid.getColliders(e);
@@ -143,6 +137,9 @@
             yResolved++;
           }
 
+          if (xResolved == 0) xResolved++;
+          if (xResolved > Math.abs(e.vel.x)) break;
+
           e.x += Util.sign(e.vel.x);
           if (grid.collides(e)) {
             var xColliders:EntitySet = grid.getColliders(e);
@@ -154,6 +151,9 @@
             }
           }
         }
+
+        e.x = Math.floor(e.x);
+        e.y = Math.floor(e.y);
 
         e.touchingBottom = (e.yColl.any("!non-blocking") && e.vel.y > 0);
         e.touchingTop    = (e.yColl.any("!non-blocking") && e.vel.y < 0);

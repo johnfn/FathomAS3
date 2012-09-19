@@ -46,7 +46,7 @@ package {
       // You need to set the width after you add the TextField - otherwise, it'll
       // be reset to 0.
       width = 200;
-      height = 200;
+      //height = 200;
     }
 
     override public function set width(val:Number):void {
