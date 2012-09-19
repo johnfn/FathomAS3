@@ -10,13 +10,17 @@ package {
 		private var currentFrame:int = 0;
 		private var currentTick:int = 0;
 
-		private var ticksPerFrame:int = 6;
+		private var _ticksPerFrame:int = 6;
 		private var gfx:Graphic;
 		private var andThenFn:Function = null;
 
 		function AnimationHandler(s:Graphic) {
 			currentAnimation = "default";
 			this.gfx = s;
+		}
+
+		public function set ticksPerFrame(val:int):void {
+			_ticksPerFrame = val;
 		}
 
 		// We assume that you hold y is constant, with numFrames frames starting at x.
@@ -106,7 +110,7 @@ package {
 
 			++currentTick;
 
-			if (currentTick > ticksPerFrame) {
+			if (currentTick > _ticksPerFrame) {
 				++currentFrame;
 				currentTick = 0;
 
@@ -154,7 +158,7 @@ package {
 		// Returns true if it's on the final frame of the animation, false otherwise.
 		public function lastFrame():Boolean {
 			return currentFrame == animations[currentAnimation].length - 1 &&
-			       currentTick  == ticksPerFrame - 1;
+			       currentTick  == _ticksPerFrame - 1;
 		}
 
 		// Plays the animation, starting offsetInTicks ticks ahead of the
@@ -163,8 +167,8 @@ package {
 		public function playWithOffset(name:String, offsetInTicks:int):AnimationHandler {
 			play(name);
 
-			currentFrame = Math.floor(offsetInTicks / ticksPerFrame);
-			currentTick = offsetInTicks % ticksPerFrame;
+			currentFrame = Math.floor(offsetInTicks / _ticksPerFrame);
+			currentTick = offsetInTicks % _ticksPerFrame;
 
 			return this;
 		}
