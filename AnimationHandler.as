@@ -9,6 +9,7 @@ package {
 		private var currentAnimation:String = "";
 		private var currentFrame:int = 0;
 		private var currentTick:int = 0;
+
 		private var ticksPerFrame:int = 6;
 		private var gfx:Graphic;
 		private var andThenFn:Function = null;
@@ -146,6 +147,24 @@ package {
 				currentTick = 0;
 				currentFrame  = 0;
 			}
+
+			return this;
+		}
+
+		// Returns true if it's on the final frame of the animation, false otherwise.
+		public function lastFrame():Boolean {
+			return currentFrame == animations[currentAnimation].length - 1 &&
+			       currentTick  == ticksPerFrame - 1;
+		}
+
+		// Plays the animation, starting offsetInTicks ticks ahead of the
+		// beginning of the animation.
+
+		public function playWithOffset(name:String, offsetInTicks:int):AnimationHandler {
+			play(name);
+
+			currentFrame = Math.floor(offsetInTicks / ticksPerFrame);
+			currentTick = offsetInTicks % ticksPerFrame;
 
 			return this;
 		}

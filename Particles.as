@@ -188,7 +188,7 @@ package {
 			        newParticle.loadSpritesheet(baseMC, particleDim, new Vec(animationFrames[0][0], animationFrames[0][1]));
 
 					newParticle.animations.addAnimationXY("particle", animationFrames);
-					newParticle.animations.play("particle");
+					newParticle.animations.playWithOffset("particle", Util.randRange(0, 12));
 				} else {
 					newParticle.loadImage(baseMC);
 				}
@@ -252,7 +252,7 @@ package {
 				var lifeLeft:int = data["life"]--;
 
 				// Kill the particle, if necessary.
-				if (lifeLeft == 0) {
+				if (lifeLeft == 0 || (animated && pObj.animations.lastFrame())) {
 					delete particleData[p];
 					deadParticles.push(p);
 
