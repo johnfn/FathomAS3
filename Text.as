@@ -39,6 +39,9 @@ package {
       textField.embedFonts = true;
       textField.defaultTextFormat = normalTextFormat;
       textField.antiAliasType = "advanced";
+      textField.sharpness = 100;
+      textField.thickness = 0;
+
       text = content;
 
       addChild(textField);
@@ -47,6 +50,13 @@ package {
       // be reset to 0.
       width = 200;
       //height = 200;
+    }
+
+    public function set size(val:Number):void {
+      normalTextFormat.size = val;
+      redTextFormat.size = val;
+
+      textField.defaultTextFormat = normalTextFormat;
     }
 
     override public function set width(val:Number):void {
