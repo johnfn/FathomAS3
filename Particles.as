@@ -62,6 +62,12 @@ package {
 			return this;
 		}
 
+		public function withSpawnRate(rate:Number):Particles {
+			this.spawnRate = rate;
+
+			return this;
+		}
+
 		// Makes the assumption that the baseMC is a height * numFrames by width spritesheet.
 		// Yep, square frames for now. TODO.
 		public function animateFromSpritesheet():Particles {
