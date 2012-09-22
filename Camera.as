@@ -297,6 +297,9 @@ package {
 
     // TODO: Remove this whole thing and thereby decouple Camera and Graphic (woo!)
     public function update():void {
+      //TODO: If this isn't here, bad times.
+      if (Fathom.currentMode == C.MODE_TITLE) return;
+
       var e:Entity;
       var camScaleX:Number = normalWidth / width;
       var camScaleY:Number = normalHeight / height;

@@ -82,6 +82,7 @@ package {
                  return  0;
     }
 
+    // TODO: Rename -> clamp
     public static function bind(x:Number, low:Number, high:Number):Number {
       if (x < low) return low;
       if (x > high) return high;

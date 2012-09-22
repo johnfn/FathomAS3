@@ -69,11 +69,12 @@ package {
   	}
 
     public function raiseToTop():void {
-    	Util.assert(this.parent != null);
+      // TODO
+    	//Util.assert(this.parent != null);
 
-        if (this.parent) {
-	        this.parent.setChildIndex(this, this.parent.numChildren - 1);
-        }
+      if (this.parent) {
+	      this.parent.setChildIndex(this, this.parent.numChildren - 1);
+      }
     }
 
 

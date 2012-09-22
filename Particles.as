@@ -53,6 +53,10 @@ package {
 			particleEffects.push(this);
 		}
 
+		public function setImage(img:Class):void {
+			this.baseMC = img;
+		}
+
 		// Chainable methods for ease of constructing particle effects.
 
 		public function withLifetime(newLow:int, newHigh:int):Particles {
@@ -188,6 +192,12 @@ package {
 
 			if (deadParticles.length > 0) {
 				newParticle = deadParticles.pop();
+
+				/*
+				if (!(newParticle is baseMC)) {
+					newParticle = new baseMC();
+				}
+				*/
 			} else {
 				newParticle = new Graphic();
 				if (animated) {
@@ -224,6 +234,8 @@ package {
 		}
 
 		public function update():void {
+			if (Fathom.currentMode != 0 && Fathom.currentMode != C.MODE_TITLE) return;
+
 			var particlesLeft:Boolean = true;
 
 			stopParticleGen--;
