@@ -255,6 +255,12 @@ package {
       return false;
     }
 
+    public function set visible(val:Boolean):void {
+      persistent[topLeftCorner.asKey()].map(function(e:*, i:int, a:Array):void {
+        e.visible = val;
+      });
+    }
+
     public function collides(i:*):Boolean {
       if (i is Vec) {
         return collidesPt(i as Vec);
