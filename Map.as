@@ -18,6 +18,7 @@ package {
     private var _heightInTiles:int;
 
     private var bogusmapentry:Entity;
+    private var grounds:Array;
 
     private var _tileSize:int;
     private var data:Array = []; // Color data from the map.
@@ -75,10 +76,11 @@ package {
       return false;
     }
 
-    public function fromImage(mapClass:Class, persistentItemMapping:Object):Map {
+    public function fromImage(mapClass:Class, groundList:Array, persistentItemMapping:Object):Map {
       var bAsset:BitmapAsset = new mapClass();
       var bData:BitmapData = bAsset.bitmapData;
 
+      this.grounds = groundList;
       this.persistentItemMapping = persistentItemMapping;
 
       data = Util.make2DArray(bData.width, bData.height, undefined);
@@ -96,8 +98,10 @@ package {
       var processedItems:Array = [];
       var items:Array = persistent[topLeftCorner.asKey()] || [];
 
+      trace("begin");
       for (var i:int = 0; i < items.length; i++) {
         if (!items[i].destroyed) {
+          trace ("removing", items[i]);
           items[i].removeFromFathom();
           processedItems.push(items[i]);
         }
@@ -116,6 +120,10 @@ package {
       topLeftCorner.add(diff)
 
       addNewPersistentItems();
+    }
+
+    private function isGround(c:Color, s:String):Boolean {
+      return grounds.indexOf(c.toString()) != -1 && c.toString() != s;
     }
 
     private function fancyProcessing(itemData:Object, c:String, x:int, y:int):Vec {
@@ -151,6 +159,11 @@ package {
         }
       }
 
+      if ("randoEdges" in itemData) {
+        result.x += Util.randRange(-1, 2);
+        result.y += Util.randRange(-1, 2);
+      }
+
       if ("fancyEdges" in itemData) {
         var cstr:String = c.toString();
         var empty:String = (new Color(255, 255, 255).toString());
@@ -160,9 +173,9 @@ package {
 
         // Horizontal wall, ground below.
 
-        if (data[locX - 1][locY].toString() == cstr &&
-            data[locX + 1][locY].toString() == cstr &&
-            data[locX][locY + 1].toString() == empty) {
+        if (!isGround(data[locX - 1][locY], cstr) &&
+            !isGround(data[locX + 1][locY], cstr) &&
+            isGround(data[locX][locY + 1], cstr)) {
           result.y += 2;
         }
 
@@ -170,7 +183,7 @@ package {
 
         if (data[locX - 1][locY].toString() == cstr &&
             data[locX + 1][locY].toString() == cstr &&
-            data[locX][locY - 1].toString() == empty) {
+            isGround(data[locX][locY - 1], cstr)) {
           result.y -= 2;
         }
 
@@ -178,15 +191,15 @@ package {
 
         if (data[locX][locY - 1].toString() == cstr &&
             data[locX][locY + 1].toString() == cstr &&
-            data[locX - 1][locY].toString() == empty) {
+            isGround(data[locX - 1][locY], cstr)) {
           result.x -= 2;
         }
 
         // Vertical wall, ground to the right.
 
-        if (data[locX][locY - 1].toString() == cstr &&
-            data[locX][locY + 1].toString() == cstr &&
-            data[locX + 1][locY].toString() == empty) {
+        if (!isGround(data[locX][locY - 1], cstr) &&
+            !isGround(data[locX][locY + 1], cstr) &&
+             isGround(data[locX + 1][locY], cstr)) {
           result.x += 2;
         }
 
@@ -196,8 +209,8 @@ package {
 
         if (data[locX + 1][locY].toString() == cstr &&
             data[locX][locY + 1].toString() == cstr &&
-            data[locX - 1][locY].toString() == empty &&
-            data[locX][locY - 1].toString() == empty) {
+            isGround(data[locX - 1][locY], cstr) &&
+            isGround(data[locX][locY - 1], cstr)) {
           result.x -= 2;
           result.y -= 2;
         } else if (data[locX + 1][locY].toString() == cstr &&
@@ -217,8 +230,8 @@ package {
 
         if (data[locX - 1][locY].toString() == cstr &&
             data[locX][locY + 1].toString() == cstr &&
-            data[locX + 1][locY].toString() == empty &&
-            data[locX][locY - 1].toString() == empty) {
+            isGround(data[locX + 1][locY], cstr) &&
+            isGround(data[locX][locY - 1], cstr)) {
           result.x += 2;
           result.y -= 2;
         } else if (data[locX - 1][locY].toString() == cstr &&
@@ -233,8 +246,8 @@ package {
 
         if (data[locX - 1][locY].toString() == cstr &&
             data[locX][locY - 1].toString() == cstr &&
-            data[locX + 1][locY].toString() == empty &&
-            data[locX][locY + 1].toString() == empty) {
+            isGround(data[locX + 1][locY], cstr) &&
+            isGround(data[locX][locY + 1], cstr)) {
           result.x += 2;
           result.y += 2;
         } else if (data[locX - 1][locY].toString() == cstr &&
@@ -249,8 +262,8 @@ package {
 
         if (data[locX + 1][locY].toString() == cstr &&
             data[locX][locY - 1].toString() == cstr &&
-            data[locX - 1][locY].toString() == empty &&
-            data[locX][locY + 1].toString() == empty) {
+            isGround(data[locX - 1][locY], cstr) &&
+            isGround(data[locX][locY + 1], cstr)) {
           result.x -= 2;
           result.y += 2;
         } else if (data[locX + 1][locY].toString() == cstr &&
@@ -272,17 +285,12 @@ package {
       }
 
       var itemData:Object = persistentItemMapping[c.toString()];
+
+      if (!("type" in itemData)) return;
+
       var e:Entity = new itemData["type"]();
 
-      if ("gfx" in itemData) {
-        if ("spritesheet" in itemData) {
-          // This is an awesome feature that I need to explain more when I'm not doing Ludum Dare. TODO
-          Util.assert(false);
-          //e.loadSpritesheet(itemData["gfx"], C.dim, result);
-        } else {
-          e.loadSpritesheet(itemData["gfx"], C.dim);
-        }
-      }
+      e.loadSpritesheet(itemData["gfx"], C.dim, itemData["spritesheet"] || new Vec(0, 0));
 
       e.setPos(new Vec(x * tileSize, y * tileSize));
 
@@ -299,6 +307,8 @@ package {
       var seenBefore:Boolean = exploredMaps[topLeftCorner.asKey()];
 
       this.clearTiles();
+
+      trace(topLeftCorner);
 
       // Scan the map, adding every object to our list of persistent items for this map.
       if (!seenBefore) {
@@ -317,6 +327,8 @@ package {
 
         // Add all persistent items.
         persistent[topLeftCorner.asKey()].map(function(e:*, i:int, a:Array):void {
+          trace("adding", e);
+
           e.addToFathom();
 
           if (e.groups().contains("remember-loc")) {
@@ -474,7 +486,9 @@ package {
             cachedAssets[key] = new itemData.gfx();
           }
 
-          collisionInfo[x][y] = true;
+          if (!isGround(c, "")) {
+            collisionInfo[x][y] = true;
+          }
 
           transparency[x][y] = "transparent" in itemData;
 
@@ -499,12 +513,13 @@ package {
       transparency = Util.make2DArray(widthInTiles, heightInTiles, true);
 
       diff.multiply(new Vec(widthInTiles, heightInTiles));
-      topLeftCorner.add(diff)
+
+      updatePersistentItems(diff);
+
       dumpToGraphics();
       Fathom.grid = new SpatialHash(new EntitySet());
       Fathom.grid.loadMap(this, bogusmapentry);
 
-      //updatePersistentItems(diff);
       Fathom.container.sortDepths();
 
       return this;
