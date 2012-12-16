@@ -22,6 +22,16 @@ package {
 		    }
 		}
 
+		public function loadMap(m:Map, e:Entity):void {
+			for (var i:int = 0; i < m.widthInTiles; i++) {
+				for (var j:int = 0; j < m.heightInTiles; j++) {
+					if (!m.collisionInfo[i][j]) continue;
+
+					grid[i][j].push(e);
+				}
+			}
+		}
+
 		/* Return the coordinates that the provided entity hashes to. Could be more than
 		   one coordinate. An entity with size exactly the gridsize, positioned exactly
 		   on a grid, will only exist in one coordinate. */
@@ -63,7 +73,7 @@ package {
 		        for (var j:int = 0; j < arr.length; j++) {
 		        	if (arr[j] == e) continue;
 
-		        	if (e.touchingRect(arr[j])) {
+		        	if (arr[j].touchingRect(e)) {
 		        		return true;
 		        	}
 		        }
@@ -83,7 +93,7 @@ package {
 	        for (var j:int = 0; j < arr.length; j++) {
 	          if (arr[j] == e) continue;
 
-	          if (e.touchingRect(arr[j])) {
+              if (arr[j].touchingRect(e)) {
 	            result.add(arr[j]);
 	          }
 	        }

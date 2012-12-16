@@ -116,7 +116,7 @@
       var list:Set = movingEntities().filter(function(e:MovingEntity):Boolean { return e.modes().contains(currentMode); });
       // TODO: Optimization: You shouldn't have to recreate this
       // hash every loop.
-      grid = new SpatialHash(Fathom.entities.get());
+      //grid = new SpatialHash(Fathom.entities.get());
 
       // Move every non-static entity.
       for each (var e:MovingEntity in list) {
@@ -138,6 +138,8 @@
 
             if (grid.collides(e)) {
               var yColliders:EntitySet = grid.getColliders(e);
+
+              trace(yColliders.length);
 
               e.yColl.extend(yColliders);
 

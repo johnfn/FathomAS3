@@ -17,9 +17,13 @@ package {
     private var _widthInTiles:int;
     private var _heightInTiles:int;
 
+    private var bogusmapentry:Entity;
+
     private var _tileSize:int;
     private var data:Array = []; // Color data from the map.
+    public var transparency:Array = []; //TODO POST LD
     private var tiles:Array = []; // Cached array of collideable tiles.
+    public var collisionInfo:Array = [];
     private var topLeftCorner:Vec = new Vec(0, 0);
     private var exploredMaps:Object = {};
 
@@ -41,6 +45,7 @@ package {
       this._tileSize = tileSize;
 
       this.clearTiles();
+      bogusmapentry = new BogusMapEntry();
     }
 
     private function clearTiles():void {
@@ -469,6 +474,10 @@ package {
             cachedAssets[key] = new itemData.gfx();
           }
 
+          collisionInfo[x][y] = true;
+
+          transparency[x][y] = "transparent" in itemData;
+
           bAsset = cachedAssets[key];
 
           imgData.copyPixels(bAsset.bitmapData, new Rectangle(ss.x, ss.y, 25, 25), new Point(x * 25, y * 25));
@@ -486,9 +495,15 @@ package {
     }
 
     public function loadNewMap(diff:Vec):Map {
-      diff.multiply(new Vec(widthInTiles, heightInTiles));
+      collisionInfo = Util.make2DArray(widthInTiles, heightInTiles, false);
+      transparency = Util.make2DArray(widthInTiles, heightInTiles, true);
 
+      diff.multiply(new Vec(widthInTiles, heightInTiles));
+      topLeftCorner.add(diff)
       dumpToGraphics();
+      Fathom.grid = new SpatialHash(new EntitySet());
+      Fathom.grid.loadMap(this, bogusmapentry);
+
       //updatePersistentItems(diff);
       Fathom.container.sortDepths();
 
@@ -498,5 +513,21 @@ package {
     public function getTopLeftCorner():Vec {
       return this.topLeftCorner;
     }
+  }
+}
+
+class BogusMapEntry extends Entity {
+  function BogusMapEntry(x:int=0, y:int=0) {
+    super(x, y, 25, 25);
+  }
+
+  // holy freaking christ
+  // hack levels are currently off the charts
+  public override function touchingRect(rect:Entity):Boolean {
+    return true;
+  }
+
+  public override function groups():Set {
+    return super.groups().concat("map");
   }
 }
