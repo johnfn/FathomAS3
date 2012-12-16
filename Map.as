@@ -4,6 +4,7 @@ package {
   import flash.geom.Rectangle;
   import mx.core.BitmapAsset;
   import flash.display.BitmapData;
+  import flash.display.Bitmap;
 
   import Color;
   import Util;
@@ -20,6 +21,8 @@ package {
     private var tiles:Array = []; // Cached array of collideable tiles.
     private var topLeftCorner:Vec = new Vec(0, 0);
     private var exploredMaps:Object = {};
+
+    private var graphics:Entity;
 
     private var persistentItemMapping:Object = {};
     private var persistent:Object = {};
@@ -295,8 +298,6 @@ package {
 
         for (var x:int = 0; x < widthInTiles; x++) {
           for (var y:int = 0; y < heightInTiles; y++) {
-            trace(topLeftCorner);
-
             var dataColor:Color = data[topLeftCorner.x + x][topLeftCorner.y + y];
 
             addPersistentItem(dataColor, x, y);
@@ -379,6 +380,8 @@ package {
     }
 
     public function set visible(val:Boolean):void {
+      return;
+
       persistent[topLeftCorner.asKey()].map(function(e:*, i:int, a:Array):void {
         e.visible = val;
       });
@@ -399,6 +402,8 @@ package {
     public function update():void {
       var items:Array = persistent[topLeftCorner.asKey()];
 
+      return;
+
       for (var i:int = 0; i < items.length; i++) {
         if (Hooks.hasLeftMap(items[i], this)) {
           Util.assert(!items[i].groups().contains("Character"));
@@ -416,7 +421,6 @@ package {
     }
 
     public function loadNewMapAbs(abs:Vec):Map {
-      trace("LoadNewMapAbz");
       var diff:Vec = abs.subtract(getTopLeftCorner());
 
       loadNewMap(diff);
@@ -424,10 +428,53 @@ package {
       return this;
     }
 
+    private function dumpToGraphics():void {
+      graphics = new Entity();
+
+      while (graphics.numChildren > 0) {
+        graphics.removeChildAt(0);
+      }
+
+      // Write out the tiles to imgData
+      var imgData:BitmapData = new BitmapData(widthInTiles * tileSize, heightInTiles * tileSize, true, 0xFFFFFFFF);
+
+      for (var x:int = 0; x < widthInTiles; x++) {
+        for (var y:int = 0; y < heightInTiles; y++) {
+          var c:Color = data[topLeftCorner.x + x][topLeftCorner.y + y];
+
+          if (!(c.toString() in persistentItemMapping)) {
+            if (c.toString() != "#ffffff") {
+              Util.log("Color without data: " + c.toString());
+            }
+            continue;
+          }
+
+          var itemData:Object = persistentItemMapping[c.toString()];
+
+          if (!("gfx" in itemData)) continue;
+
+          var ss:Vec = itemData.spritesheet.clone().multiply(25); // Hardcore hardcoding TODO
+
+          var bAsset:BitmapAsset = new itemData.gfx(); //TODO: Cache this
+          imgData.copyPixels(bAsset.bitmapData, new Rectangle(ss.x, ss.y, 25, 25), new Point(x * 25, y * 25));
+        }
+      }
+
+      // I have this suspicion that I don't need to keep adding the bitmapData TODO
+
+      // Add imgData to screen.
+      var bmp:Bitmap = new Bitmap(imgData);
+      graphics.addChild(bmp);
+
+      graphics.graphics.drawRect(0, 0, 25, 25);
+      //addChild(graphics);
+    }
+
     public function loadNewMap(diff:Vec):Map {
       diff.multiply(new Vec(widthInTiles, heightInTiles));
 
-      updatePersistentItems(diff);
+      dumpToGraphics();
+      //updatePersistentItems(diff);
       Fathom.container.sortDepths();
 
       return this;
