@@ -109,17 +109,17 @@ package {
       });
     }
 
-    public static function flicker(duration:int = 50, callback:Function=null):Function {
+    public static function flicker(who:Entity, duration:int = 50, callback:Function=null):Function {
       var counter:int = 0;
 
       var fn:Function = function():void {
         counter++;
 
-        this.visible = (Math.floor(counter / 3) % 2 == 0)
+        who.visible = (Math.floor(counter / 3) % 2 == 0)
 
         if (counter > duration) {
-          this.visible = true;
-          this.off("pre-update", fn);
+          who.visible = true;
+          who.unlisten(fn);
           if (callback != null) callback();
         }
       }

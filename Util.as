@@ -145,6 +145,8 @@ package {
         }
 
         result += "]";
+      } else if (o == null) {
+        result = "null";
       } else {
         result = o.toString();
       }

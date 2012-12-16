@@ -69,9 +69,9 @@ package {
 
     public function outOfBoundsPt(x:int, y:int):Boolean {
       if (x < 0) return true;
-      if (x >= widthInTiles) return true;
+      if (x >= width) return true;
       if (y < 0) return true;
-      if (y >= heightInTiles) return true;
+      if (y >= height) return true;
 
       return false;
     }
@@ -98,10 +98,8 @@ package {
       var processedItems:Array = [];
       var items:Array = persistent[topLeftCorner.asKey()] || [];
 
-      trace("begin");
       for (var i:int = 0; i < items.length; i++) {
         if (!items[i].destroyed) {
-          trace ("removing", items[i]);
           items[i].removeFromFathom();
           processedItems.push(items[i]);
         }
@@ -119,6 +117,7 @@ package {
 
       topLeftCorner.add(diff)
 
+      dumpToGraphics();
       addNewPersistentItems();
     }
 
@@ -159,7 +158,7 @@ package {
         }
       }
 
-      if ("randoEdges" in itemData) {
+      if ("randoEdges" in itemData && Util.randRange(0, 5) == 3) {
         result.x += Util.randRange(-1, 2);
         result.y += Util.randRange(-1, 2);
       }
@@ -288,9 +287,17 @@ package {
 
       if (!("type" in itemData)) return;
 
-      var e:Entity = new itemData["type"]();
+      var e:Entity;
+      if ("args" in itemData) {
+        // TODO: new ItemData["type"].call(args)
+        e = new itemData["type"](itemData.args);
+      } else {
+        e = new itemData["type"]();
+      }
 
-      e.loadSpritesheet(itemData["gfx"], C.dim, itemData["spritesheet"] || new Vec(0, 0));
+      if (!("special" in itemData)) {
+        e.loadSpritesheet(itemData["gfx"], C.dim, itemData["spritesheet"] || new Vec(0, 0));
+      }
 
       e.setPos(new Vec(x * tileSize, y * tileSize));
 
@@ -308,8 +315,6 @@ package {
 
       this.clearTiles();
 
-      trace(topLeftCorner);
-
       // Scan the map, adding every object to our list of persistent items for this map.
       if (!seenBefore) {
         // If we haven't seen it before, load in all the persistent items.
@@ -318,6 +323,8 @@ package {
 
         for (var x:int = 0; x < widthInTiles; x++) {
           for (var y:int = 0; y < heightInTiles; y++) {
+            trace(topLeftCorner);
+
             var dataColor:Color = data[topLeftCorner.x + x][topLeftCorner.y + y];
 
             addPersistentItem(dataColor, x, y);
@@ -327,8 +334,6 @@ package {
 
         // Add all persistent items.
         persistent[topLeftCorner.asKey()].map(function(e:*, i:int, a:Array):void {
-          trace("adding", e);
-
           e.addToFathom();
 
           if (e.groups().contains("remember-loc")) {
@@ -443,7 +448,7 @@ package {
     }
 
     public function loadNewMapAbs(abs:Vec):Map {
-      var diff:Vec = abs.subtract(getTopLeftCorner());
+      var diff:Vec = abs.subtract(getTopLeftCorner().clone().divide(25));
 
       loadNewMap(diff);
 
@@ -516,7 +521,6 @@ package {
 
       updatePersistentItems(diff);
 
-      dumpToGraphics();
       Fathom.grid = new SpatialHash(new EntitySet());
       Fathom.grid.loadMap(this, bogusmapentry);
 
@@ -526,7 +530,7 @@ package {
     }
 
     public function getTopLeftCorner():Vec {
-      return this.topLeftCorner;
+      return this.topLeftCorner.clone();
     }
   }
 }

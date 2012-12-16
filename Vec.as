@@ -28,6 +28,10 @@ package {
       return "Vec[" + this.x + ", " + this.y + "]";
     }
 
+    public function angle():Number {
+      return Math.atan2(this.y, this.x) * 180.0 / Math.PI;
+    }
+
     public function randomize():Vec {
       var r:Number = Util.randRange(0, 4);
 
