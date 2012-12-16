@@ -234,7 +234,10 @@ package {
 		}
 
 		public function update():void {
-			if (Fathom.currentMode != 0 && Fathom.currentMode != C.MODE_TITLE) return;
+			if (Fathom.currentMode != 0) {
+				trace("Due to a hack, I'm returning now.");
+				return;
+			}
 
 			var particlesLeft:Boolean = true;
 

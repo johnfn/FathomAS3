@@ -57,6 +57,15 @@ package {
       return _heightInTiles;
     }
 
+    public function outOfBoundsPt(x:int, y:int):Boolean {
+      if (x < 0) return true;
+      if (x >= widthInTiles) return true;
+      if (y < 0) return true;
+      if (y >= heightInTiles) return true;
+
+      return false;
+    }
+
     public function fromImage(mapClass:Class, persistentItemMapping:Object):Map {
       var bAsset:BitmapAsset = new mapClass();
       var bData:BitmapData = bAsset.bitmapData;
@@ -117,8 +126,10 @@ package {
           var result:Vec = itemData["spritesheet"].clone();
 
           if ("roundOutEdges" in itemData) {
+            /*
             var X:int = 0;
             var Y:int = 1;
+            */
 
             var locX:int = topLeftCorner.x + x;
             var locY:int = topLeftCorner.y + y;
@@ -144,6 +155,116 @@ package {
             }
           }
 
+          if ("fancyEdges" in itemData) {
+            var cstr:String = c.toString();
+            var empty:String = (new Color(255, 255, 255).toString());
+
+            var locX:int = topLeftCorner.x + x;
+            var locY:int = topLeftCorner.y + y;
+
+            // Horizontal wall, ground below.
+
+            if (data[locX - 1][locY].toString() == cstr &&
+                data[locX + 1][locY].toString() == cstr &&
+                data[locX][locY + 1].toString() == empty) {
+              result.y += 2;
+            }
+
+            // Horizontal wall, ground above.
+
+            if (data[locX - 1][locY].toString() == cstr &&
+                data[locX + 1][locY].toString() == cstr &&
+                data[locX][locY - 1].toString() == empty) {
+              result.y -= 2;
+            }
+
+            // Vertical wall, ground to the left.
+
+            if (data[locX][locY - 1].toString() == cstr &&
+                data[locX][locY + 1].toString() == cstr &&
+                data[locX - 1][locY].toString() == empty) {
+              result.x -= 2;
+            }
+
+            // Vertical wall, ground to the right.
+
+            if (data[locX][locY - 1].toString() == cstr &&
+                data[locX][locY + 1].toString() == cstr &&
+                data[locX + 1][locY].toString() == empty) {
+              result.x += 2;
+            }
+
+            // - - -
+            // - x x
+            // - x -
+
+            if (data[locX + 1][locY].toString() == cstr &&
+                data[locX][locY + 1].toString() == cstr &&
+                data[locX - 1][locY].toString() == empty &&
+                data[locX][locY - 1].toString() == empty) {
+              result.x -= 2;
+              result.y -= 2;
+            } else if (data[locX + 1][locY].toString() == cstr &&
+                data[locX][locY + 1].toString() == cstr) {
+
+              // x x x
+              // x x x
+              // x x -
+
+              result.x += 2;
+              result.y += 1;
+            }
+
+            // - - -
+            // x x -
+            // - x -
+
+            if (data[locX - 1][locY].toString() == cstr &&
+                data[locX][locY + 1].toString() == cstr &&
+                data[locX + 1][locY].toString() == empty &&
+                data[locX][locY - 1].toString() == empty) {
+              result.x += 2;
+              result.y -= 2;
+            } else if (data[locX - 1][locY].toString() == cstr &&
+                       data[locX][locY + 1].toString() == cstr) {
+              result.x -= 2;
+              result.y += 1;
+            }
+
+            // - x -
+            // x x -
+            // - - -
+
+            if (data[locX - 1][locY].toString() == cstr &&
+                data[locX][locY - 1].toString() == cstr &&
+                data[locX + 1][locY].toString() == empty &&
+                data[locX][locY + 1].toString() == empty) {
+              result.x += 2;
+              result.y += 2;
+            } else if (data[locX - 1][locY].toString() == cstr &&
+                       data[locX][locY - 1].toString() == cstr) {
+              result.x -= 2;
+              result.y -= 1;
+            }
+
+            // - x -
+            // - x x
+            // - - -
+
+            if (data[locX + 1][locY].toString() == cstr &&
+                data[locX][locY - 1].toString() == cstr &&
+                data[locX - 1][locY].toString() == empty &&
+                data[locX][locY + 1].toString() == empty) {
+              result.x -= 2;
+              result.y += 2;
+            } else if (data[locX + 1][locY].toString() == cstr &&
+                       data[locX][locY - 1].toString() == cstr) {
+              result.x += 2;
+              result.y -= 1;
+            }
+
+          }
+
           e.loadSpritesheet(itemData["gfx"], C.dim, result);
         } else {
           e.loadSpritesheet(itemData["gfx"], C.dim);
@@ -157,7 +278,7 @@ package {
       }
 
       if (e.groups().contains("remember-loc")) {
-        (e as PushBlock).rememberLoc();
+        trace("I never did this LOL");
       }
     }
 
@@ -174,6 +295,8 @@ package {
 
         for (var x:int = 0; x < widthInTiles; x++) {
           for (var y:int = 0; y < heightInTiles; y++) {
+            trace(topLeftCorner);
+
             var dataColor:Color = data[topLeftCorner.x + x][topLeftCorner.y + y];
 
             addPersistentItem(dataColor, x, y);
@@ -290,6 +413,15 @@ package {
 
     public function modes():Array {
       return [0];
+    }
+
+    public function loadNewMapAbs(abs:Vec):Map {
+      trace("LoadNewMapAbz");
+      var diff:Vec = abs.subtract(getTopLeftCorner());
+
+      loadNewMap(diff);
+
+      return this;
     }
 
     public function loadNewMap(diff:Vec):Map {

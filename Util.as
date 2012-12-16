@@ -214,7 +214,7 @@ package {
 
     public static function movementVector():Vec {
       var x:int = (KeyDown.Right ? 1 : 0) - (KeyDown.Left ? 1 : 0);
-      var y:int = (KeyDown.Up  ? 1 : 0)   - (KeyDown.Down ? 1 : 0);
+      var y:int = (KeyDown.Down  ? 1 : 0) -   (KeyDown.Up ? 1 : 0);
 
       return new Vec(x, y);
     }

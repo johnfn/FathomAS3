@@ -38,7 +38,7 @@ package {
 
     // Rename spritesheetObj and spritesheet
     // spritesheetObj isnt even necessarily a spritesheet
-    private var spritesheetObj:* = null;
+    protected var spritesheetObj:* = null;
 
     protected var spriteSheetWidth:int = -1;
     protected var spriteSheetHeight:int = -1;

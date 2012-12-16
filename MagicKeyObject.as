@@ -33,6 +33,8 @@ public dynamic class MagicKeyObject extends Proxy {
   private static function keysToKeyCodes():Object {
     var res:Object = {};
 
+    res["Enter"] = 13;
+    res["Space"] = 32;
     res["Left"]  = 37;
     res["Up"]    = 38;
     res["Right"] = 39;

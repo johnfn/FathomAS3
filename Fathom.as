@@ -23,6 +23,8 @@
     public static var initialized:Boolean = false;
     public static var stage:Stage;
 
+    public static var grid:SpatialHash;
+
     public static var modes:Array = [Fathom._currentMode];
 
     private static var _paused:Boolean = false;
@@ -87,6 +89,8 @@
       //fpsTxt.visible = false;
 
       MagicKeyObject._initializeKeyInput(container);
+
+      grid = new SpatialHash(Fathom.entities.get());
     }
 
     public static function start():void {
@@ -99,6 +103,10 @@
       container.removeEventListener(Event.ENTER_FRAME, update);
     }
 
+    public static function anythingAt(x:int, y:int):Boolean {
+      return grid.getAt(x, y).all("transparent");
+    }
+
     // TODO: These should be static functions on MovingEntity.
 
     // A fast way to find collisions is to subdivide the map into a grid and
@@ -108,7 +116,7 @@
       var list:Set = movingEntities().filter(function(e:MovingEntity):Boolean { return e.modes().contains(currentMode); });
       // TODO: Optimization: You shouldn't have to recreate this
       // hash every loop.
-      var grid:SpatialHash = new SpatialHash(Fathom.entities.get());
+      grid = new SpatialHash(Fathom.entities.get());
 
       // Move every non-static entity.
       for each (var e:MovingEntity in list) {

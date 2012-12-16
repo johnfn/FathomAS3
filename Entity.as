@@ -26,7 +26,7 @@
     // The update loop in Fathom will eventually destroy it.
     public var destroyed:Boolean = false;
 
-    // These is purely for debugging purposes.
+    // These are purely for debugging purposes.
     protected static var counter:int = 0;
     protected var uid:Number = ++counter;
 

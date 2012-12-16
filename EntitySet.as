@@ -36,6 +36,10 @@
       return resultList;
     }
 
+    public function all(...criteria):Boolean {
+      return this.length == this.get.apply(this, criteria).length;
+    }
+
     public function one(...criteria):Entity {
       var results:EntitySet = this.get.apply(this, criteria);
 
