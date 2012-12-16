@@ -1,6 +1,7 @@
 package {
   import flash.display.Sprite;
   import flash.geom.Point;
+  import flash.utils.Dictionary;
   import flash.geom.Rectangle;
   import mx.core.BitmapAsset;
   import flash.display.BitmapData;
@@ -112,6 +113,151 @@ package {
       addNewPersistentItems();
     }
 
+    private function fancyProcessing(itemData:Object, c:String, x:int, y:int):Vec {
+      var result:Vec = itemData["spritesheet"].clone();
+
+      if ("roundOutEdges" in itemData) {
+        /*
+        var X:int = 0;
+        var Y:int = 1;
+        */
+
+        var locX:int = topLeftCorner.x + x;
+        var locY:int = topLeftCorner.y + y;
+
+        if (locY == 0 || data[locX][locY - 1].toString() != c.toString()) {
+          result.y--;
+        }
+
+        if (locX == 0 || data[locX - 1][locY].toString() != c.toString()) {
+          result.x--;
+        }
+
+        if (locY != heightInTiles - 1 && data[locX][locY + 1].toString() != c.toString()) {
+          result.y++;
+        }
+
+        if (locX == widthInTiles - 1 || data[locX + 1][locY].toString() != c.toString()) {
+          result.x++;
+        }
+
+        if (locY != 0 && data[locX][locY - 1].toString() != c.toString()  && locY != heightInTiles - 1 && data[locX][locY + 1].toString() != c.toString()) {
+          result.y--;
+        }
+      }
+
+      if ("fancyEdges" in itemData) {
+        var cstr:String = c.toString();
+        var empty:String = (new Color(255, 255, 255).toString());
+
+        var locX:int = topLeftCorner.x + x;
+        var locY:int = topLeftCorner.y + y;
+
+        // Horizontal wall, ground below.
+
+        if (data[locX - 1][locY].toString() == cstr &&
+            data[locX + 1][locY].toString() == cstr &&
+            data[locX][locY + 1].toString() == empty) {
+          result.y += 2;
+        }
+
+        // Horizontal wall, ground above.
+
+        if (data[locX - 1][locY].toString() == cstr &&
+            data[locX + 1][locY].toString() == cstr &&
+            data[locX][locY - 1].toString() == empty) {
+          result.y -= 2;
+        }
+
+        // Vertical wall, ground to the left.
+
+        if (data[locX][locY - 1].toString() == cstr &&
+            data[locX][locY + 1].toString() == cstr &&
+            data[locX - 1][locY].toString() == empty) {
+          result.x -= 2;
+        }
+
+        // Vertical wall, ground to the right.
+
+        if (data[locX][locY - 1].toString() == cstr &&
+            data[locX][locY + 1].toString() == cstr &&
+            data[locX + 1][locY].toString() == empty) {
+          result.x += 2;
+        }
+
+        // - - -
+        // - x x
+        // - x -
+
+        if (data[locX + 1][locY].toString() == cstr &&
+            data[locX][locY + 1].toString() == cstr &&
+            data[locX - 1][locY].toString() == empty &&
+            data[locX][locY - 1].toString() == empty) {
+          result.x -= 2;
+          result.y -= 2;
+        } else if (data[locX + 1][locY].toString() == cstr &&
+            data[locX][locY + 1].toString() == cstr) {
+
+          // x x x
+          // x x x
+          // x x -
+
+          result.x += 2;
+          result.y += 1;
+        }
+
+        // - - -
+        // x x -
+        // - x -
+
+        if (data[locX - 1][locY].toString() == cstr &&
+            data[locX][locY + 1].toString() == cstr &&
+            data[locX + 1][locY].toString() == empty &&
+            data[locX][locY - 1].toString() == empty) {
+          result.x += 2;
+          result.y -= 2;
+        } else if (data[locX - 1][locY].toString() == cstr &&
+                   data[locX][locY + 1].toString() == cstr) {
+          result.x -= 2;
+          result.y += 1;
+        }
+
+        // - x -
+        // x x -
+        // - - -
+
+        if (data[locX - 1][locY].toString() == cstr &&
+            data[locX][locY - 1].toString() == cstr &&
+            data[locX + 1][locY].toString() == empty &&
+            data[locX][locY + 1].toString() == empty) {
+          result.x += 2;
+          result.y += 2;
+        } else if (data[locX - 1][locY].toString() == cstr &&
+                   data[locX][locY - 1].toString() == cstr) {
+          result.x -= 2;
+          result.y -= 1;
+        }
+
+        // - x -
+        // - x x
+        // - - -
+
+        if (data[locX + 1][locY].toString() == cstr &&
+            data[locX][locY - 1].toString() == cstr &&
+            data[locX - 1][locY].toString() == empty &&
+            data[locX][locY + 1].toString() == empty) {
+          result.x -= 2;
+          result.y += 2;
+        } else if (data[locX + 1][locY].toString() == cstr &&
+                   data[locX][locY - 1].toString() == cstr) {
+          result.x += 2;
+          result.y -= 1;
+        }
+      }
+
+      return result;
+    }
+
     private function addPersistentItem(c:Color, x:int, y:int):void {
       if (!(c.toString() in persistentItemMapping)) {
         if (c.toString() != "#ffffff") {
@@ -126,149 +272,8 @@ package {
       if ("gfx" in itemData) {
         if ("spritesheet" in itemData) {
           // This is an awesome feature that I need to explain more when I'm not doing Ludum Dare. TODO
-          var result:Vec = itemData["spritesheet"].clone();
-
-          if ("roundOutEdges" in itemData) {
-            /*
-            var X:int = 0;
-            var Y:int = 1;
-            */
-
-            var locX:int = topLeftCorner.x + x;
-            var locY:int = topLeftCorner.y + y;
-
-            if (locY == 0 || data[locX][locY - 1].toString() != c.toString()) {
-              result.y--;
-            }
-
-            if (locX == 0 || data[locX - 1][locY].toString() != c.toString()) {
-              result.x--;
-            }
-
-            if (locY != heightInTiles - 1 && data[locX][locY + 1].toString() != c.toString()) {
-              result.y++;
-            }
-
-            if (locX == widthInTiles - 1 || data[locX + 1][locY].toString() != c.toString()) {
-              result.x++;
-            }
-
-            if (locY != 0 && data[locX][locY - 1].toString() != c.toString()  && locY != heightInTiles - 1 && data[locX][locY + 1].toString() != c.toString()) {
-              result.y--;
-            }
-          }
-
-          if ("fancyEdges" in itemData) {
-            var cstr:String = c.toString();
-            var empty:String = (new Color(255, 255, 255).toString());
-
-            var locX:int = topLeftCorner.x + x;
-            var locY:int = topLeftCorner.y + y;
-
-            // Horizontal wall, ground below.
-
-            if (data[locX - 1][locY].toString() == cstr &&
-                data[locX + 1][locY].toString() == cstr &&
-                data[locX][locY + 1].toString() == empty) {
-              result.y += 2;
-            }
-
-            // Horizontal wall, ground above.
-
-            if (data[locX - 1][locY].toString() == cstr &&
-                data[locX + 1][locY].toString() == cstr &&
-                data[locX][locY - 1].toString() == empty) {
-              result.y -= 2;
-            }
-
-            // Vertical wall, ground to the left.
-
-            if (data[locX][locY - 1].toString() == cstr &&
-                data[locX][locY + 1].toString() == cstr &&
-                data[locX - 1][locY].toString() == empty) {
-              result.x -= 2;
-            }
-
-            // Vertical wall, ground to the right.
-
-            if (data[locX][locY - 1].toString() == cstr &&
-                data[locX][locY + 1].toString() == cstr &&
-                data[locX + 1][locY].toString() == empty) {
-              result.x += 2;
-            }
-
-            // - - -
-            // - x x
-            // - x -
-
-            if (data[locX + 1][locY].toString() == cstr &&
-                data[locX][locY + 1].toString() == cstr &&
-                data[locX - 1][locY].toString() == empty &&
-                data[locX][locY - 1].toString() == empty) {
-              result.x -= 2;
-              result.y -= 2;
-            } else if (data[locX + 1][locY].toString() == cstr &&
-                data[locX][locY + 1].toString() == cstr) {
-
-              // x x x
-              // x x x
-              // x x -
-
-              result.x += 2;
-              result.y += 1;
-            }
-
-            // - - -
-            // x x -
-            // - x -
-
-            if (data[locX - 1][locY].toString() == cstr &&
-                data[locX][locY + 1].toString() == cstr &&
-                data[locX + 1][locY].toString() == empty &&
-                data[locX][locY - 1].toString() == empty) {
-              result.x += 2;
-              result.y -= 2;
-            } else if (data[locX - 1][locY].toString() == cstr &&
-                       data[locX][locY + 1].toString() == cstr) {
-              result.x -= 2;
-              result.y += 1;
-            }
-
-            // - x -
-            // x x -
-            // - - -
-
-            if (data[locX - 1][locY].toString() == cstr &&
-                data[locX][locY - 1].toString() == cstr &&
-                data[locX + 1][locY].toString() == empty &&
-                data[locX][locY + 1].toString() == empty) {
-              result.x += 2;
-              result.y += 2;
-            } else if (data[locX - 1][locY].toString() == cstr &&
-                       data[locX][locY - 1].toString() == cstr) {
-              result.x -= 2;
-              result.y -= 1;
-            }
-
-            // - x -
-            // - x x
-            // - - -
-
-            if (data[locX + 1][locY].toString() == cstr &&
-                data[locX][locY - 1].toString() == cstr &&
-                data[locX - 1][locY].toString() == empty &&
-                data[locX][locY + 1].toString() == empty) {
-              result.x -= 2;
-              result.y += 2;
-            } else if (data[locX + 1][locY].toString() == cstr &&
-                       data[locX][locY - 1].toString() == cstr) {
-              result.x += 2;
-              result.y -= 1;
-            }
-
-          }
-
-          e.loadSpritesheet(itemData["gfx"], C.dim, result);
+          Util.assert(false);
+          //e.loadSpritesheet(itemData["gfx"], C.dim, result);
         } else {
           e.loadSpritesheet(itemData["gfx"], C.dim);
         }
@@ -428,6 +433,8 @@ package {
       return this;
     }
 
+    private static var cachedAssets:Dictionary = new Dictionary();
+
     private function dumpToGraphics():void {
       graphics = new Entity();
 
@@ -453,9 +460,17 @@ package {
 
           if (!("gfx" in itemData)) continue;
 
-          var ss:Vec = itemData.spritesheet.clone().multiply(25); // Hardcore hardcoding TODO
+          var ss:Vec = fancyProcessing(itemData, c.toString(), x, y).multiply(25); // Hardcore hardcoding TODO
 
-          var bAsset:BitmapAsset = new itemData.gfx(); //TODO: Cache this
+          var key:String = Util.className(itemData.gfx);
+          var bAsset:BitmapAsset;
+
+          if (!(cachedAssets[key])) {
+            cachedAssets[key] = new itemData.gfx();
+          }
+
+          bAsset = cachedAssets[key];
+
           imgData.copyPixels(bAsset.bitmapData, new Rectangle(ss.x, ss.y, 25, 25), new Point(x * 25, y * 25));
         }
       }
