@@ -22,6 +22,8 @@
   public class Entity extends Graphic {
     private var events:Object = {};
 
+    public var isFlickering:Boolean = false;
+
     // This indicates that the object should be destroyed.
     // The update loop in Fathom will eventually destroy it.
     public var destroyed:Boolean = false;

@@ -109,8 +109,9 @@ package {
       });
     }
 
-    public static function flicker(who:Entity, duration:int = 50, callback:Function=null):Function {
+    public static function flicker(who:Entity, duration:int = 20, callback:Function=null):Function {
       var counter:int = 0;
+      who.isFlickering = true;
 
       var fn:Function = function():void {
         counter++;
@@ -118,6 +119,7 @@ package {
         who.visible = (Math.floor(counter / 3) % 2 == 0)
 
         if (counter > duration) {
+          who.isFlickering = false;
           who.visible = true;
           who.unlisten(fn);
           if (callback != null) callback();
