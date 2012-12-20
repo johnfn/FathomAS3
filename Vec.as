@@ -103,8 +103,8 @@ package {
       } else if (name == "Vec") {
         var vec:Vec = n as Vec;
 
-        x *= n.x;
-        y *= n.y;
+        x *= vec.x;
+        y *= vec.y;
       } else {
         throw new Error("Unsupported type for Vec#multiply.");
       }
@@ -121,8 +121,8 @@ package {
       } else if (getQualifiedClassName(n) == "Vec") {
         var vec:Vec = n as Vec;
 
-        x /= n.x;
-        y /= n.y;
+        x /= vec.x;
+        y /= vec.y;
       } else {
         throw new Error("Unsupported type for Vec#multiply.");
       }

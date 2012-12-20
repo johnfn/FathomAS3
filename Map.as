@@ -174,23 +174,23 @@ package {
 
         if (!isGround(data[locX - 1][locY], cstr) &&
             !isGround(data[locX + 1][locY], cstr) &&
-            isGround(data[locX][locY + 1], cstr)) {
+             isGround(data[locX][locY + 1], cstr)) {
           result.y += 2;
         }
 
         // Horizontal wall, ground above.
 
-        if (data[locX - 1][locY].toString() == cstr &&
-            data[locX + 1][locY].toString() == cstr &&
-            isGround(data[locX][locY - 1], cstr)) {
+        if (!isGround(data[locX - 1][locY], cstr) &&
+            !isGround(data[locX + 1][locY], cstr) &&
+             isGround(data[locX][locY - 1], cstr)) {
           result.y -= 2;
         }
 
         // Vertical wall, ground to the left.
 
-        if (data[locX][locY - 1].toString() == cstr &&
-            data[locX][locY + 1].toString() == cstr &&
-            isGround(data[locX - 1][locY], cstr)) {
+        if (!isGround(data[locX][locY - 1], cstr) &&
+            !isGround(data[locX][locY + 1], cstr) &&
+             isGround(data[locX - 1][locY], cstr)) {
           result.x -= 2;
         }
 
@@ -476,6 +476,11 @@ package {
               Util.log("Color without data: " + c.toString());
             }
             continue;
+          }
+
+          // Dont even have to mention how much of a HACK this is.
+          if (c.toString() == (new Color(255, 75, 0).toString())) {
+            c = new Color(0, 255, 255);
           }
 
           var itemData:Object = persistentItemMapping[c.toString()];
